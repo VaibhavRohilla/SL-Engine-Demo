@@ -1,0 +1,475 @@
+{
+	"frames": {
+		"Fire (10).png": {
+			"frame": {
+				"x": 1,
+				"y": 1,
+				"w": 289,
+				"h": 289
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 289,
+				"h": 289
+			},
+			"sourceSize": {
+				"w": 289,
+				"h": 289
+			}
+		},
+		"Fire (11).png": {
+			"frame": {
+				"x": 292,
+				"y": 1,
+				"w": 289,
+				"h": 289
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 289,
+				"h": 289
+			},
+			"sourceSize": {
+				"w": 289,
+				"h": 289
+			}
+		},
+		"Fire (12).png": {
+			"frame": {
+				"x": 583,
+				"y": 1,
+				"w": 289,
+				"h": 289
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 289,
+				"h": 289
+			},
+			"sourceSize": {
+				"w": 289,
+				"h": 289
+			}
+		},
+		"Fire (13).png": {
+			"frame": {
+				"x": 874,
+				"y": 1,
+				"w": 289,
+				"h": 289
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 289,
+				"h": 289
+			},
+			"sourceSize": {
+				"w": 289,
+				"h": 289
+			}
+		},
+		"Fire (14).png": {
+			"frame": {
+				"x": 1,
+				"y": 292,
+				"w": 289,
+				"h": 289
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 289,
+				"h": 289
+			},
+			"sourceSize": {
+				"w": 289,
+				"h": 289
+			}
+		},
+		"Fire (15).png": {
+			"frame": {
+				"x": 292,
+				"y": 292,
+				"w": 289,
+				"h": 289
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 289,
+				"h": 289
+			},
+			"sourceSize": {
+				"w": 289,
+				"h": 289
+			}
+		},
+		"Fire (16).png": {
+			"frame": {
+				"x": 583,
+				"y": 292,
+				"w": 289,
+				"h": 289
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 289,
+				"h": 289
+			},
+			"sourceSize": {
+				"w": 289,
+				"h": 289
+			}
+		},
+		"Fire (17).png": {
+			"frame": {
+				"x": 874,
+				"y": 292,
+				"w": 289,
+				"h": 289
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 289,
+				"h": 289
+			},
+			"sourceSize": {
+				"w": 289,
+				"h": 289
+			}
+		},
+		"Fire (18).png": {
+			"frame": {
+				"x": 1,
+				"y": 583,
+				"w": 289,
+				"h": 289
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 289,
+				"h": 289
+			},
+			"sourceSize": {
+				"w": 289,
+				"h": 289
+			}
+		},
+		"Fire (19).png": {
+			"frame": {
+				"x": 292,
+				"y": 583,
+				"w": 289,
+				"h": 289
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 289,
+				"h": 289
+			},
+			"sourceSize": {
+				"w": 289,
+				"h": 289
+			}
+		},
+		"Fire (1).png": {
+			"frame": {
+				"x": 583,
+				"y": 583,
+				"w": 289,
+				"h": 289
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 289,
+				"h": 289
+			},
+			"sourceSize": {
+				"w": 289,
+				"h": 289
+			}
+		},
+		"Fire (20).png": {
+			"frame": {
+				"x": 874,
+				"y": 583,
+				"w": 289,
+				"h": 289
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 289,
+				"h": 289
+			},
+			"sourceSize": {
+				"w": 289,
+				"h": 289
+			}
+		},
+		"Fire (21).png": {
+			"frame": {
+				"x": 1,
+				"y": 874,
+				"w": 289,
+				"h": 289
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 289,
+				"h": 289
+			},
+			"sourceSize": {
+				"w": 289,
+				"h": 289
+			}
+		},
+		"Fire (22).png": {
+			"frame": {
+				"x": 292,
+				"y": 874,
+				"w": 289,
+				"h": 289
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 289,
+				"h": 289
+			},
+			"sourceSize": {
+				"w": 289,
+				"h": 289
+			}
+		},
+		"Fire (23).png": {
+			"frame": {
+				"x": 583,
+				"y": 874,
+				"w": 289,
+				"h": 289
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 289,
+				"h": 289
+			},
+			"sourceSize": {
+				"w": 289,
+				"h": 289
+			}
+		},
+		"Fire (2).png": {
+			"frame": {
+				"x": 874,
+				"y": 874,
+				"w": 289,
+				"h": 289
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 289,
+				"h": 289
+			},
+			"sourceSize": {
+				"w": 289,
+				"h": 289
+			}
+		},
+		"Fire (3).png": {
+			"frame": {
+				"x": 1165,
+				"y": 1,
+				"w": 289,
+				"h": 289
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 289,
+				"h": 289
+			},
+			"sourceSize": {
+				"w": 289,
+				"h": 289
+			}
+		},
+		"Fire (4).png": {
+			"frame": {
+				"x": 1165,
+				"y": 292,
+				"w": 289,
+				"h": 289
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 289,
+				"h": 289
+			},
+			"sourceSize": {
+				"w": 289,
+				"h": 289
+			}
+		},
+		"Fire (5).png": {
+			"frame": {
+				"x": 1165,
+				"y": 583,
+				"w": 289,
+				"h": 289
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 289,
+				"h": 289
+			},
+			"sourceSize": {
+				"w": 289,
+				"h": 289
+			}
+		},
+		"Fire (6).png": {
+			"frame": {
+				"x": 1165,
+				"y": 874,
+				"w": 289,
+				"h": 289
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 289,
+				"h": 289
+			},
+			"sourceSize": {
+				"w": 289,
+				"h": 289
+			}
+		},
+		"Fire (7).png": {
+			"frame": {
+				"x": 1,
+				"y": 1165,
+				"w": 289,
+				"h": 289
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 289,
+				"h": 289
+			},
+			"sourceSize": {
+				"w": 289,
+				"h": 289
+			}
+		},
+		"Fire (8).png": {
+			"frame": {
+				"x": 292,
+				"y": 1165,
+				"w": 289,
+				"h": 289
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 289,
+				"h": 289
+			},
+			"sourceSize": {
+				"w": 289,
+				"h": 289
+			}
+		},
+		"Fire (9).png": {
+			"frame": {
+				"x": 583,
+				"y": 1165,
+				"w": 289,
+				"h": 289
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 289,
+				"h": 289
+			},
+			"sourceSize": {
+				"w": 289,
+				"h": 289
+			}
+		}
+	},
+	"meta": {
+		"app": "http://www.codeandweb.com/texturepacker",
+		"version": "1.0",
+		"image": "Fire.png",
+		"format": "RGBA8888",
+		"size": {
+			"w": 1455,
+			"h": 1455
+		},
+		"scale": "1"
+	}
+}

@@ -1,0 +1,131 @@
+{
+  "version": "1.0.0",
+  "baseUrl": "assets/",
+  "bundles": [
+    {
+      "name": "main",
+      "priority": 1,
+      "required": true,
+      "assets": [
+        {
+          "key": "Background",
+          "type": "texture",
+          "url": "Background.png"
+        },
+        {
+          "key": "CoinSheet",
+          "type": "texture",
+          "url": "CoinSheet.png"
+        },
+        {
+          "key": "Fire/Fire",
+          "type": "spritesheet",
+          "url": "Fire/Fire.json"
+        },
+        {
+          "key": "gui/Guibuttons",
+          "type": "spritesheet",
+          "url": "gui/Guibuttons.json"
+        },
+        {
+          "key": "PayLines",
+          "type": "texture",
+          "url": "PayLines.png"
+        },
+        {
+          "key": "SlotMachine_3x5",
+          "type": "texture",
+          "url": "SlotMachine_3x5.png"
+        },
+        {
+          "key": "Symbols/10",
+          "type": "spritesheet",
+          "url": "Symbols/10.json"
+        },
+        {
+          "key": "Symbols/A",
+          "type": "spritesheet",
+          "url": "Symbols/A.json"
+        },
+        {
+          "key": "Symbols/Ankh",
+          "type": "spritesheet",
+          "url": "Symbols/Ankh.json"
+        },
+        {
+          "key": "Symbols/Bonus",
+          "type": "spritesheet",
+          "url": "Symbols/Bonus.json"
+        },
+        {
+          "key": "Symbols/Eye",
+          "type": "spritesheet",
+          "url": "Symbols/Eye.json"
+        },
+        {
+          "key": "Symbols/FreeSpin",
+          "type": "spritesheet",
+          "url": "Symbols/FreeSpin.json"
+        },
+        {
+          "key": "Symbols/J",
+          "type": "spritesheet",
+          "url": "Symbols/J.json"
+        },
+        {
+          "key": "Symbols/Jackpot",
+          "type": "spritesheet",
+          "url": "Symbols/Jackpot.json"
+        },
+        {
+          "key": "Symbols/k",
+          "type": "spritesheet",
+          "url": "Symbols/k.json"
+        },
+        {
+          "key": "Symbols/Lotus",
+          "type": "spritesheet",
+          "url": "Symbols/Lotus.json"
+        },
+        {
+          "key": "Symbols/Q",
+          "type": "spritesheet",
+          "url": "Symbols/Q.json"
+        },
+        {
+          "key": "Symbols/Scatter",
+          "type": "spritesheet",
+          "url": "Symbols/Scatter.json"
+        },
+        {
+          "key": "Symbols/Shen",
+          "type": "spritesheet",
+          "url": "Symbols/Shen.json"
+        },
+        {
+          "key": "Symbols/Wick",
+          "type": "spritesheet",
+          "url": "Symbols/Wick.json"
+        },
+        {
+          "key": "Symbols/Wild",
+          "type": "spritesheet",
+          "url": "Symbols/Wild.json"
+        },
+        {
+          "key": "Vase",
+          "type": "texture",
+          "url": "Vase.png"
+        },
+        {
+          "key": "ViewButtons/viewbuttons",
+          "type": "spritesheet",
+          "url": "ViewButtons/viewbuttons.json"
+        }
+      ],
+      "payloadClass": "reelsSymbolCore",
+      "decodeCostClass": "medium",
+      "uploadCostClass": "medium"
+    }
+  ]
+}

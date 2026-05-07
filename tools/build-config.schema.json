@@ -1,0 +1,70 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "SL-Engine Starter Build Config",
+  "description": "Canonical project configuration for SL-Engine starter runtime and asset tooling",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["game"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "game": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "version"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "description": "Unique game identifier (kebab-case)" },
+        "name": { "type": "string", "minLength": 1, "description": "Human-readable game name" },
+        "version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+", "description": "Semantic version" },
+        "description": { "type": "string", "description": "Game description" }
+      }
+    },
+    "display": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "width": { "type": "integer", "minimum": 1, "default": 1280 },
+        "height": { "type": "integer", "minimum": 1, "default": 720 },
+        "backgroundColor": { "type": "string", "default": "0x000000" }
+      }
+    },
+    "assets": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "baseUrl": { "type": "string", "default": "assets/" },
+        "manifestPath": { "type": "string", "default": "assets/manifest.json" },
+        "bundles": {
+          "type": "array",
+          "description": "Optional explicit bundle list for multi-market/skin.",
+          "items": {
+            "type": "object",
+            "required": ["name"],
+            "additionalProperties": false,
+            "properties": {
+              "name": { "type": "string", "minLength": 1 },
+              "pathPrefixes": { "type": "array", "items": { "type": "string" }, "default": [] },
+              "priority": { "type": "integer", "minimum": 0, "default": 10 },
+              "required": { "type": "boolean", "default": false }
+            }
+          }
+        }
+      }
+    },
+    "boot": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "manifestUrl": { "type": "string", "default": "assets/manifest.json" },
+        "startSceneBundles": { "type": "array", "items": { "type": "string" }, "default": ["main"] },
+        "skipStartScreen": { "type": "boolean", "default": false }
+      }
+    },
+    "spinFeel": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "preset": { "type": "string", "enum": ["premium", "arcade", "turbo", "normal"], "default": "premium" }
+      }
+    }
+  }
+}

@@ -1,0 +1,523 @@
+{
+  "frames": {
+    "Shen(10).png": {
+      "frame": {
+        "x": 1,
+        "y": 1,
+        "w": 239,
+        "h": 239
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 239,
+        "h": 239
+      },
+      "sourceSize": {
+        "w": 239,
+        "h": 239
+      }
+    },
+    "Shen(11).png": {
+      "frame": {
+        "x": 242,
+        "y": 1,
+        "w": 239,
+        "h": 239
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 239,
+        "h": 239
+      },
+      "sourceSize": {
+        "w": 239,
+        "h": 239
+      }
+    },
+    "Shen(12).png": {
+      "frame": {
+        "x": 483,
+        "y": 1,
+        "w": 239,
+        "h": 239
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 239,
+        "h": 239
+      },
+      "sourceSize": {
+        "w": 239,
+        "h": 239
+      }
+    },
+    "Shen(13).png": {
+      "frame": {
+        "x": 724,
+        "y": 1,
+        "w": 239,
+        "h": 239
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 239,
+        "h": 239
+      },
+      "sourceSize": {
+        "w": 239,
+        "h": 239
+      }
+    },
+    "Shen(14).png": {
+      "frame": {
+        "x": 1,
+        "y": 242,
+        "w": 239,
+        "h": 239
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 239,
+        "h": 239
+      },
+      "sourceSize": {
+        "w": 239,
+        "h": 239
+      }
+    },
+    "Shen(15).png": {
+      "frame": {
+        "x": 242,
+        "y": 242,
+        "w": 239,
+        "h": 239
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 239,
+        "h": 239
+      },
+      "sourceSize": {
+        "w": 239,
+        "h": 239
+      }
+    },
+    "Shen(16).png": {
+      "frame": {
+        "x": 483,
+        "y": 242,
+        "w": 239,
+        "h": 239
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 239,
+        "h": 239
+      },
+      "sourceSize": {
+        "w": 239,
+        "h": 239
+      }
+    },
+    "Shen(17).png": {
+      "frame": {
+        "x": 724,
+        "y": 242,
+        "w": 239,
+        "h": 239
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 239,
+        "h": 239
+      },
+      "sourceSize": {
+        "w": 239,
+        "h": 239
+      }
+    },
+    "Shen(18).png": {
+      "frame": {
+        "x": 1,
+        "y": 483,
+        "w": 239,
+        "h": 239
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 239,
+        "h": 239
+      },
+      "sourceSize": {
+        "w": 239,
+        "h": 239
+      }
+    },
+    "Shen(19).png": {
+      "frame": {
+        "x": 242,
+        "y": 483,
+        "w": 239,
+        "h": 239
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 239,
+        "h": 239
+      },
+      "sourceSize": {
+        "w": 239,
+        "h": 239
+      }
+    },
+    "Shen(1).png": {
+      "frame": {
+        "x": 483,
+        "y": 483,
+        "w": 239,
+        "h": 239
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 239,
+        "h": 239
+      },
+      "sourceSize": {
+        "w": 239,
+        "h": 239
+      }
+    },
+    "Shen(20).png": {
+      "frame": {
+        "x": 724,
+        "y": 483,
+        "w": 239,
+        "h": 239
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 239,
+        "h": 239
+      },
+      "sourceSize": {
+        "w": 239,
+        "h": 239
+      }
+    },
+    "Shen(21).png": {
+      "frame": {
+        "x": 1,
+        "y": 724,
+        "w": 239,
+        "h": 239
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 239,
+        "h": 239
+      },
+      "sourceSize": {
+        "w": 239,
+        "h": 239
+      }
+    },
+    "Shen(22).png": {
+      "frame": {
+        "x": 242,
+        "y": 724,
+        "w": 239,
+        "h": 239
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 239,
+        "h": 239
+      },
+      "sourceSize": {
+        "w": 239,
+        "h": 239
+      }
+    },
+    "Shen(23).png": {
+      "frame": {
+        "x": 483,
+        "y": 724,
+        "w": 239,
+        "h": 239
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 239,
+        "h": 239
+      },
+      "sourceSize": {
+        "w": 239,
+        "h": 239
+      }
+    },
+    "Shen(24).png": {
+      "frame": {
+        "x": 724,
+        "y": 724,
+        "w": 239,
+        "h": 239
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 239,
+        "h": 239
+      },
+      "sourceSize": {
+        "w": 239,
+        "h": 239
+      }
+    },
+    "Shen(2).png": {
+      "frame": {
+        "x": 965,
+        "y": 1,
+        "w": 239,
+        "h": 239
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 239,
+        "h": 239
+      },
+      "sourceSize": {
+        "w": 239,
+        "h": 239
+      }
+    },
+    "Shen(3).png": {
+      "frame": {
+        "x": 965,
+        "y": 242,
+        "w": 239,
+        "h": 239
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 239,
+        "h": 239
+      },
+      "sourceSize": {
+        "w": 239,
+        "h": 239
+      }
+    },
+    "Shen(4).png": {
+      "frame": {
+        "x": 965,
+        "y": 483,
+        "w": 239,
+        "h": 239
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 239,
+        "h": 239
+      },
+      "sourceSize": {
+        "w": 239,
+        "h": 239
+      }
+    },
+    "Shen(5).png": {
+      "frame": {
+        "x": 965,
+        "y": 724,
+        "w": 239,
+        "h": 239
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 239,
+        "h": 239
+      },
+      "sourceSize": {
+        "w": 239,
+        "h": 239
+      }
+    },
+    "Shen(6).png": {
+      "frame": {
+        "x": 1,
+        "y": 965,
+        "w": 239,
+        "h": 239
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 239,
+        "h": 239
+      },
+      "sourceSize": {
+        "w": 239,
+        "h": 239
+      }
+    },
+    "Shen(7).png": {
+      "frame": {
+        "x": 242,
+        "y": 965,
+        "w": 239,
+        "h": 239
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 239,
+        "h": 239
+      },
+      "sourceSize": {
+        "w": 239,
+        "h": 239
+      }
+    },
+    "Shen(8).png": {
+      "frame": {
+        "x": 483,
+        "y": 965,
+        "w": 239,
+        "h": 239
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 239,
+        "h": 239
+      },
+      "sourceSize": {
+        "w": 239,
+        "h": 239
+      }
+    },
+    "Shen(9).png": {
+      "frame": {
+        "x": 724,
+        "y": 965,
+        "w": 239,
+        "h": 239
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 239,
+        "h": 239
+      },
+      "sourceSize": {
+        "w": 239,
+        "h": 239
+      }
+    }
+  },
+  "meta": {
+    "app": "http://www.codeandweb.com/texturepacker",
+    "version": "1.0",
+    "image": "Shen.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 1205,
+      "h": 1205
+    },
+    "scale": "1"
+  },
+  "animations": {
+    "idle": [
+      "Shen(1).png",
+      "Shen(2).png",
+      "Shen(3).png",
+      "Shen(4).png",
+      "Shen(5).png",
+      "Shen(6).png",
+      "Shen(7).png",
+      "Shen(8).png",
+      "Shen(9).png",
+      "Shen(10).png",
+      "Shen(11).png",
+      "Shen(12).png",
+      "Shen(13).png",
+      "Shen(14).png",
+      "Shen(15).png",
+      "Shen(16).png",
+      "Shen(17).png",
+      "Shen(18).png",
+      "Shen(19).png",
+      "Shen(20).png",
+      "Shen(21).png",
+      "Shen(22).png",
+      "Shen(23).png",
+      "Shen(24).png"
+    ]
+  }
+}

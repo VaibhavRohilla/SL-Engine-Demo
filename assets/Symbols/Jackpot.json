@@ -1,0 +1,523 @@
+{
+  "frames": {
+    "Jackpot(10).png": {
+      "frame": {
+        "x": 1,
+        "y": 1,
+        "w": 239,
+        "h": 239
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 239,
+        "h": 239
+      },
+      "sourceSize": {
+        "w": 239,
+        "h": 239
+      }
+    },
+    "Jackpot(11).png": {
+      "frame": {
+        "x": 242,
+        "y": 1,
+        "w": 239,
+        "h": 239
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 239,
+        "h": 239
+      },
+      "sourceSize": {
+        "w": 239,
+        "h": 239
+      }
+    },
+    "Jackpot(12).png": {
+      "frame": {
+        "x": 483,
+        "y": 1,
+        "w": 239,
+        "h": 239
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 239,
+        "h": 239
+      },
+      "sourceSize": {
+        "w": 239,
+        "h": 239
+      }
+    },
+    "Jackpot(13).png": {
+      "frame": {
+        "x": 724,
+        "y": 1,
+        "w": 239,
+        "h": 239
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 239,
+        "h": 239
+      },
+      "sourceSize": {
+        "w": 239,
+        "h": 239
+      }
+    },
+    "Jackpot(14).png": {
+      "frame": {
+        "x": 1,
+        "y": 242,
+        "w": 239,
+        "h": 239
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 239,
+        "h": 239
+      },
+      "sourceSize": {
+        "w": 239,
+        "h": 239
+      }
+    },
+    "Jackpot(15).png": {
+      "frame": {
+        "x": 242,
+        "y": 242,
+        "w": 239,
+        "h": 239
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 239,
+        "h": 239
+      },
+      "sourceSize": {
+        "w": 239,
+        "h": 239
+      }
+    },
+    "Jackpot(16).png": {
+      "frame": {
+        "x": 483,
+        "y": 242,
+        "w": 239,
+        "h": 239
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 239,
+        "h": 239
+      },
+      "sourceSize": {
+        "w": 239,
+        "h": 239
+      }
+    },
+    "Jackpot(17).png": {
+      "frame": {
+        "x": 724,
+        "y": 242,
+        "w": 239,
+        "h": 239
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 239,
+        "h": 239
+      },
+      "sourceSize": {
+        "w": 239,
+        "h": 239
+      }
+    },
+    "Jackpot(18).png": {
+      "frame": {
+        "x": 1,
+        "y": 483,
+        "w": 239,
+        "h": 239
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 239,
+        "h": 239
+      },
+      "sourceSize": {
+        "w": 239,
+        "h": 239
+      }
+    },
+    "Jackpot(19).png": {
+      "frame": {
+        "x": 242,
+        "y": 483,
+        "w": 239,
+        "h": 239
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 239,
+        "h": 239
+      },
+      "sourceSize": {
+        "w": 239,
+        "h": 239
+      }
+    },
+    "Jackpot(1).png": {
+      "frame": {
+        "x": 483,
+        "y": 483,
+        "w": 239,
+        "h": 239
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 239,
+        "h": 239
+      },
+      "sourceSize": {
+        "w": 239,
+        "h": 239
+      }
+    },
+    "Jackpot(20).png": {
+      "frame": {
+        "x": 724,
+        "y": 483,
+        "w": 239,
+        "h": 239
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 239,
+        "h": 239
+      },
+      "sourceSize": {
+        "w": 239,
+        "h": 239
+      }
+    },
+    "Jackpot(21).png": {
+      "frame": {
+        "x": 1,
+        "y": 724,
+        "w": 239,
+        "h": 239
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 239,
+        "h": 239
+      },
+      "sourceSize": {
+        "w": 239,
+        "h": 239
+      }
+    },
+    "Jackpot(22).png": {
+      "frame": {
+        "x": 242,
+        "y": 724,
+        "w": 239,
+        "h": 239
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 239,
+        "h": 239
+      },
+      "sourceSize": {
+        "w": 239,
+        "h": 239
+      }
+    },
+    "Jackpot(23).png": {
+      "frame": {
+        "x": 483,
+        "y": 724,
+        "w": 239,
+        "h": 239
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 239,
+        "h": 239
+      },
+      "sourceSize": {
+        "w": 239,
+        "h": 239
+      }
+    },
+    "Jackpot(24).png": {
+      "frame": {
+        "x": 724,
+        "y": 724,
+        "w": 239,
+        "h": 239
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 239,
+        "h": 239
+      },
+      "sourceSize": {
+        "w": 239,
+        "h": 239
+      }
+    },
+    "Jackpot(2).png": {
+      "frame": {
+        "x": 965,
+        "y": 1,
+        "w": 239,
+        "h": 239
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 239,
+        "h": 239
+      },
+      "sourceSize": {
+        "w": 239,
+        "h": 239
+      }
+    },
+    "Jackpot(3).png": {
+      "frame": {
+        "x": 965,
+        "y": 242,
+        "w": 239,
+        "h": 239
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 239,
+        "h": 239
+      },
+      "sourceSize": {
+        "w": 239,
+        "h": 239
+      }
+    },
+    "Jackpot(4).png": {
+      "frame": {
+        "x": 965,
+        "y": 483,
+        "w": 239,
+        "h": 239
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 239,
+        "h": 239
+      },
+      "sourceSize": {
+        "w": 239,
+        "h": 239
+      }
+    },
+    "Jackpot(5).png": {
+      "frame": {
+        "x": 965,
+        "y": 724,
+        "w": 239,
+        "h": 239
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 239,
+        "h": 239
+      },
+      "sourceSize": {
+        "w": 239,
+        "h": 239
+      }
+    },
+    "Jackpot(6).png": {
+      "frame": {
+        "x": 1,
+        "y": 965,
+        "w": 239,
+        "h": 239
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 239,
+        "h": 239
+      },
+      "sourceSize": {
+        "w": 239,
+        "h": 239
+      }
+    },
+    "Jackpot(7).png": {
+      "frame": {
+        "x": 242,
+        "y": 965,
+        "w": 239,
+        "h": 239
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 239,
+        "h": 239
+      },
+      "sourceSize": {
+        "w": 239,
+        "h": 239
+      }
+    },
+    "Jackpot(8).png": {
+      "frame": {
+        "x": 483,
+        "y": 965,
+        "w": 239,
+        "h": 239
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 239,
+        "h": 239
+      },
+      "sourceSize": {
+        "w": 239,
+        "h": 239
+      }
+    },
+    "Jackpot(9).png": {
+      "frame": {
+        "x": 724,
+        "y": 965,
+        "w": 239,
+        "h": 239
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 239,
+        "h": 239
+      },
+      "sourceSize": {
+        "w": 239,
+        "h": 239
+      }
+    }
+  },
+  "meta": {
+    "app": "http://www.codeandweb.com/texturepacker",
+    "version": "1.0",
+    "image": "Jackpot.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 1205,
+      "h": 1205
+    },
+    "scale": "1"
+  },
+  "animations": {
+    "idle": [
+      "Jackpot(1).png",
+      "Jackpot(2).png",
+      "Jackpot(3).png",
+      "Jackpot(4).png",
+      "Jackpot(5).png",
+      "Jackpot(6).png",
+      "Jackpot(7).png",
+      "Jackpot(8).png",
+      "Jackpot(9).png",
+      "Jackpot(10).png",
+      "Jackpot(11).png",
+      "Jackpot(12).png",
+      "Jackpot(13).png",
+      "Jackpot(14).png",
+      "Jackpot(15).png",
+      "Jackpot(16).png",
+      "Jackpot(17).png",
+      "Jackpot(18).png",
+      "Jackpot(19).png",
+      "Jackpot(20).png",
+      "Jackpot(21).png",
+      "Jackpot(22).png",
+      "Jackpot(23).png",
+      "Jackpot(24).png"
+    ]
+  }
+}

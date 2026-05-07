@@ -1,0 +1,51 @@
+{
+  "name": "@fnx/sl-engine",
+  "version": "2.0.0",
+  "description": "Slot frontend runtime: plays spins from a configured ISpinResultSource (production hosts use backend adapters; stock bootstrap uses MockResultSource by default)",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs",
+      "default": "./dist/index.js"
+    },
+    "./testing": {
+      "types": "./dist/testing/index.d.ts",
+      "import": "./dist/testing/index.js",
+      "require": "./dist/testing/index.cjs",
+      "default": "./dist/testing/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "author": "Fnx iGaming",
+  "license": "SEE LICENSE IN LICENSE",
+  "keywords": [
+    "igaming",
+    "slots",
+    "slot-sdk",
+    "slot-frontend",
+    "typescript",
+    "runtime",
+    "pixi.js"
+  ],
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  },
+  "peerDependencies": {
+    "@esotericsoftware/spine-pixi-v8": "^4.2.74",
+    "@tweenjs/tween.js": "^25.0.0",
+    "howler": "^2.2.4",
+    "pixi.js": "^8.6.6",
+    "zod": "^3.24.1"
+  }
+}

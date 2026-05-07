@@ -1,0 +1,523 @@
+{
+  "frames": {
+    "Ankh(10).png": {
+      "frame": {
+        "x": 1,
+        "y": 1,
+        "w": 239,
+        "h": 239
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 239,
+        "h": 239
+      },
+      "sourceSize": {
+        "w": 239,
+        "h": 239
+      }
+    },
+    "Ankh(11).png": {
+      "frame": {
+        "x": 242,
+        "y": 1,
+        "w": 239,
+        "h": 239
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 239,
+        "h": 239
+      },
+      "sourceSize": {
+        "w": 239,
+        "h": 239
+      }
+    },
+    "Ankh(12).png": {
+      "frame": {
+        "x": 483,
+        "y": 1,
+        "w": 239,
+        "h": 239
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 239,
+        "h": 239
+      },
+      "sourceSize": {
+        "w": 239,
+        "h": 239
+      }
+    },
+    "Ankh(13).png": {
+      "frame": {
+        "x": 724,
+        "y": 1,
+        "w": 239,
+        "h": 239
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 239,
+        "h": 239
+      },
+      "sourceSize": {
+        "w": 239,
+        "h": 239
+      }
+    },
+    "Ankh(14).png": {
+      "frame": {
+        "x": 1,
+        "y": 242,
+        "w": 239,
+        "h": 239
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 239,
+        "h": 239
+      },
+      "sourceSize": {
+        "w": 239,
+        "h": 239
+      }
+    },
+    "Ankh(15).png": {
+      "frame": {
+        "x": 242,
+        "y": 242,
+        "w": 239,
+        "h": 239
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 239,
+        "h": 239
+      },
+      "sourceSize": {
+        "w": 239,
+        "h": 239
+      }
+    },
+    "Ankh(16).png": {
+      "frame": {
+        "x": 483,
+        "y": 242,
+        "w": 239,
+        "h": 239
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 239,
+        "h": 239
+      },
+      "sourceSize": {
+        "w": 239,
+        "h": 239
+      }
+    },
+    "Ankh(17).png": {
+      "frame": {
+        "x": 724,
+        "y": 242,
+        "w": 239,
+        "h": 239
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 239,
+        "h": 239
+      },
+      "sourceSize": {
+        "w": 239,
+        "h": 239
+      }
+    },
+    "Ankh(18).png": {
+      "frame": {
+        "x": 1,
+        "y": 483,
+        "w": 239,
+        "h": 239
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 239,
+        "h": 239
+      },
+      "sourceSize": {
+        "w": 239,
+        "h": 239
+      }
+    },
+    "Ankh(19).png": {
+      "frame": {
+        "x": 242,
+        "y": 483,
+        "w": 239,
+        "h": 239
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 239,
+        "h": 239
+      },
+      "sourceSize": {
+        "w": 239,
+        "h": 239
+      }
+    },
+    "Ankh(1).png": {
+      "frame": {
+        "x": 483,
+        "y": 483,
+        "w": 239,
+        "h": 239
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 239,
+        "h": 239
+      },
+      "sourceSize": {
+        "w": 239,
+        "h": 239
+      }
+    },
+    "Ankh(20).png": {
+      "frame": {
+        "x": 724,
+        "y": 483,
+        "w": 239,
+        "h": 239
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 239,
+        "h": 239
+      },
+      "sourceSize": {
+        "w": 239,
+        "h": 239
+      }
+    },
+    "Ankh(21).png": {
+      "frame": {
+        "x": 1,
+        "y": 724,
+        "w": 239,
+        "h": 239
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 239,
+        "h": 239
+      },
+      "sourceSize": {
+        "w": 239,
+        "h": 239
+      }
+    },
+    "Ankh(22).png": {
+      "frame": {
+        "x": 242,
+        "y": 724,
+        "w": 239,
+        "h": 239
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 239,
+        "h": 239
+      },
+      "sourceSize": {
+        "w": 239,
+        "h": 239
+      }
+    },
+    "Ankh(23).png": {
+      "frame": {
+        "x": 483,
+        "y": 724,
+        "w": 239,
+        "h": 239
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 239,
+        "h": 239
+      },
+      "sourceSize": {
+        "w": 239,
+        "h": 239
+      }
+    },
+    "Ankh(24).png": {
+      "frame": {
+        "x": 724,
+        "y": 724,
+        "w": 239,
+        "h": 239
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 239,
+        "h": 239
+      },
+      "sourceSize": {
+        "w": 239,
+        "h": 239
+      }
+    },
+    "Ankh(2).png": {
+      "frame": {
+        "x": 965,
+        "y": 1,
+        "w": 239,
+        "h": 239
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 239,
+        "h": 239
+      },
+      "sourceSize": {
+        "w": 239,
+        "h": 239
+      }
+    },
+    "Ankh(3).png": {
+      "frame": {
+        "x": 965,
+        "y": 242,
+        "w": 239,
+        "h": 239
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 239,
+        "h": 239
+      },
+      "sourceSize": {
+        "w": 239,
+        "h": 239
+      }
+    },
+    "Ankh(4).png": {
+      "frame": {
+        "x": 965,
+        "y": 483,
+        "w": 239,
+        "h": 239
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 239,
+        "h": 239
+      },
+      "sourceSize": {
+        "w": 239,
+        "h": 239
+      }
+    },
+    "Ankh(5).png": {
+      "frame": {
+        "x": 965,
+        "y": 724,
+        "w": 239,
+        "h": 239
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 239,
+        "h": 239
+      },
+      "sourceSize": {
+        "w": 239,
+        "h": 239
+      }
+    },
+    "Ankh(6).png": {
+      "frame": {
+        "x": 1,
+        "y": 965,
+        "w": 239,
+        "h": 239
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 239,
+        "h": 239
+      },
+      "sourceSize": {
+        "w": 239,
+        "h": 239
+      }
+    },
+    "Ankh(7).png": {
+      "frame": {
+        "x": 242,
+        "y": 965,
+        "w": 239,
+        "h": 239
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 239,
+        "h": 239
+      },
+      "sourceSize": {
+        "w": 239,
+        "h": 239
+      }
+    },
+    "Ankh(8).png": {
+      "frame": {
+        "x": 483,
+        "y": 965,
+        "w": 239,
+        "h": 239
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 239,
+        "h": 239
+      },
+      "sourceSize": {
+        "w": 239,
+        "h": 239
+      }
+    },
+    "Ankh(9).png": {
+      "frame": {
+        "x": 724,
+        "y": 965,
+        "w": 239,
+        "h": 239
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 239,
+        "h": 239
+      },
+      "sourceSize": {
+        "w": 239,
+        "h": 239
+      }
+    }
+  },
+  "meta": {
+    "app": "http://www.codeandweb.com/texturepacker",
+    "version": "1.0",
+    "image": "Ankh.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 1205,
+      "h": 1205
+    },
+    "scale": "1"
+  },
+  "animations": {
+    "idle": [
+      "Ankh(1).png",
+      "Ankh(2).png",
+      "Ankh(3).png",
+      "Ankh(4).png",
+      "Ankh(5).png",
+      "Ankh(6).png",
+      "Ankh(7).png",
+      "Ankh(8).png",
+      "Ankh(9).png",
+      "Ankh(10).png",
+      "Ankh(11).png",
+      "Ankh(12).png",
+      "Ankh(13).png",
+      "Ankh(14).png",
+      "Ankh(15).png",
+      "Ankh(16).png",
+      "Ankh(17).png",
+      "Ankh(18).png",
+      "Ankh(19).png",
+      "Ankh(20).png",
+      "Ankh(21).png",
+      "Ankh(22).png",
+      "Ankh(23).png",
+      "Ankh(24).png"
+    ]
+  }
+}

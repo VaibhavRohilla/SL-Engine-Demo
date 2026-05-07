@@ -1,0 +1,28 @@
+{
+  "$schema": "./tools/build-config.schema.json",
+  "game": {
+    "id": "testnew",
+    "name": "Testnew",
+    "version": "1.0.0",
+    "description": "Testnew slot game built with SL-Engine"
+  },
+  "display": {
+    "width": 1280,
+    "height": 720,
+    "backgroundColor": "0x111827"
+  },
+  "assets": {
+    "baseUrl": "assets/",
+    "manifestPath": "assets/manifest.json"
+  },
+  "boot": {
+    "manifestUrl": "assets/manifest.json",
+    "startSceneBundles": [
+      "main"
+    ],
+    "skipStartScreen": false
+  },
+  "spinFeel": {
+    "preset": "premium"
+  }
+}
