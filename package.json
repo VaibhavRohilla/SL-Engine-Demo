@@ -1,7 +1,7 @@
 {
-  "name": "testnew",
+  "name": "SL-Engine/Cleopatra",
   "version": "1.0.0",
-  "description": "Testnew starter project powered by SL-Engine",
+  "description": "SL-Engine/Cleopatra starter project powered by SL-Engine",
   "type": "module",
   "private": true,
   "scripts": {

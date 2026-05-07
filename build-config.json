@@ -1,10 +1,10 @@
 {
   "$schema": "./tools/build-config.schema.json",
   "game": {
-    "id": "testnew",
-    "name": "Testnew",
+    "id": "SL-Engine/Cleopatra",
+    "name": "SL-Engine/Cleopatra",
     "version": "1.0.0",
-    "description": "Testnew slot game built with SL-Engine"
+    "description": "SL-Engine/Cleopatra slot game built with SL-Engine"
   },
   "display": {
     "width": 1280,

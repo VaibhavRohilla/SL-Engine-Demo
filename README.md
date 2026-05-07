@@ -1,4 +1,4 @@
-# Testnew
+# SL-Engine/Cleopatra
 
 A standalone classic slot starter built on the vendored `@fnx/sl-engine` package. It is meant to be the first codebase for a branded slot: replace the starter art, tune the reel window, wire hooks, run diagnostics, and ship from the generated project without depending on this monorepo.
 
