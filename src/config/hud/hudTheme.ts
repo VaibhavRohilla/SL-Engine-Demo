@@ -12,7 +12,7 @@ export const hudTheme = {
   textPrimaryColor: 0xffffff,
   textSecondaryColor: 0xb8c1d6,
   valueTextColor: 0xffd76a,
-  accentColor: 0x66d9ff,
+  accentColor: 0xA9A9A9,
   dangerColor: 0xd34b4b,
   activeColor: 0x22c768,
   radius: 14,

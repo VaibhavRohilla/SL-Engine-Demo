@@ -112,7 +112,11 @@ function buildLinesOutcome(slotConfig: SlotConfig, request: SpinRequest, spinCou
     count: winCount,
     multiplicity: 1,
     winType: 'line' as const,
-    meta: { lineId: payline.id },
+    meta: {
+      lineId: payline.id,
+      paylinePattern: [...payline.pattern],
+      direction: 'left-to-right' as const,
+    },
   };
 
   return {

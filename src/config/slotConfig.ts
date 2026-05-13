@@ -3,7 +3,7 @@
  *
  * Demo-only math/config.
  * Not RTP-certified. Not production math.
- */
+ */ 
 
 import type { SlotConfig } from '@fnx/sl-engine';
 import { STOCK_BEHAVIOR_CLASSIC } from '@fnx/sl-engine';
@@ -14,7 +14,9 @@ function animatedSheetSymbol(manifestSpritesheetKey: string) {
     scaleMode: 'fit' as const,
     displayType: 'animatedSprite' as const,
     spriteKey: manifestSpritesheetKey,
-    spriteSheetAnimation: 'idle',
+    animationSpeed : 0.45,
+    /** Local alias: resolved against `spriteKey` sheet (see engine `resolveSymbolSpritesheetAnimation`). */
+    spriteSheetAnimation: 'idle' as const,
   };
 }
 

@@ -208,11 +208,18 @@ The mask is rectangular and reel-local. Polygon masks and alpha masks are not in
 
 ## Spin Feel
 
-Set the starter spin feel in `templateGameConfig.ts`:
+Set spin feel in `templateGameConfig.ts`: pick a **preset**, then optionally add **`overrides`** — the engine deep-merges overrides onto the preset and validates them at bootstrap (same channel as `bootstrap.spinFeelOverrides` in `main.ts`, where `audioCues` from `audioConfig.ts` are merged).
 
 ```ts
 spinFeel: {
   preset: 'premium',
+  overrides: {
+    minSpinMs: 800,
+    startDelayMs: [0, 90, 180, 270, 360],
+    stopDelayMs: [0, 200, 300, 400, 500],
+    symbolStripStopSettle: { mode: 'none' },
+    // …classic-only fields: startMotion, stopMotion, snap, turbo, etc.
+  },
 }
 ```
 
@@ -223,9 +230,9 @@ Available presets:
 | `premium` | Classic balanced feel with slower, more dramatic reel stops |
 | `arcade` | Faster and snappier stops |
 | `turbo` | Fastest preset with minimal delay |
-| `normal` | Engine compatibility alias for the premium baseline |
+| `normal` | Engine baseline alias tuned for parity with legacy “normal” labeling |
 
-The starter exposes preset selection only. Per-field spin timing overrides are not part of the starter config surface yet.
+Classic normal stops use the engine’s **final-strip natural landing**; spin feel controls motion, delays, and settle — not a separate overlay stop path.
 
 If `spinFeel.preset` is omitted from `templateGameConfig.ts`, the preset falls back to `build-config.json` (`starterRuntimeBuildConfig`).
 

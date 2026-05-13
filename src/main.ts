@@ -1,6 +1,7 @@
-import { bootstrap, EngineEventRegistry } from '@fnx/sl-engine';
-import type { BootstrapInput, GameHandle, IReelsView, LayoutState } from '@fnx/sl-engine';
+import { bootstrap, EngineEventRegistry, SlotGameScene } from '@fnx/sl-engine';
+import type { BootstrapInput, GameHandle, GameSceneFactory, IReelsView, LayoutState } from '@fnx/sl-engine';
 import { gameDefinition } from './config/gameDefinition.ts';
+import { isAuthoredWinPresentationTemplate, type StarterGameDefinition } from './config/composeEngineGameDefinition.ts';
 import { runtimeShellConfig } from './config/hud/index.ts';
 import {
   createTemplateHookPresentationSurfaces,
@@ -259,6 +260,18 @@ function installBrowserSmokeHook(): void {
   };
 }
 
+function createGameSceneWithWinPresentation(
+  overrides: NonNullable<StarterGameDefinition['winPresenterConfigOverrides']>,
+): GameSceneFactory {
+  return (ctx, spinFlow, authority) =>
+    SlotGameScene.fromContext(ctx, spinFlow, authority, {
+      slotSceneConfigOverrides: {
+        // Structural match for engine `DeepPartial<WinPresenterFullConfig>` (template narrows the surface).
+        winPresenterConfigOverrides: overrides,
+      },
+    });
+}
+
 function buildBootstrapInput(): BootstrapInput {
   const canvas = document.getElementById('game-canvas') as HTMLCanvasElement | null;
   if (!canvas) {
@@ -296,6 +309,14 @@ function buildBootstrapInput(): BootstrapInput {
         reelCount: gameDefinition.slotConfig.layout.reelCount,
       }),
     ],
+
+    ...(isAuthoredWinPresentationTemplate(gameDefinition.winPresenterConfigOverrides)
+      ? {
+          scenes: {
+            game: createGameSceneWithWinPresentation(gameDefinition.winPresenterConfigOverrides),
+          },
+        }
+      : {}),
 
     locale: { locale: 'en', localeService },
     accessibility: { reducedMotion: false },

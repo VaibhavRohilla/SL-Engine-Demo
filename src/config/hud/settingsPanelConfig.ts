@@ -25,5 +25,6 @@ export const settingsPanelConfig = {
         { id: 'close', type: 'action', action: 'closePanel', label: 'Close' },
       ],
     },
+    
   ],
 } satisfies SlotHudSystemSettingsPanelConfig;

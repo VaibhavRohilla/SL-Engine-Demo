@@ -18,7 +18,7 @@ export const paytableConfig = {
           symbolId: '7',
           label: 'Seven (high)',
           payouts: [
-            { count: 5, pays: 'See slotConfig paytable' },
+            { count: 5, pays: 'See slotConfig paytable', },
             { count: 4, pays: 'See slotConfig paytable' },
             { count: 3, pays: 'See slotConfig paytable' },
           ],

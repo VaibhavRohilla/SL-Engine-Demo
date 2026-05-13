@@ -20,14 +20,12 @@
       "default": "./dist/testing/index.js"
     }
   },
-  "files": [
-    "dist",
-    "README.md",
-    "CHANGELOG.md",
-    "LICENSE"
-  ],
   "author": "Fnx iGaming",
   "license": "SEE LICENSE IN LICENSE",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/VaibhavRohilla/SL-Engine.git"
+  },
   "keywords": [
     "igaming",
     "slots",
@@ -37,9 +35,59 @@
     "runtime",
     "pixi.js"
   ],
-  "engines": {
-    "node": ">=18.0.0",
-    "pnpm": ">=8.0.0"
+  "files": [
+    "dist",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "pnpm build:sdk && pnpm build:demo && pnpm --filter @fnx/create-sl-engine build",
+    "build:sdk": "SL_SDK_SOURCEMAP=false tsup && pnpm --filter @fnx/create-sl-engine build",
+    "build:sdk:production": "NODE_ENV=production SL_SDK_SOURCEMAP=false tsup && pnpm --filter @fnx/create-sl-engine build",
+    "build:sdk:debug": "SL_SDK_SOURCEMAP=true tsup && pnpm --filter @fnx/create-sl-engine build",
+    "build:sdk:debug:production": "NODE_ENV=production SL_SDK_SOURCEMAP=true tsup && pnpm --filter @fnx/create-sl-engine build",
+    "build:demo": "node scripts/build.js",
+    "demo:dev": "node scripts/dev.js",
+    "examples:dev": "node scripts/dev-examples.js",
+    "example:hello": "pnpm build:sdk && node scripts/consumer-hello-dev.js",
+    "examples:minimal": "pnpm build:sdk:production && pnpm vite examples/minimal",
+    "typecheck:examples": "tsc -p tsconfig.examples.json --noEmit",
+    "test": "pnpm check:structural-governance && vitest run",
+    "test:browser": "pnpm test:generated",
+    "test:generated": "tsx scripts/test-generated-projects.ts",
+    "test:watch": "vitest",
+    "test:run": "pnpm check:structural-governance && vitest run",
+    "test:stress": "node scripts/run-stress-tests.js",
+    "perf:run": "vitest run --config vitest.config.ts tests/performance/performance.test.ts",
+    "perf:autoplay": "vitest run --config vitest.config.ts tests/performance/performance.test.ts -t \"autoplay-soak\"",
+    "perf:feature": "vitest run --config vitest.config.ts tests/performance/performance.test.ts -t \"feature-heavy\"",
+    "perf:cascade": "vitest run --config vitest.config.ts tests/performance/performance.test.ts -t \"cascade\"",
+    "perf:mobile": "vitest run --config vitest.config.ts tests/performance/performance.test.ts -t \"low-end-mobile\"",
+    "perf:report": "PERF_GENERATE_REPORT=1 vitest run --config vitest.config.ts tests/performance/performance-report.test.ts",
+    "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.bootGameTests.json && pnpm typecheck:starters",
+    "typecheck:starters": "tsx scripts/typecheck-starter-sources.ts",
+    "lint": "pnpm eslint src tests",
+    "lint:fix": "pnpm eslint src tests --fix",
+    "ci": "pnpm lint && pnpm test && pnpm typecheck",
+    "check:determinism": "node scripts/check-determinism.js",
+    "check:completion-truth": "tsx scripts/check-completion-truth.ts",
+    "check:structural-governance": "tsx scripts/check-structural-governance.ts",
+    "check:internal-imports": "tsx scripts/check-internal-import-governance.ts",
+    "check:architecture-closure": "pnpm check:structural-governance && vitest run tests/governance tests/architecture",
+    "check:governance": "vitest run tests/governance",
+    "docs": "typedoc && pnpm exec tsx scripts/sync-docs-api-media-adoption.ts",
+    "docs:exports": "tsx scripts/validate-public-api.ts",
+    "prepack": "pnpm build:sdk:production",
+    "prepublishOnly": "pnpm pack:check",
+    "check:release-gates": "pnpm check:determinism && pnpm typecheck && pnpm docs:exports && pnpm check:structural-governance && pnpm check:governance",
+    "pack:check": "pnpm check:release-gates && pnpm pack && rm -f *.tgz",
+    "pack:sdk": "pnpm check:release-gates && pnpm pack && rm -f *.tgz",
+    "consumer:smoke": "./scripts/consumer-smoke.sh",
+    "check:release-version": "tsx scripts/check-release-version.ts",
+    "release": "pnpm check:release-gates && pnpm check:release-version",
+    "clean": "rm -rf dist dist-app *.tgz smoke-test",
+    "prepare": "husky"
   },
   "peerDependencies": {
     "@esotericsoftware/spine-pixi-v8": "^4.2.74",
@@ -47,5 +95,26 @@
     "howler": "^2.2.4",
     "pixi.js": "^8.6.6",
     "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.59.1",
+    "@types/howler": "^2.2.12",
+    "@types/node": "^22.10.2",
+    "@typescript-eslint/eslint-plugin": "^8.53.1",
+    "@typescript-eslint/parser": "^8.53.1",
+    "esbuild": "^0.24.2",
+    "eslint": "^9.0.0",
+    "husky": "^9.1.7",
+    "jsdom": "^25.0.1",
+    "tsup": "^8.3.5",
+    "tsx": "^4.19.2",
+    "typedoc": "^0.27.5",
+    "typescript": "^5.7.2",
+    "vite": "^5.0.0",
+    "vitest": "^2.1.8"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
   }
 }

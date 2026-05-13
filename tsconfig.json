@@ -5,12 +5,12 @@
     "moduleResolution": "bundler",
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "paths": {
-      "@fnx/sl-engine": ["../../../../src/index.ts"],
-      "@core/*": ["../../../../src/core/*"],
-      "@runtime/*": ["../../../../src/runtime/*"],
-      "@view/*": ["../../../../src/view/*"],
-      "@config/*": ["../../../../src/config/*"],
-      "@app/*": ["../../../../src/app/*"]
+      "@fnx/sl-engine": ["../SL-Engine/src/index.ts"],
+      "@core/*": ["../SL-Engine/src/core/*"],
+      "@runtime/*": ["../SL-Engine/src/runtime/*"],
+      "@view/*": ["../SL-Engine/src/view/*"],
+      "@config/*": ["../SL-Engine/src/config/*"],
+      "@app/*": ["../SL-Engine/src/app/*"]
     },
     "strict": true,
     "noImplicitAny": true,

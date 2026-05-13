@@ -54,12 +54,20 @@ export function createStarterWinVisualizerScene(
   return SlotGameScene.fromContext(ctx, spinFlow, stockSpinExecutionAuthority, {
     slotSceneConfigOverrides: {
       winPresenterConfigOverrides: {
+        timing:{
+          singleWinDurationMs: 10000,
+          betweenWinsDelayMs: 10000,
+          allWinsDurationMs: 10000,
+        },
         visualizer: {
+          executionMode : 'parallel',
+          loopEnabled: true,
+          linePresentationMode: 'vector',
           moduleOrder: ['winText', 'highlight', 'linePath', 'jackpot'],
           enabledModules: {
             highlight: true,
             linePath: true,
-            jackpot: false,
+            jackpot: true,
             winText: true,
           },
         },

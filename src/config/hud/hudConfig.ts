@@ -53,26 +53,30 @@ export const hudConfig = {
           zoneBackgroundAlpha: 0,
           zoneBorderAlpha: 0,
         },
+        bottomHudBar: {
+          zoneBackgroundAlpha: 0,
+          zoneBorderAlpha: 0,
+        },
       },
     },
     zones: {
       topBrandLayer: {
-        enabled: true,
+        enabled: false,
         titleKey: 'hud.brand.title',
       },
       leftFeatureRail: {
-        enabled: true,
+        enabled: false,
         items: [
           {
             id: 'free-spins-20',
             labelKey: 'hud.leftRail.twentyFreeSpins',
-            state: 'demo',
+            state: 'active',
             interactive: false,
           },
         ],
       },
       rightActionRail: {
-        enabled: true,
+        enabled: false,
         betSummary: {
           enabled: true,
           labelKey: 'hud.rightRail.bet',
@@ -80,11 +84,12 @@ export const hudConfig = {
         buyFeatureButtons: [],
       },
       bottomHudBar: {
-        enabled: false,
-        showCredit: false,
-        showBet: false,
-        showWin: false,
-        showTurboHint: false,
+        enabled: true,
+        showCredit: true,
+        showBet: true,
+        showWin: true,
+        showTurboHint: true,
+        
       },
       spinControlCluster: {
         enabled: true,
@@ -120,7 +125,7 @@ export const hudConfig = {
     },
     betPanel: {
       ...betPanelShared,
-      position: { anchor: 'bottom-left', x: 190, y: -332 },
+      position: { anchor: 'bottom-left', x: 500, y: -500 },
     },
     autoplaySettingsPanel: {
       enabled: true,
@@ -141,7 +146,7 @@ export const hudConfig = {
     soundPopover: {
       enabled: true,
       title: 'Sound',
-      backdrop: 'none',
+      backdrop: 'dim',
       closeButton: false,
       position: { anchor: 'bottom-right', x: -228, y: -212 },
     },

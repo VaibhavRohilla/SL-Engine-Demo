@@ -21,6 +21,13 @@ import { validateLoading } from '../pipeline/loadingValidate.ts';
 import { validateTemplateGameConfig } from '../pipeline/templateConfigValidate.ts';
 import { validateStarterHudConfig } from '../pipeline/hudConfigValidate.ts';
 import { resolveProjectRoot } from '../utils/paths.ts';
+import { composeEngineGameDefinition } from '../../../src/config/composeEngineGameDefinition.ts';
+import { audioProfile } from '../../../src/config/audioConfig.ts';
+import { bootConfig } from '../../../src/config/bootConfig.ts';
+import { featureConfig } from '../../../src/config/featureConfig.ts';
+import { slotConfig } from '../../../src/config/slotConfig.ts';
+import { templateGameConfig } from '../../../src/config/templateGameConfig.ts';
+import { starterRuntimeBuildConfig } from '../../../src/config/buildConfigRuntime.ts';
 
 export interface RunDoctorOptions {
   rootDir?: string;
@@ -389,6 +396,68 @@ function checkGeneratedArtifacts(projectRoot: string, issues: PipelineIssue[]): 
   }
 }
 
+function checkMaskTopology(issues: PipelineIssue[]): void {
+  const definition = composeEngineGameDefinition(templateGameConfig, {
+    slotConfig,
+    bootConfig,
+    fallbackSpinFeelPreset: starterRuntimeBuildConfig.spinFeelPreset,
+    audioConfig: audioProfile,
+    featureConfig,
+    createResultSource: () => ({}) as never,
+    canvasClearColorFromBuild: starterRuntimeBuildConfig.display.canvasClearColorFromBuild,
+  });
+  if (definition.reelMasks && definition.orientation) {
+    issues.push({
+      code: IssueCodes.CONFIG_INVALID,
+      category: IssueCategory.CONFIG,
+      severity: 'error',
+      message: 'Composed definition has both top-level reelMasks and orientation config; top-level masks must be fallback-only.',
+      file: 'src/config/composeEngineGameDefinition.ts',
+    });
+  }
+
+  const maxRows = Math.max(...slotConfig.layout.rowsPerReel);
+  const checkOrientation = (orientation: 'portrait' | 'landscape'): void => {
+    const profile = definition.orientation?.[orientation];
+    const mask = profile?.reelMasks?.[0];
+    if (!profile || !mask) return;
+    const layout = profile.layout;
+    if (!layout?.symbolHeight || !layout?.symbolWidth) {
+      issues.push({
+        code: IssueCodes.CONFIG_INVALID,
+        category: IssueCategory.CONFIG,
+        severity: 'error',
+        message: `orientation.${orientation}.layout must define symbolWidth and symbolHeight to validate mask geometry.`,
+        file: 'src/config/composeEngineGameDefinition.ts',
+      });
+      return;
+    }
+    const symbolGap = layout.symbolGap ?? 0;
+    const expectedHeight = maxRows * layout.symbolHeight + Math.max(0, maxRows - 1) * symbolGap;
+    const expectedWidth = layout.symbolWidth;
+    if (mask.height === undefined || Math.abs(mask.height - expectedHeight) > 0.001) {
+      issues.push({
+        code: IssueCodes.CONFIG_INVALID,
+        category: IssueCategory.CONFIG,
+        severity: 'error',
+        message: `orientation.${orientation}.reelMasks[0].height must match derived grid height (${expectedHeight}).`,
+        file: 'src/config/templateGameConfig.ts',
+      });
+    }
+    if (mask.width === undefined || Math.abs(mask.width - expectedWidth) > 0.001) {
+      issues.push({
+        code: IssueCodes.CONFIG_INVALID,
+        category: IssueCategory.CONFIG,
+        severity: 'error',
+        message: `orientation.${orientation}.reelMasks[0].width must match derived symbol width (${expectedWidth}).`,
+        file: 'src/config/templateGameConfig.ts',
+      });
+    }
+  };
+  checkOrientation('portrait');
+  checkOrientation('landscape');
+}
+
 export async function runDoctor(options: RunDoctorOptions = {}): Promise<PipelineReport> {
   const logger = options.logger ?? console;
   const projectRoot = resolveProjectRoot(options.rootDir);
@@ -419,6 +488,7 @@ export async function runDoctor(options: RunDoctorOptions = {}): Promise<Pipelin
     checkGameFiles(projectRoot, allIssues);
     checkGeneratedArtifacts(projectRoot, allIssues);
     checkCanonicalConsumer(projectRoot, allIssues);
+    checkMaskTopology(allIssues);
 
     logger.log('  [4/9] Template game config...');
     const templateConfigReport = validateTemplateGameConfig(projectRoot);

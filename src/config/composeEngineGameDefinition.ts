@@ -4,7 +4,7 @@ import type {
   BootstrapInput,
   ISpinResultSource,
   SlotConfig,
-  SpinFeelConfig,
+  SpinFeelConfigOverrides,
   SpinFeelPresetName,
 } from '@fnx/sl-engine';
 import type { StarterAudioProfile } from './audioConfig.ts';
@@ -20,6 +20,7 @@ import type {
   TemplateSlotLayoutOverride,
   TemplateSymbolLayoutConfig,
   TemplateViewportConfig,
+  TemplateWinPresentationConfig,
 } from './templateGameConfig.ts';
 
 type EngineBackgroundConfig = NonNullable<BootstrapInput['background']>;
@@ -38,7 +39,7 @@ export interface StarterGameDefinition {
    * Merged after the preset via engine `resolveSpinFeelConfig` (same channel as `bootstrap.spinFeelOverrides`).
    * Use for timings, `symbolStripStopSettle`, reel order, etc., without hand-authoring a full `SpinFeelConfig`.
    */
-  spinFeelOverrides?: Partial<SpinFeelConfig>;
+  spinFeelOverrides?: SpinFeelConfigOverrides;
   audioConfig: StarterAudioProfile;
   featureConfig: StarterFeatureConfig;
   createResultSource: () => ISpinResultSource;
@@ -49,6 +50,11 @@ export interface StarterGameDefinition {
   orientation?: BootstrapInput['orientation'];
   /** Pixi canvas clear (`BootstrapInput.backgroundColor`). Mirrors template solid slot color when applicable. */
   canvasBackgroundColor: number;
+  /**
+   * When set, bootstrap uses a stock game scene factory that passes these values as
+   * `SlotGameScene.fromContext(..., { slotSceneConfigOverrides: { winPresenterConfigOverrides } })`.
+   */
+  winPresenterConfigOverrides?: TemplateWinPresentationConfig;
 }
 
 export interface ComposeEngineGameDefinitionInputs {
@@ -160,6 +166,16 @@ function assertCompatibleDimension(actual: number, expected: number, field: stri
       `Starter template config: ${field} conflicts with explicit symbol layout (expected ${expected}, got ${actual})`,
     );
   }
+}
+
+function computeWindowWidth(layout: EngineLayoutInput, slotShape: SlotShapeSummary): number | undefined {
+  if (layout.symbolWidth === undefined) return undefined;
+  return slotShape.reelCount * layout.symbolWidth + Math.max(0, slotShape.reelCount - 1) * (layout.reelGap ?? 0);
+}
+
+function computeWindowHeight(layout: EngineLayoutInput, slotShape: SlotShapeSummary): number | undefined {
+  if (layout.symbolHeight === undefined) return undefined;
+  return slotShape.maxRows * layout.symbolHeight + Math.max(0, slotShape.maxRows - 1) * (layout.symbolGap ?? 0);
 }
 
 function getSlotShapeSummary(slotConfig: SlotConfig): SlotShapeSummary {
@@ -316,6 +332,22 @@ function composeMask(
   const right = mask.padding?.right ?? 0;
   const bottom = mask.padding?.bottom ?? 0;
   const left = mask.padding?.left ?? 0;
+  const derivedWindowWidth = computeWindowWidth(layout, slotShape);
+  const derivedWindowHeight = computeWindowHeight(layout, slotShape);
+  if (mask.width !== undefined && layout.symbolWidth !== undefined) {
+    const fullWindowWidth = derivedWindowWidth;
+    const matchesSingleReel = Math.abs(mask.width - layout.symbolWidth) <= 0.001;
+    const matchesWindow = fullWindowWidth !== undefined && Math.abs(mask.width - fullWindowWidth) <= 0.001;
+    if (!matchesSingleReel && !matchesWindow) {
+      throw new Error(
+        `Starter template config: layout.reelWindow.mask.width conflicts with explicit symbol layout (expected symbolWidth=${layout.symbolWidth} or fullWindowWidth=${fullWindowWidth}, got ${mask.width})`,
+      );
+    }
+  }
+  if (mask.height !== undefined && derivedWindowHeight !== undefined) {
+    assertCompatibleDimension(mask.height + top + bottom, derivedWindowHeight + top + bottom, 'layout.reelWindow.mask.height');
+  }
+
   const baseWidth = mask.width ?? layout.symbolWidth;
   const baseHeight =
     mask.height ??
@@ -476,6 +508,26 @@ function composeBootConfig(
   };
 }
 
+function isNonArrayObject(value: unknown): value is Record<string, unknown> {
+  return value !== null && typeof value === 'object' && !Array.isArray(value);
+}
+
+/**
+ * True when `winPresentation` carries at least one non-empty section.
+ * Empty `{}` or `{ paylineStyle: {} }` must not force a custom game scene factory (no-op vs stock path).
+ */
+export function isAuthoredWinPresentationTemplate(
+  wp: TemplateWinPresentationConfig | undefined,
+): wp is TemplateWinPresentationConfig {
+  if (wp == null) return false;
+  if (isNonArrayObject(wp.paylineStyle) && Object.keys(wp.paylineStyle).length > 0) return true;
+  if (isNonArrayObject(wp.global) && Object.keys(wp.global).length > 0) return true;
+  if (isNonArrayObject(wp.visualizer) && Object.keys(wp.visualizer).length > 0) return true;
+  if (isNonArrayObject(wp.timing) && Object.keys(wp.timing).length > 0) return true;
+  if (isNonArrayObject(wp.textPosition) && Object.keys(wp.textPosition).length > 0) return true;
+  return false;
+}
+
 export function composeEngineGameDefinition(
   templateConfig: TemplateGameConfig,
   inputs: ComposeEngineGameDefinitionInputs,
@@ -486,6 +538,13 @@ export function composeEngineGameDefinition(
   const sceneSlotFrame = templateConfig.scenes.slot.frame;
   const frame = composeFrame(sceneSlotFrame);
   const orientation = composeOrientation(templateConfig, slotShape, background, sceneSlotFrame);
+  const fallbackReelMasks = orientation ? undefined : baseProfile.reelMasks;
+  if (orientation?.portrait?.reelMasks) {
+    console.debug('[Cleopatra][compose] portrait.reelMasks', orientation.portrait.reelMasks);
+  }
+  if (orientation?.landscape?.reelMasks) {
+    console.debug('[Cleopatra][compose] landscape.reelMasks', orientation.landscape.reelMasks);
+  }
   const canvasBackgroundColor = resolveCanvasBackgroundColor(background, inputs.canvasClearColorFromBuild);
 
   return {
@@ -504,8 +563,11 @@ export function composeEngineGameDefinition(
     background,
     frame,
     layout: baseProfile.layout,
-    reelMasks: baseProfile.reelMasks,
+    reelMasks: fallbackReelMasks,
     orientation,
     canvasBackgroundColor,
+    ...(isAuthoredWinPresentationTemplate(templateConfig.winPresentation)
+      ? { winPresenterConfigOverrides: templateConfig.winPresentation }
+      : {}),
   };
 }

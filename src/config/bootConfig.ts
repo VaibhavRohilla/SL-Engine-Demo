@@ -36,6 +36,7 @@ export const bootConfig: BootConfigInput = {
   loading: {
     background: { type: 'image', value: 'Background' },
     loader: {
+
       type: 'bar',
       bar: {
         widthPct: 0.6,
@@ -43,17 +44,17 @@ export const bootConfig: BootConfigInput = {
         borderRadius: 4,
         offsetX: 0,
         offsetY: 0,
-        track: { type: 'graphics', color: 0x333344, alpha: 0.6, offsetX: 0, offsetY: 0, scale: { x: 1, y: 1 }, borderWidth: 0 },
-        fill: { type: 'graphics', color: 0x4a9eff, offsetX: 0, offsetY: 0, scale: { x: 1, y: 1 } },
+        track: { type: 'graphics', color: 0x000000, alpha: 0.6, offsetX: 0, offsetY: 0, scale: { x: 1, y: 2 }, borderWidth: 1, borderColor: 0xea9511},
+        fill: { type: 'graphics', color: 0xfbe72c, offsetX: 0, offsetY: 0, scale: { x: 1, y: 2} },
       },
     },
     labels: {
-      showPercent: true,
+      showPercent: false,
       showStatus: false,
-      textColor: 0x888899,
+      textColor: 0xea9511,
       fontFamily: 'Arial',
-      percentFontSize: 14,
-      statusFontSize: 14,
+      percentFontSize: 50,
+      statusFontSize: 50,
     },
   },
 
