@@ -32,8 +32,11 @@ function getPath(root: Record<string, unknown>, path: readonly string[]): unknow
 
 /** Must match engine `PaylineStyleConfig` / template `TemplateWinPresentationConfig.paylineStyle` surface. */
 const WIN_PRESENTATION_PAYLINE_STYLE_KEYS = new Set<string>([
+  'color',
   'lineColor',
+  'width',
   'lineThickness',
+  'alpha',
   'lineAlpha',
   'animateDrawing',
   'drawingDurationMs',
@@ -43,29 +46,103 @@ const WIN_PRESENTATION_PAYLINE_STYLE_KEYS = new Set<string>([
   'labelColor',
   'lineCap',
   'lineJoin',
+  'reveal',
+  'glow',
 ]);
 
 const WIN_PRESENTATION_LINE_CAP = new Set(['butt', 'round', 'square']);
 const WIN_PRESENTATION_LINE_JOIN = new Set(['miter', 'round', 'bevel']);
+const WIN_PRESENTATION_PAYLINE_REVEAL_KEYS = new Set(['enabled', 'durationMs', 'easing']);
+const WIN_PRESENTATION_PAYLINE_GLOW_KEYS = new Set(['enabled', 'width', 'alpha', 'color']);
+const WIN_PRESENTATION_EASING_NAMES = new Set([
+  'linear',
+  'quadIn', 'quadOut', 'quadInOut',
+  'cubicIn', 'cubicOut', 'cubicInOut',
+  'quartIn', 'quartOut', 'quartInOut',
+  'quintIn', 'quintOut', 'quintInOut',
+  'sineIn', 'sineOut', 'sineInOut',
+  'expoIn', 'expoOut', 'expoInOut',
+  'circIn', 'circOut', 'circInOut',
+  'elasticIn', 'elasticOut', 'elasticInOut',
+  'backIn', 'backOut', 'backInOut',
+  'bounceIn', 'bounceOut', 'bounceInOut',
+  'reelStop', 'reelStopSmooth', 'symbolBounce', 'symbolSettle', 'anticipationSlow',
+  'backOutSoft', 'backOutStrong',
+]);
 const WIN_PRESENTATION_TOP_KEYS = new Set([
+  'timingPrecedence',
   'paylineStyle',
   'global',
   'visualizer',
   'timing',
   'textPosition',
 ]);
-const WIN_PRESENTATION_GLOBAL_KEYS = new Set([
-  'showPaylines',
-  'showLineLabels',
-  'showIndividualWins',
-  'clearBetweenEvents',
-  'clearBetweenCycles',
-  'winLoopLimit',
+const WIN_PRESENTATION_TIMING_PRECEDENCE = new Set(['presenterOverridesTier', 'tierOverridesPresenter']);
+const WIN_PRESENTATION_GLOBAL_KEYS = new Set(['showPaylines', 'showLineLabels', 'winLoopLimit', 'showWinHighlight']);
+const WIN_PRESENTATION_VISUALIZER_KEYS = new Set([
+  'executionMode',
+  'loopEnabled',
+  'lifetime',
+  'symbolWins',
+  'lines',
   'winText',
+  'linePresentationMode',
+  'enabledModules',
 ]);
-const WIN_PRESENTATION_VISUALIZER_KEYS = new Set(['linePresentationMode', 'executionMode', 'loopEnabled']);
+const WIN_PRESENTATION_VISUALIZER_MODULE_KEYS = new Set(['highlight', 'linePath', 'jackpot', 'winText']);
 const WIN_PRESENTATION_LINE_MODES = new Set(['vector', 'boundsOverlay']);
 const WIN_VISUALIZER_EXECUTION_MODES = new Set(['parallel', 'sequential']);
+const WIN_PRESENTATION_DURATION_POLICIES = new Set(['fixedMs', 'untilNextSpin', 'once']);
+const WIN_PRESENTATION_CHILD_LIFETIMES = new Set(['followPresentation', 'fixedMs', 'once']);
+const WIN_PRESENTATION_SYMBOL_LOOP_POLICIES = new Set(['presentation', 'untilNextSpin', 'fixedMs', 'once']);
+const WIN_PRESENTATION_SYMBOL_KEYS = new Set(['enabled', 'animation', 'overlay']);
+const WIN_PRESENTATION_SYMBOL_ANIMATION_KEYS = new Set(['enabled', 'animationKey', 'loopPolicy', 'durationMs']);
+const WIN_PRESENTATION_SYMBOL_OVERLAY_KEYS = new Set([
+  'enabled',
+  'type',
+  'lifetime',
+  'durationMs',
+  'fill',
+  'alpha',
+  'stroke',
+  'paddingPx',
+  'cornerRadius',
+  'pulse',
+]);
+const WIN_PRESENTATION_SYMBOL_OVERLAY_STROKE_KEYS = new Set(['color', 'width', 'alpha']);
+const WIN_PRESENTATION_SYMBOL_OVERLAY_PULSE_KEYS = new Set(['enabled', 'alpha', 'durationMs']);
+const WIN_PRESENTATION_CHILD_KEYS = new Set(['enabled', 'lifetime', 'durationMs']);
+
+function isColorValue(v: unknown): boolean {
+  if (typeof v === 'number' && Number.isFinite(v)) return true;
+  if (typeof v !== 'string') return false;
+  const hex = v.trim().replace(/^#/, '').replace(/^0x/i, '');
+  return /^[0-9a-fA-F]{6}$/.test(hex);
+}
+
+function checkBooleanField(issues: PipelineIssue[], value: unknown, field: string): void {
+  if (value !== undefined && typeof value !== 'boolean') {
+    addConfigIssue(issues, `${field} must be a boolean when set.`, field, `set ${field} to true or false in ${TEMPLATE_CONFIG_FILE}.`);
+  }
+}
+
+function checkFiniteNonNegativeField(issues: PipelineIssue[], value: unknown, field: string): void {
+  if (value !== undefined && (typeof value !== 'number' || !Number.isFinite(value) || value < 0)) {
+    addConfigIssue(issues, `${field} must be a non-negative finite number when set.`, field, `set a valid ${field} in ${TEMPLATE_CONFIG_FILE}.`);
+  }
+}
+
+function checkFinitePositiveField(issues: PipelineIssue[], value: unknown, field: string): void {
+  if (value !== undefined && (typeof value !== 'number' || !Number.isFinite(value) || value <= 0)) {
+    addConfigIssue(issues, `${field} must be a positive finite number when set.`, field, `set a valid ${field} in ${TEMPLATE_CONFIG_FILE}.`);
+  }
+}
+
+function checkAlphaField(issues: PipelineIssue[], value: unknown, field: string): void {
+  if (value !== undefined && (typeof value !== 'number' || !Number.isFinite(value) || value < 0 || value > 1)) {
+    addConfigIssue(issues, `${field} must be a number from 0 to 1 when set.`, field, `set a valid ${field} in ${TEMPLATE_CONFIG_FILE}.`);
+  }
+}
 
 function validateWinPresentation(issues: PipelineIssue[], config: Record<string, unknown>): void {
   const raw = getPath(config, ['winPresentation']);
@@ -88,9 +165,22 @@ function validateWinPresentation(issues: PipelineIssue[], config: Record<string,
         issues,
         `winPresentation has unknown key "${key}".`,
         `winPresentation.${key}`,
-        `use only paylineStyle, global, visualizer, timing, and textPosition under winPresentation in ${TEMPLATE_CONFIG_FILE}.`,
+        `use only timingPrecedence, paylineStyle, global, visualizer, timing, and textPosition under winPresentation in ${TEMPLATE_CONFIG_FILE}.`,
       );
     }
+  }
+
+  const timingPrecedence = wp.timingPrecedence;
+  if (
+    timingPrecedence !== undefined &&
+    (typeof timingPrecedence !== 'string' || !WIN_PRESENTATION_TIMING_PRECEDENCE.has(timingPrecedence))
+  ) {
+    addConfigIssue(
+      issues,
+      `winPresentation.timingPrecedence must be presenterOverridesTier | tierOverridesPresenter (got ${JSON.stringify(timingPrecedence)}).`,
+      'winPresentation.timingPrecedence',
+      `set timingPrecedence to "presenterOverridesTier" or "tierOverridesPresenter" in ${TEMPLATE_CONFIG_FILE}.`,
+    );
   }
 
   const paylineStyle = asRecord(wp.paylineStyle);
@@ -133,11 +223,14 @@ function validateWinPresentation(issues: PipelineIssue[], config: Record<string,
       }
       for (const [field, checker] of [
         ['lineThickness', (v: unknown) => typeof v === 'number' && Number.isFinite(v) && v > 0],
+        ['width', (v: unknown) => typeof v === 'number' && Number.isFinite(v) && v > 0],
         ['lineAlpha', (v: unknown) => typeof v === 'number' && Number.isFinite(v) && v >= 0 && v <= 1],
+        ['alpha', (v: unknown) => typeof v === 'number' && Number.isFinite(v) && v >= 0 && v <= 1],
         ['drawingDurationMs', (v: unknown) => typeof v === 'number' && Number.isFinite(v) && v >= 0],
         ['paylineStartInsetPx', (v: unknown) => typeof v === 'number' && Number.isFinite(v) && v >= 0],
         ['labelFontSize', (v: unknown) => typeof v === 'number' && Number.isFinite(v) && v > 0],
-        ['lineColor', (v: unknown) => typeof v === 'number' && Number.isFinite(v)],
+        ['lineColor', isColorValue],
+        ['color', isColorValue],
       ] as const) {
         const v = paylineStyle[field];
         if (v === undefined) continue;
@@ -168,6 +261,72 @@ function validateWinPresentation(issues: PipelineIssue[], config: Record<string,
           `set showLineLabel to true or false in ${TEMPLATE_CONFIG_FILE}.`,
         );
       }
+      const reveal = asRecord(paylineStyle.reveal);
+      if (paylineStyle.reveal !== undefined) {
+        if (!reveal) {
+          addConfigIssue(
+            issues,
+            'winPresentation.paylineStyle.reveal must be a plain object when set.',
+            'winPresentation.paylineStyle.reveal',
+            `fix reveal in ${TEMPLATE_CONFIG_FILE} or remove it.`,
+          );
+        } else {
+          for (const key of Object.keys(reveal)) {
+            if (!WIN_PRESENTATION_PAYLINE_REVEAL_KEYS.has(key)) {
+              addConfigIssue(
+                issues,
+                `winPresentation.paylineStyle.reveal has unknown key "${key}".`,
+                `winPresentation.paylineStyle.reveal.${key}`,
+                `remove the key or align with engine PaylineRevealConfig in ${TEMPLATE_CONFIG_FILE}.`,
+              );
+            }
+          }
+          checkBooleanField(issues, reveal.enabled, 'winPresentation.paylineStyle.reveal.enabled');
+          checkFinitePositiveField(issues, reveal.durationMs, 'winPresentation.paylineStyle.reveal.durationMs');
+          const easing = reveal.easing;
+          if (easing !== undefined && (typeof easing !== 'string' || !WIN_PRESENTATION_EASING_NAMES.has(easing))) {
+            addConfigIssue(
+              issues,
+              `winPresentation.paylineStyle.reveal.easing is invalid (got ${JSON.stringify(easing)}).`,
+              'winPresentation.paylineStyle.reveal.easing',
+              `use a known engine easing name in ${TEMPLATE_CONFIG_FILE}.`,
+            );
+          }
+        }
+      }
+      const glow = asRecord(paylineStyle.glow);
+      if (paylineStyle.glow !== undefined) {
+        if (!glow) {
+          addConfigIssue(
+            issues,
+            'winPresentation.paylineStyle.glow must be a plain object when set.',
+            'winPresentation.paylineStyle.glow',
+            `fix glow in ${TEMPLATE_CONFIG_FILE} or remove it.`,
+          );
+        } else {
+          for (const key of Object.keys(glow)) {
+            if (!WIN_PRESENTATION_PAYLINE_GLOW_KEYS.has(key)) {
+              addConfigIssue(
+                issues,
+                `winPresentation.paylineStyle.glow has unknown key "${key}".`,
+                `winPresentation.paylineStyle.glow.${key}`,
+                `remove the key or align with engine PaylineGlowConfig in ${TEMPLATE_CONFIG_FILE}.`,
+              );
+            }
+          }
+          checkBooleanField(issues, glow.enabled, 'winPresentation.paylineStyle.glow.enabled');
+          checkFinitePositiveField(issues, glow.width, 'winPresentation.paylineStyle.glow.width');
+          checkAlphaField(issues, glow.alpha, 'winPresentation.paylineStyle.glow.alpha');
+          if (glow.color !== undefined && !isColorValue(glow.color)) {
+            addConfigIssue(
+              issues,
+              'winPresentation.paylineStyle.glow.color must be a finite number or 6-digit hex string.',
+              'winPresentation.paylineStyle.glow.color',
+              `set a valid glow.color in ${TEMPLATE_CONFIG_FILE}.`,
+            );
+          }
+        }
+      }
     }
   }
 
@@ -187,17 +346,11 @@ function validateWinPresentation(issues: PipelineIssue[], config: Record<string,
             issues,
             `winPresentation.global has unknown key "${key}".`,
             `winPresentation.global.${key}`,
-            `use only showPaylines, showLineLabels, showIndividualWins, clearBetweenEvents, clearBetweenCycles, winLoopLimit, and winText in ${TEMPLATE_CONFIG_FILE}.`,
+            `use only showPaylines, showLineLabels, winLoopLimit, and showWinHighlight in ${TEMPLATE_CONFIG_FILE}.`,
           );
         }
       }
-      for (const key of [
-        'showPaylines',
-        'showLineLabels',
-        'showIndividualWins',
-        'clearBetweenEvents',
-        'clearBetweenCycles',
-      ] as const) {
+      for (const key of ['showPaylines', 'showLineLabels'] as const) {
         const v = global[key];
         if (v !== undefined && typeof v !== 'boolean') {
           addConfigIssue(
@@ -208,88 +361,19 @@ function validateWinPresentation(issues: PipelineIssue[], config: Record<string,
           );
         }
       }
-
       const winLoopLimit = global.winLoopLimit;
-      if (winLoopLimit !== undefined) {
-        if (
-          typeof winLoopLimit !== 'number' ||
-          !Number.isInteger(winLoopLimit) ||
-          winLoopLimit < 1 ||
-          winLoopLimit > 100
-        ) {
-          addConfigIssue(
-            issues,
-            'winPresentation.global.winLoopLimit must be an integer from 1 to 100 when set.',
-            'winPresentation.global.winLoopLimit',
-            `set winLoopLimit (e.g. 3) in ${TEMPLATE_CONFIG_FILE}.`,
-          );
-        }
+      if (
+        winLoopLimit !== undefined &&
+        (typeof winLoopLimit !== 'number' || !Number.isInteger(winLoopLimit) || winLoopLimit < 1 || winLoopLimit > 100)
+      ) {
+        addConfigIssue(
+          issues,
+          'winPresentation.global.winLoopLimit must be an integer from 1 to 100 when set (engine playback safety clamp).',
+          'winPresentation.global.winLoopLimit',
+          `set winLoopLimit between 1 and 100 in ${TEMPLATE_CONFIG_FILE}.`,
+        );
       }
-
-      const winText = asRecord(global.winText);
-      if (global.winText !== undefined) {
-        if (!winText) {
-          addConfigIssue(
-            issues,
-            'winPresentation.global.winText must be a plain object when set.',
-            'winPresentation.global.winText',
-            `fix winText in ${TEMPLATE_CONFIG_FILE} or remove it.`,
-          );
-        } else {
-          for (const key of Object.keys(winText)) {
-            if (key !== 'amountTween') {
-              addConfigIssue(
-                issues,
-                `winPresentation.global.winText has unknown key "${key}".`,
-                `winPresentation.global.winText.${key}`,
-                `use only amountTween under winText in ${TEMPLATE_CONFIG_FILE}.`,
-              );
-            }
-          }
-          const amountTween = asRecord(winText.amountTween);
-          if (winText.amountTween !== undefined) {
-            if (!amountTween) {
-              addConfigIssue(
-                issues,
-                'winPresentation.global.winText.amountTween must be a plain object when set.',
-                'winPresentation.global.winText.amountTween',
-                `fix amountTween in ${TEMPLATE_CONFIG_FILE} or remove it.`,
-              );
-            } else {
-              for (const key of Object.keys(amountTween)) {
-                if (key !== 'enabled' && key !== 'durationMs') {
-                  addConfigIssue(
-                    issues,
-                    `winPresentation.global.winText.amountTween has unknown key "${key}".`,
-                    `winPresentation.global.winText.amountTween.${key}`,
-                    `use only enabled and durationMs in ${TEMPLATE_CONFIG_FILE}.`,
-                  );
-                }
-              }
-              if (amountTween.enabled !== undefined && typeof amountTween.enabled !== 'boolean') {
-                addConfigIssue(
-                  issues,
-                  'winPresentation.global.winText.amountTween.enabled must be a boolean when set.',
-                  'winPresentation.global.winText.amountTween.enabled',
-                  `set enabled to true or false in ${TEMPLATE_CONFIG_FILE}.`,
-                );
-              }
-              const dur = amountTween.durationMs;
-              if (
-                dur !== undefined &&
-                (typeof dur !== 'number' || !Number.isFinite(dur) || dur <= 0)
-              ) {
-                addConfigIssue(
-                  issues,
-                  'winPresentation.global.winText.amountTween.durationMs must be a positive finite number when set.',
-                  'winPresentation.global.winText.amountTween.durationMs',
-                  `set durationMs in ${TEMPLATE_CONFIG_FILE}.`,
-                );
-              }
-            }
-          }
-        }
-      }
+      checkBooleanField(issues, global.showWinHighlight, 'winPresentation.global.showWinHighlight');
     }
   }
 
@@ -379,19 +463,11 @@ function validateWinPresentation(issues: PipelineIssue[], config: Record<string,
             issues,
             `winPresentation.visualizer has unknown key "${key}".`,
             `winPresentation.visualizer.${key}`,
-            `use only linePresentationMode, executionMode, and loopEnabled in ${TEMPLATE_CONFIG_FILE} (template surface).`,
+            `use only executionMode, loopEnabled, lifetime, symbolWins, lines, winText, linePresentationMode, and enabledModules in ${TEMPLATE_CONFIG_FILE} (template surface).`,
           );
         }
       }
-      const loopEnabled = visualizer.loopEnabled;
-      if (loopEnabled !== undefined && typeof loopEnabled !== 'boolean') {
-        addConfigIssue(
-          issues,
-          'winPresentation.visualizer.loopEnabled must be a boolean when set.',
-          'winPresentation.visualizer.loopEnabled',
-          `set loopEnabled to true or false in ${TEMPLATE_CONFIG_FILE}.`,
-        );
-      }
+      checkBooleanField(issues, visualizer.loopEnabled, 'winPresentation.visualizer.loopEnabled');
       const mode = visualizer.linePresentationMode;
       if (mode !== undefined && (typeof mode !== 'string' || !WIN_PRESENTATION_LINE_MODES.has(mode))) {
         addConfigIssue(
@@ -410,8 +486,213 @@ function validateWinPresentation(issues: PipelineIssue[], config: Record<string,
           `set executionMode in ${TEMPLATE_CONFIG_FILE}.`,
         );
       }
+      validatePresentationLifetime(issues, visualizer.lifetime, 'winPresentation.visualizer.lifetime');
+      validateVisualizerEnabledModules(issues, visualizer.enabledModules);
+      validateSymbolWins(issues, visualizer.symbolWins);
+      validatePresentationChild(issues, visualizer.lines, 'winPresentation.visualizer.lines');
+      validatePresentationChild(issues, visualizer.winText, 'winPresentation.visualizer.winText');
     }
   }
+}
+
+function validateVisualizerEnabledModules(issues: PipelineIssue[], raw: unknown): void {
+  if (raw === undefined) return;
+  const em = asRecord(raw);
+  const field = 'winPresentation.visualizer.enabledModules';
+  if (!em) {
+    addConfigIssue(
+      issues,
+      `${field} must be a plain object when set.`,
+      field,
+      `fix enabledModules in ${TEMPLATE_CONFIG_FILE} or remove it.`,
+    );
+    return;
+  }
+  for (const key of Object.keys(em)) {
+    if (!WIN_PRESENTATION_VISUALIZER_MODULE_KEYS.has(key)) {
+      addConfigIssue(
+        issues,
+        `${field} has unknown key "${key}".`,
+        `${field}.${key}`,
+        `use only highlight, linePath, jackpot, and winText under enabledModules in ${TEMPLATE_CONFIG_FILE}.`,
+      );
+    } else {
+      checkBooleanField(issues, em[key], `${field}.${key}`);
+    }
+  }
+}
+
+function validatePresentationLifetime(issues: PipelineIssue[], raw: unknown, field: string): void {
+  if (raw === undefined) return;
+  const lifetime = asRecord(raw);
+  if (!lifetime) {
+    addConfigIssue(issues, `${field} must be a plain object when set.`, field, `fix ${field} in ${TEMPLATE_CONFIG_FILE} or remove it.`);
+    return;
+  }
+  for (const key of Object.keys(lifetime)) {
+    if (key !== 'durationPolicy' && key !== 'durationMs') {
+      addConfigIssue(issues, `${field} has unknown key "${key}".`, `${field}.${key}`, `use only durationPolicy and durationMs under ${field}.`);
+    }
+  }
+  const policy = lifetime.durationPolicy;
+  if (policy !== undefined && (typeof policy !== 'string' || !WIN_PRESENTATION_DURATION_POLICIES.has(policy))) {
+    addConfigIssue(
+      issues,
+      `${field}.durationPolicy must be fixedMs | untilNextSpin | once (got ${JSON.stringify(policy)}).`,
+      `${field}.durationPolicy`,
+      `set ${field}.durationPolicy in ${TEMPLATE_CONFIG_FILE}.`,
+    );
+  }
+  checkFiniteNonNegativeField(issues, lifetime.durationMs, `${field}.durationMs`);
+}
+
+function validatePresentationChild(issues: PipelineIssue[], raw: unknown, field: string): void {
+  if (raw === undefined) return;
+  const child = asRecord(raw);
+  if (!child) {
+    addConfigIssue(issues, `${field} must be a plain object when set.`, field, `fix ${field} in ${TEMPLATE_CONFIG_FILE} or remove it.`);
+    return;
+  }
+  for (const key of Object.keys(child)) {
+    if (!WIN_PRESENTATION_CHILD_KEYS.has(key)) {
+      addConfigIssue(issues, `${field} has unknown key "${key}".`, `${field}.${key}`, `use only enabled, lifetime, and durationMs under ${field}.`);
+    }
+  }
+  checkBooleanField(issues, child.enabled, `${field}.enabled`);
+  const lifetime = child.lifetime;
+  if (lifetime !== undefined && (typeof lifetime !== 'string' || !WIN_PRESENTATION_CHILD_LIFETIMES.has(lifetime))) {
+    addConfigIssue(
+      issues,
+      `${field}.lifetime must be followPresentation | fixedMs | once (got ${JSON.stringify(lifetime)}).`,
+      `${field}.lifetime`,
+      `set ${field}.lifetime in ${TEMPLATE_CONFIG_FILE}.`,
+    );
+  }
+  checkFiniteNonNegativeField(issues, child.durationMs, `${field}.durationMs`);
+}
+
+function validateSymbolWins(issues: PipelineIssue[], raw: unknown): void {
+  if (raw === undefined) return;
+  const symbolWins = asRecord(raw);
+  if (!symbolWins) {
+    addConfigIssue(issues, 'winPresentation.visualizer.symbolWins must be a plain object when set.', 'winPresentation.visualizer.symbolWins', `fix symbolWins in ${TEMPLATE_CONFIG_FILE} or remove it.`);
+    return;
+  }
+  for (const key of Object.keys(symbolWins)) {
+    if (!WIN_PRESENTATION_SYMBOL_KEYS.has(key)) {
+      addConfigIssue(issues, `winPresentation.visualizer.symbolWins has unknown key "${key}".`, `winPresentation.visualizer.symbolWins.${key}`, 'use only enabled, animation, and overlay under symbolWins.');
+    }
+  }
+  checkBooleanField(issues, symbolWins.enabled, 'winPresentation.visualizer.symbolWins.enabled');
+  validateSymbolWinAnimation(issues, symbolWins.animation);
+  validateSymbolWinOverlay(issues, symbolWins.overlay);
+}
+
+function validateSymbolWinAnimation(issues: PipelineIssue[], raw: unknown): void {
+  if (raw === undefined) return;
+  const animation = asRecord(raw);
+  const field = 'winPresentation.visualizer.symbolWins.animation';
+  if (!animation) {
+    addConfigIssue(issues, `${field} must be a plain object when set.`, field, `fix ${field} in ${TEMPLATE_CONFIG_FILE} or remove it.`);
+    return;
+  }
+  for (const key of Object.keys(animation)) {
+    if (!WIN_PRESENTATION_SYMBOL_ANIMATION_KEYS.has(key)) {
+      addConfigIssue(issues, `${field} has unknown key "${key}".`, `${field}.${key}`, `use only enabled, animationKey, loopPolicy, and durationMs under ${field}.`);
+    }
+  }
+  checkBooleanField(issues, animation.enabled, `${field}.enabled`);
+  if (animation.animationKey !== undefined && (typeof animation.animationKey !== 'string' || animation.animationKey.trim().length === 0)) {
+    addConfigIssue(issues, `${field}.animationKey must be a non-empty string when set.`, `${field}.animationKey`, `set a valid animation key in ${TEMPLATE_CONFIG_FILE}.`);
+  }
+  const loopPolicy = animation.loopPolicy;
+  if (loopPolicy !== undefined && (typeof loopPolicy !== 'string' || !WIN_PRESENTATION_SYMBOL_LOOP_POLICIES.has(loopPolicy))) {
+    addConfigIssue(
+      issues,
+      `${field}.loopPolicy must be presentation | untilNextSpin | fixedMs | once (got ${JSON.stringify(loopPolicy)}).`,
+      `${field}.loopPolicy`,
+      `set ${field}.loopPolicy in ${TEMPLATE_CONFIG_FILE}.`,
+    );
+  }
+  checkFiniteNonNegativeField(issues, animation.durationMs, `${field}.durationMs`);
+}
+
+function validateSymbolWinOverlay(issues: PipelineIssue[], raw: unknown): void {
+  if (raw === undefined) return;
+  const overlay = asRecord(raw);
+  const field = 'winPresentation.visualizer.symbolWins.overlay';
+  if (!overlay) {
+    addConfigIssue(issues, `${field} must be a plain object when set.`, field, `fix ${field} in ${TEMPLATE_CONFIG_FILE} or remove it.`);
+    return;
+  }
+  for (const key of Object.keys(overlay)) {
+    if (!WIN_PRESENTATION_SYMBOL_OVERLAY_KEYS.has(key)) {
+      addConfigIssue(issues, `${field} has unknown key "${key}".`, `${field}.${key}`, `use only supported graphic overlay keys under ${field}.`);
+    }
+  }
+  if (overlay.enabled !== undefined && typeof overlay.enabled !== 'boolean') {
+    addConfigIssue(issues, `${field}.enabled must be a boolean when set.`, `${field}.enabled`, `set ${field}.enabled to true or false in ${TEMPLATE_CONFIG_FILE}.`);
+  }
+  if (overlay.enabled === false) return;
+  if (overlay.type !== undefined && overlay.type !== 'graphic') {
+    addConfigIssue(issues, `${field}.type must be graphic (got ${JSON.stringify(overlay.type)}).`, `${field}.type`, `set ${field}.type to "graphic" in ${TEMPLATE_CONFIG_FILE}.`);
+  }
+  const lifetime = overlay.lifetime;
+  if (lifetime !== undefined && (typeof lifetime !== 'string' || !WIN_PRESENTATION_CHILD_LIFETIMES.has(lifetime))) {
+    addConfigIssue(
+      issues,
+      `${field}.lifetime must be followPresentation | fixedMs | once (got ${JSON.stringify(lifetime)}).`,
+      `${field}.lifetime`,
+      `set ${field}.lifetime in ${TEMPLATE_CONFIG_FILE}.`,
+    );
+  }
+  checkFiniteNonNegativeField(issues, overlay.durationMs, `${field}.durationMs`);
+  if (overlay.fill !== undefined && !isColorValue(overlay.fill)) {
+    addConfigIssue(issues, `${field}.fill must be a finite number or 6-digit hex string.`, `${field}.fill`, `set a valid fill in ${TEMPLATE_CONFIG_FILE}.`);
+  }
+  checkAlphaField(issues, overlay.alpha, `${field}.alpha`);
+  checkFiniteNonNegativeField(issues, overlay.paddingPx, `${field}.paddingPx`);
+  checkFiniteNonNegativeField(issues, overlay.cornerRadius, `${field}.cornerRadius`);
+  validateSymbolWinOverlayStroke(issues, overlay.stroke);
+  validateSymbolWinOverlayPulse(issues, overlay.pulse);
+}
+
+function validateSymbolWinOverlayStroke(issues: PipelineIssue[], raw: unknown): void {
+  if (raw === undefined) return;
+  const field = 'winPresentation.visualizer.symbolWins.overlay.stroke';
+  const stroke = asRecord(raw);
+  if (!stroke) {
+    addConfigIssue(issues, `${field} must be a plain object when set.`, field, `fix ${field} in ${TEMPLATE_CONFIG_FILE} or remove it.`);
+    return;
+  }
+  for (const key of Object.keys(stroke)) {
+    if (!WIN_PRESENTATION_SYMBOL_OVERLAY_STROKE_KEYS.has(key)) {
+      addConfigIssue(issues, `${field} has unknown key "${key}".`, `${field}.${key}`, `use only color, width, and alpha under ${field}.`);
+    }
+  }
+  if (stroke.color !== undefined && !isColorValue(stroke.color)) {
+    addConfigIssue(issues, `${field}.color must be a finite number or 6-digit hex string.`, `${field}.color`, `set a valid stroke color in ${TEMPLATE_CONFIG_FILE}.`);
+  }
+  checkFiniteNonNegativeField(issues, stroke.width, `${field}.width`);
+  checkAlphaField(issues, stroke.alpha, `${field}.alpha`);
+}
+
+function validateSymbolWinOverlayPulse(issues: PipelineIssue[], raw: unknown): void {
+  if (raw === undefined) return;
+  const field = 'winPresentation.visualizer.symbolWins.overlay.pulse';
+  const pulse = asRecord(raw);
+  if (!pulse) {
+    addConfigIssue(issues, `${field} must be a plain object when set.`, field, `fix ${field} in ${TEMPLATE_CONFIG_FILE} or remove it.`);
+    return;
+  }
+  for (const key of Object.keys(pulse)) {
+    if (!WIN_PRESENTATION_SYMBOL_OVERLAY_PULSE_KEYS.has(key)) {
+      addConfigIssue(issues, `${field} has unknown key "${key}".`, `${field}.${key}`, `use only enabled, alpha, and durationMs under ${field}.`);
+    }
+  }
+  checkBooleanField(issues, pulse.enabled, `${field}.enabled`);
+  checkAlphaField(issues, pulse.alpha, `${field}.alpha`);
+  checkFinitePositiveField(issues, pulse.durationMs, `${field}.durationMs`);
 }
 
 function isBlank(value: unknown): boolean {

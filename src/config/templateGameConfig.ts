@@ -1,4 +1,4 @@
-import type { SpinFeelConfigOverrides, SpinFeelPresetName } from '@fnx/sl-engine';
+import type { EasingName, SpinFeelConfigOverrides, SpinFeelPresetName } from '@fnx/sl-engine';
 
 export const STARTER_SPIN_FEEL_PRESETS = ['premium', 'arcade', 'turbo', 'normal'] as const satisfies readonly SpinFeelPresetName[];
 export type StarterSpinFeelPresetName = (typeof STARTER_SPIN_FEEL_PRESETS)[number];
@@ -118,12 +118,17 @@ export interface TemplateSlotLayoutOverride {
 /**
  * Payline / line-win presentation overrides for the stock win presenter.
  * Forwarded to bootstrap as `scenes.game` + `SlotGameScene.fromContext` `winPresenterConfigOverrides`
- * (same nesting as engine `WinPresenterFullConfig`: `paylineStyle`, `global`, `visualizer`, `timing`, `textPosition`).
+ * (same nesting as engine `WinPresenterFullConfig`: `timingPrecedence`, `paylineStyle`, `global`, `visualizer`, `timing`, `textPosition`).
  */
 export interface TemplateWinPresentationConfig {
+  /** Shared per-event timing authority. Cleopatra owns authored root timing for WV-3. */
+  timingPrecedence?: 'presenterOverridesTier' | 'tierOverridesPresenter';
   paylineStyle?: {
-    lineColor?: number;
+    color?: number | string;
+    lineColor?: number | string;
+    width?: number;
     lineThickness?: number;
+    alpha?: number;
     lineAlpha?: number;
     animateDrawing?: boolean;
     drawingDurationMs?: number;
@@ -135,6 +140,19 @@ export interface TemplateWinPresentationConfig {
     lineCap?: 'butt' | 'round' | 'square';
     /** Pixi stroke join: `round` for rounded corners along the path. */
     lineJoin?: 'miter' | 'round' | 'bevel';
+    /** Vector line reveal policy. */
+    reveal?: {
+      enabled?: boolean;
+      durationMs?: number;
+      easing?: EasingName;
+    };
+    /** Wider vector underlay glow pass. */
+    glow?: {
+      enabled?: boolean;
+      width?: number;
+      alpha?: number;
+      color?: number | string;
+    };
   };
   /**
    * Win banner position relative to reel band (engine `WinPresenterFullConfig.textPosition`).
@@ -155,35 +173,64 @@ export interface TemplateWinPresentationConfig {
     showPaylines?: boolean;
     showLineLabels?: boolean;
     /**
-     * When `true`, each win event runs separately (clear between), which staggers line vs text.
-     * When `false`, the engine shows one combined snapshot (line + highlights + win text together).
-     */
-    showIndividualWins?: boolean;
-    clearBetweenEvents?: boolean;
-    /** Clear overlay between repeat cycles when `visualizer.loopEnabled` is true (engine `global.clearBetweenCycles`). */
-    clearBetweenCycles?: boolean;
-    /**
-     * Max full win-presentation cycles when looping (`WinVisualizerCore` / `global.winLoopLimit`).
-     * Requires `visualizer.loopEnabled: true`.
+     * Caps how many full presenter cycles run while the session is alive.
+     * Engine safety clamp: 1–100 (see `applyWinPresentationPlaybackSafetyClamps` in SL-Engine).
      */
     winLoopLimit?: number;
-    /** Optional win text / amount tween overrides (engine `global.winText`). */
-    winText?: {
-      amountTween?: {
-        enabled?: boolean;
-        durationMs?: number;
-      };
-    };
+    /**
+     * Cleopatra compose maps `false` → engine `visualizer.enabledModules.highlight: false` (tier rectangle highlights).
+     * Omitted leaves stock highlight module on. Stripped before bootstrap merge — not an engine `global` key.
+     */
+    showWinHighlight?: boolean;
   };
   visualizer?: {
-    linePresentationMode?: 'vector' | 'boundsOverlay';
-    /** Stock default is `parallel` (line + text modules at once). Prefer explicit for templates. */
+    /** WV-2 execution contract: all win presentation facets share a session start barrier. */
     executionMode?: 'parallel' | 'sequential';
     /**
-     * When `true`, the win visualizer repeats the full presentation up to `global.winLoopLimit` times
-     * (engine `visualizer.loopEnabled`).
+     * When true with `global.winLoopLimit` > 1, the visualizer replays the win sequence that many times
+     * before the `untilNextSpin` idle wait. `untilNextSpin` alone only keeps the session open — it does not repeat cycles.
      */
     loopEnabled?: boolean;
+    lifetime?: {
+      durationPolicy?: 'fixedMs' | 'untilNextSpin' | 'once';
+      durationMs?: number;
+    };
+    symbolWins?: {
+      enabled?: boolean;
+      animation?: {
+        enabled?: boolean;
+        animationKey?: string;
+        loopPolicy?: 'presentation' | 'untilNextSpin' | 'fixedMs' | 'once';
+        durationMs?: number;
+      };
+      overlay?:
+        | { enabled: false }
+        | {
+            enabled?: true;
+            type?: 'graphic';
+            lifetime?: 'followPresentation' | 'fixedMs' | 'once';
+            durationMs?: number;
+            fill?: number | string;
+            alpha?: number;
+            stroke?: { color?: number | string; width?: number; alpha?: number };
+            paddingPx?: number;
+            cornerRadius?: number;
+            pulse?: { enabled: boolean; alpha?: number; durationMs?: number };
+          };
+    };
+    lines?: {
+      enabled?: boolean;
+      lifetime?: 'followPresentation' | 'fixedMs' | 'once';
+      durationMs?: number;
+    };
+    winText?: {
+      enabled?: boolean;
+      lifetime?: 'followPresentation' | 'fixedMs' | 'once';
+      durationMs?: number;
+    };
+    linePresentationMode?: 'vector' | 'boundsOverlay';
+    /** Built-in win visualizer modules; partial merges with stock defaults. */
+    enabledModules?: Partial<Record<'highlight' | 'linePath' | 'jackpot' | 'winText', boolean>>;
   };
 }
 
@@ -406,8 +453,8 @@ export const templateGameConfig: TemplateGameConfig = {
       },
   
       stopMotion: {
-        ease: 'expoOut',
-        durationMs: 100,
+        ease: 'quartOut',
+        durationMs: 450,
       },
       symbolStripStopSettle: { mode: 'none' },
       turbo: {
@@ -421,49 +468,62 @@ export const templateGameConfig: TemplateGameConfig = {
     },
   },
 
-  /** Line wins: payline path styling (omit to use engine catalog defaults only). */
+  /** Line wins: WV-2 session-owned presentation contract. */
   winPresentation: {
-    /** Lower than stock catalog `-70` (positive = further down from reel container origin). */
-    textPosition: { yOffset: 200 },
+    timingPrecedence: 'presenterOverridesTier',
+    /** Keep the win amount in the visible reel band instead of below the Cleopatra frame. */
+    textPosition: { yOffset: 260 },
 
-    /**
-     * Durations merged to engine `WinPresenterFullConfig.timing`.
-     * `allWinsDurationMs` is the combined-win linger and turbo apply-final hold (see engine tier resolver).
-     */
     timing: {
-      singleWinDurationMs: 10000,
-      betweenWinsDelayMs: 10000,
-      allWinsDurationMs: 10000,
+      singleWinDurationMs: 3200,
+      betweenWinsDelayMs: 0,
+      allWinsDurationMs: 3600,
     },
 
     global: {
       showPaylines: true,
       showLineLabels: false,
-    /** Clear modules between loop cycles so each repeat is a fresh draw (pairs with `visualizer.loopEnabled`). */
-    clearBetweenCycles: true,
-    /** Repeat full win presentation this many times when `visualizer.loopEnabled` is true (engine `global.winLoopLimit`). */
-    winLoopLimit: 4,
-      winText: {
-        amountTween: {
-          enabled: true,
-          durationMs: 900,
-        },
-      },
-      
+      /** Maximum cycles per spin while waiting for next spin (engine clamps to 100). */
+      winLoopLimit: 100,
+      /** Maps to `visualizer.enabledModules.highlight: false` at compose (tier highlight rects). */
+      showWinHighlight: false,
     },
     paylineStyle: {
-      lineColor: 0xffcc44,
-      lineThickness: 7,
-      lineJoin: 'bevel',
-      lineAlpha: 0.95,
+      color: 0xfbe72c,
+      width: 4,
+      lineJoin: 'round',
+      alpha: 0.95,
       animateDrawing: true,
-      drawingDurationMs: 100,
-      showLineLabel: false,
+      drawingDurationMs: 260,
+      reveal: { enabled: true, durationMs: 260, easing: 'quadOut' },
+      glow: { enabled: true, color: 0xfff1a8, width: 14, alpha: 0.34 },
+      labelColor : 0xfbe72c,
     },
     visualizer: {
-      /** Run the full win sequence multiple times (see `global.winLoopLimit`). */
-      loopEnabled: true,
       executionMode: 'parallel',
+      loopEnabled: true,
+      lifetime: {
+        durationPolicy: 'untilNextSpin',
+      },
+      symbolWins: {
+        enabled: true,
+        animation: {
+          enabled: true,
+          animationKey: 'winStart',
+          loopPolicy: 'untilNextSpin',
+        },
+        /** Graphic frame behind winning symbols — off if you only want animation + paylines/text. */
+        overlay: { enabled: false },
+      },
+      lines: {
+        enabled: true,
+        lifetime: 'followPresentation',
+      },
+      winText: {
+        enabled: true,
+        lifetime: 'followPresentation',
+      },
+      linePresentationMode: 'vector',
     },
   },
 };

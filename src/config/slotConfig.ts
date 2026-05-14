@@ -17,6 +17,11 @@ function animatedSheetSymbol(manifestSpritesheetKey: string) {
     animationSpeed : 0.45,
     /** Local alias: resolved against `spriteKey` sheet (see engine `resolveSymbolSpritesheetAnimation`). */
     spriteSheetAnimation: 'idle' as const,
+    animations: {
+      idle: 'idle',
+      winStart: 'idle',
+      winEnd: 'idle',
+    },
   };
 }
 

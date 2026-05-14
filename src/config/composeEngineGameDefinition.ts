@@ -513,6 +513,40 @@ function isNonArrayObject(value: unknown): value is Record<string, unknown> {
 }
 
 /**
+ * `global.showWinHighlight` is template authoring only — engine reads highlights via `visualizer.enabledModules.highlight`.
+ */
+function materializeWinPresentationOverridesForEngine(wp: TemplateWinPresentationConfig): TemplateWinPresentationConfig {
+  const alias = wp.global?.showWinHighlight;
+  if (alias === undefined) return wp;
+
+  const { showWinHighlight: _omit, ...globalRest } = {
+    ...(wp.global ?? {}),
+  } as TemplateWinPresentationConfig['global'] & { showWinHighlight?: boolean };
+
+  const out: TemplateWinPresentationConfig = {
+    ...wp,
+    visualizer:
+      alias === false
+        ? {
+            ...wp.visualizer,
+            enabledModules: {
+              ...wp.visualizer?.enabledModules,
+              highlight: false,
+            },
+          }
+        : wp.visualizer,
+  };
+
+  if (Object.keys(globalRest).length > 0) {
+    out.global = globalRest;
+  } else {
+    delete out.global;
+  }
+
+  return out;
+}
+
+/**
  * True when `winPresentation` carries at least one non-empty section.
  * Empty `{}` or `{ paylineStyle: {} }` must not force a custom game scene factory (no-op vs stock path).
  */
@@ -520,6 +554,7 @@ export function isAuthoredWinPresentationTemplate(
   wp: TemplateWinPresentationConfig | undefined,
 ): wp is TemplateWinPresentationConfig {
   if (wp == null) return false;
+  if (wp.timingPrecedence !== undefined) return true;
   if (isNonArrayObject(wp.paylineStyle) && Object.keys(wp.paylineStyle).length > 0) return true;
   if (isNonArrayObject(wp.global) && Object.keys(wp.global).length > 0) return true;
   if (isNonArrayObject(wp.visualizer) && Object.keys(wp.visualizer).length > 0) return true;
@@ -567,7 +602,9 @@ export function composeEngineGameDefinition(
     orientation,
     canvasBackgroundColor,
     ...(isAuthoredWinPresentationTemplate(templateConfig.winPresentation)
-      ? { winPresenterConfigOverrides: templateConfig.winPresentation }
+      ? {
+          winPresenterConfigOverrides: materializeWinPresentationOverridesForEngine(templateConfig.winPresentation),
+        }
       : {}),
   };
 }

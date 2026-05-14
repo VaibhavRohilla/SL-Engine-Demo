@@ -54,22 +54,38 @@ export function createStarterWinVisualizerScene(
   return SlotGameScene.fromContext(ctx, spinFlow, stockSpinExecutionAuthority, {
     slotSceneConfigOverrides: {
       winPresenterConfigOverrides: {
+        timingPrecedence: 'presenterOverridesTier',
         timing:{
-          singleWinDurationMs: 10000,
-          betweenWinsDelayMs: 10000,
-          allWinsDurationMs: 10000,
+          singleWinDurationMs: 3200,
+          betweenWinsDelayMs: 0,
+          allWinsDurationMs: 3600,
+        },
+        global: {
+          showPaylines: true,
+          winLoopLimit: 100,
         },
         visualizer: {
           executionMode : 'parallel',
           loopEnabled: true,
-          linePresentationMode: 'vector',
-          moduleOrder: ['winText', 'highlight', 'linePath', 'jackpot'],
-          enabledModules: {
-            highlight: true,
-            linePath: true,
-            jackpot: true,
-            winText: true,
+          lifetime: { durationPolicy: 'untilNextSpin' },
+          symbolWins: {
+            enabled: true,
+            animation: { enabled: true, animationKey: 'winStart', loopPolicy: 'presentation' },
+            overlay: {
+              enabled: true,
+              type: 'graphic',
+              lifetime: 'followPresentation',
+              fill: 0xffd36a,
+              alpha: 0.22,
+              stroke: { color: 0xfff1a8, width: 2, alpha: 0.52 },
+              paddingPx: 4,
+              cornerRadius: 10,
+              pulse: { enabled: true, alpha: 0.07, durationMs: 900 },
+            },
           },
+          lines: { enabled: true, lifetime: 'followPresentation' },
+          winText: { enabled: true, lifetime: 'followPresentation' },
+          linePresentationMode: 'vector',
         },
       },
       additionalWinModules: () => [new StarterProofPulseModule()],
