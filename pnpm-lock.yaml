@@ -12,8 +12,8 @@ importers:
         specifier: 4.2.110
         version: 4.2.110(pixi.js@8.18.1)
       '@fnx/sl-engine':
-        specifier: file:../SL-Engine
-        version: file:../SL-Engine(@esotericsoftware/spine-pixi-v8@4.2.110(pixi.js@8.18.1))(@tweenjs/tween.js@25.0.0)(howler@2.2.4)(pixi.js@8.18.1)(zod@3.25.76)
+        specifier: ./vendor/sl-engine
+        version: link:vendor/sl-engine
       '@tweenjs/tween.js':
         specifier: 25.0.0
         version: 25.0.0
@@ -359,16 +359,6 @@ packages:
     peerDependencies:
       pixi.js: ^8.16.0
 
-  '@fnx/sl-engine@file:../SL-Engine':
-    resolution: {directory: ../SL-Engine, type: directory}
-    engines: {node: '>=18.0.0', pnpm: '>=8.0.0'}
-    peerDependencies:
-      '@esotericsoftware/spine-pixi-v8': ^4.2.74
-      '@tweenjs/tween.js': ^25.0.0
-      howler: ^2.2.4
-      pixi.js: ^8.6.6
-      zod: ^3.24.1
-
   '@pixi/colord@2.9.6':
     resolution: {integrity: sha512-nezytU2pw587fQstUu1AsJZDVEynjskwOL+kibwcdxsMBFqPsFFNA7xl0ii/gXuDi6M0xj3mfRJj8pBSc2jCfA==}
 
@@ -618,14 +608,6 @@ snapshots:
     dependencies:
       '@esotericsoftware/spine-canvas': 4.2.110
       pixi.js: 8.18.1
-
-  '@fnx/sl-engine@file:../SL-Engine(@esotericsoftware/spine-pixi-v8@4.2.110(pixi.js@8.18.1))(@tweenjs/tween.js@25.0.0)(howler@2.2.4)(pixi.js@8.18.1)(zod@3.25.76)':
-    dependencies:
-      '@esotericsoftware/spine-pixi-v8': 4.2.110(pixi.js@8.18.1)
-      '@tweenjs/tween.js': 25.0.0
-      howler: 2.2.4
-      pixi.js: 8.18.1
-      zod: 3.25.76
 
   '@pixi/colord@2.9.6': {}
 

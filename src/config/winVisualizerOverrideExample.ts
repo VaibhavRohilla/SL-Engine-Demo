@@ -55,22 +55,20 @@ export function createStarterWinVisualizerScene(
     slotSceneConfigOverrides: {
       winPresenterConfigOverrides: {
         timingPrecedence: 'presenterOverridesTier',
-        timing:{
-          singleWinDurationMs: 3200,
-          betweenWinsDelayMs: 0,
-          allWinsDurationMs: 3600,
+        timing: {
+          singleWinDurationMs: 1200,
+          betweenWinsDelayMs: 150,
+          allWinsDurationMs: 1800,
         },
         global: {
           showPaylines: true,
-          winLoopLimit: 100,
         },
         visualizer: {
-          executionMode : 'parallel',
-          loopEnabled: true,
+          executionMode: 'parallel',
           lifetime: { durationPolicy: 'untilNextSpin' },
           symbolWins: {
             enabled: true,
-            animation: { enabled: true, animationKey: 'winStart', loopPolicy: 'presentation' },
+            animation: { enabled: true, animationKey: 'winStart', loopPolicy: 'step' },
             overlay: {
               enabled: true,
               type: 'graphic',
@@ -83,9 +81,37 @@ export function createStarterWinVisualizerScene(
               pulse: { enabled: true, alpha: 0.07, durationMs: 900 },
             },
           },
-          lines: { enabled: true, lifetime: 'followPresentation' },
-          winText: { enabled: true, lifetime: 'followPresentation' },
+          lines: { enabled: true, lifetime: 'followStep' },
+          winText: { enabled: true, lifetime: 'followStep' },
           linePresentationMode: 'vector',
+        },
+        choreography: {
+          enabled: true,
+          sequence: ['all', 'each', 'all'],
+          repeat: { policy: 'untilNextSpin' },
+          singleGroupBehavior: 'collapseToEach',
+          stepTiming: {
+            allWinsDurationMs: 1800,
+            individualWinDurationMs: 1200,
+            betweenStepsDelayMs: 150,
+          },
+          amount: { allStep: 'total', individualStep: 'group' },
+          render: { symbols: true, lines: 'whenAvailable', winText: true, overlays: true },
+        },
+        lineStyles: {
+          default: {
+            line: {
+              type: 'graphic',
+              color: 0xffd700,
+              width: 5,
+              reveal: { mode: 'fromLineStart', enabled: true, durationMs: 280 },
+            },
+            label: {
+              enabled: true,
+              position: 'start',
+              text: { enabled: true, valueMode: 'lineId' },
+            },
+          },
         },
       },
       additionalWinModules: () => [new StarterProofPulseModule()],

@@ -1,5 +1,15 @@
 # SL-Engine Starter Contract
 
+## Cleopatra development note
+
+This repo is **not** a generated starter tarball; it uses a **sibling** SDK for fast engine iteration:
+
+- `dependencies["@fnx/sl-engine"]` is `file:../SL-Engine` (see root `package.json`).
+- Run `pnpm build:sdk` in `../SL-Engine` before `pnpm build` / production-like runs so `node_modules/@fnx/sl-engine` resolves to a built SDK.
+- TypeScript may still map `@fnx/sl-engine` to engine **sources** via `tsconfig.json` `paths` for IDE go-to-definition.
+
+Generated starters keep the stricter **vendored** contract below.
+
 ## Purpose
 
 This document defines the production contract for the generated starter project.

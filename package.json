@@ -1,7 +1,7 @@
 {
-  "name": "SL-Engine/Cleopatra",
+  "name": "cleopatra",
   "version": "1.0.0",
-  "description": "SL-Engine/Cleopatra starter project powered by SL-Engine",
+  "description": "Cleopatra — SL-Engine sample / integration game (sibling-linked SDK for local development)",
   "type": "module",
   "private": true,
   "scripts": {
@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "@esotericsoftware/spine-pixi-v8": "4.2.110",
-    "@fnx/sl-engine": "file:../SL-Engine",
+    "@fnx/sl-engine": "./vendor/sl-engine",
     "@tweenjs/tween.js": "25.0.0",
     "howler": "2.2.4",
     "pixi.js": "8.18.1"
@@ -26,7 +26,11 @@
     "typescript": "5.9.3",
     "zod": "3.25.76"
   },
+  "pnpm": {
+    "onlyBuiltDependencies": ["esbuild"]
+  },
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
   }
 }

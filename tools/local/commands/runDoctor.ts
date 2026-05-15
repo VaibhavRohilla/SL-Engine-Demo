@@ -68,21 +68,23 @@ function checkSdkInstalled(projectRoot: string, issues: PipelineIssue[]): void {
   const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf-8')) as { dependencies?: Record<string, string> };
   const dependency = pkg.dependencies?.['@fnx/sl-engine'];
   const vendoredSpec = 'file:./vendor/sl-engine';
+  const siblingEngineSpec = 'file:../SL-Engine';
+  const allowedSdkSpecs = new Set([vendoredSpec, siblingEngineSpec]);
   if (!dependency) {
     issues.push({
       code: IssueCodes.PIPELINE_SDK_MISSING,
       category: IssueCategory.PIPELINE,
       severity: 'error',
-      message: 'Missing dependencies.@fnx/sl-engine — add the vendored SDK spec and run pnpm install',
+      message: 'Missing dependencies.@fnx/sl-engine — add `file:../SL-Engine` (sibling dev) or `file:./vendor/sl-engine` (vendored) and run pnpm install',
     });
     return;
   }
-  if (dependency !== vendoredSpec) {
+  if (!allowedSdkSpecs.has(dependency)) {
     issues.push({
       code: IssueCodes.PIPELINE_SDK_NOT_VENDORED,
       category: IssueCategory.PIPELINE,
       severity: 'error',
-      message: `dependencies.@fnx/sl-engine must be exactly "${vendoredSpec}" (found "${dependency}"). Registry or mismatched versions often cause stock runtime failures such as "Stock planner authority lane is not set".`,
+      message: `dependencies.@fnx/sl-engine must be "${vendoredSpec}" or "${siblingEngineSpec}" (found "${dependency}"). Use the vendored path for offline/starter parity; use the sibling path when developing against a local SL-Engine checkout.`,
       file: 'package.json',
     });
     return;

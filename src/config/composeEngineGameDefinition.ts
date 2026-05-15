@@ -546,19 +546,37 @@ function materializeWinPresentationOverridesForEngine(wp: TemplateWinPresentatio
   return out;
 }
 
+function hasAuthoredLineStyleEntry(entry: unknown): boolean {
+  if (!isNonArrayObject(entry)) return false;
+  const line = entry.line;
+  if (isNonArrayObject(line) && line.type === 'graphic' && Object.keys(line).length > 1) return true;
+  const label = entry.label;
+  if (isNonArrayObject(label) && Object.keys(label).length > 0) return true;
+  return false;
+}
+
+function hasAuthoredLineStyles(lineStyles: TemplateWinPresentationConfig['lineStyles']): boolean {
+  if (!isNonArrayObject(lineStyles)) return false;
+  if (hasAuthoredLineStyleEntry(lineStyles.default)) return true;
+  const byLineId = lineStyles.byLineId;
+  if (!isNonArrayObject(byLineId)) return false;
+  return Object.values(byLineId).some((entry) => hasAuthoredLineStyleEntry(entry));
+}
+
 /**
  * True when `winPresentation` carries at least one non-empty section.
- * Empty `{}` or `{ paylineStyle: {} }` must not force a custom game scene factory (no-op vs stock path).
+ * Empty `{}` or `{ lineStyles: { default: {} } }` must not force a custom game scene factory (no-op vs stock path).
  */
 export function isAuthoredWinPresentationTemplate(
   wp: TemplateWinPresentationConfig | undefined,
 ): wp is TemplateWinPresentationConfig {
   if (wp == null) return false;
   if (wp.timingPrecedence !== undefined) return true;
-  if (isNonArrayObject(wp.paylineStyle) && Object.keys(wp.paylineStyle).length > 0) return true;
+  if (isNonArrayObject(wp.timing) && Object.keys(wp.timing).length > 0) return true;
+  if (hasAuthoredLineStyles(wp.lineStyles)) return true;
   if (isNonArrayObject(wp.global) && Object.keys(wp.global).length > 0) return true;
   if (isNonArrayObject(wp.visualizer) && Object.keys(wp.visualizer).length > 0) return true;
-  if (isNonArrayObject(wp.timing) && Object.keys(wp.timing).length > 0) return true;
+  if (isNonArrayObject(wp.choreography) && Object.keys(wp.choreography).length > 0) return true;
   if (isNonArrayObject(wp.textPosition) && Object.keys(wp.textPosition).length > 0) return true;
   return false;
 }

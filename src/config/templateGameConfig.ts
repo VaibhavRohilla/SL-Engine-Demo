@@ -118,42 +118,11 @@ export interface TemplateSlotLayoutOverride {
 /**
  * Payline / line-win presentation overrides for the stock win presenter.
  * Forwarded to bootstrap as `scenes.game` + `SlotGameScene.fromContext` `winPresenterConfigOverrides`
- * (same nesting as engine `WinPresenterFullConfig`: `timingPrecedence`, `paylineStyle`, `global`, `visualizer`, `timing`, `textPosition`).
+ * (same nesting as engine `WinPresenterFullConfig`: `lineStyles`, `global`, `visualizer`, `choreography`, `timing`, `textPosition`).
  */
 export interface TemplateWinPresentationConfig {
   /** Shared per-event timing authority. Cleopatra owns authored root timing for WV-3. */
   timingPrecedence?: 'presenterOverridesTier' | 'tierOverridesPresenter';
-  paylineStyle?: {
-    color?: number | string;
-    lineColor?: number | string;
-    width?: number;
-    lineThickness?: number;
-    alpha?: number;
-    lineAlpha?: number;
-    animateDrawing?: boolean;
-    drawingDurationMs?: number;
-    paylineStartInsetPx?: number;
-    showLineLabel?: boolean;
-    labelFontSize?: number;
-    labelColor?: number;
-    /** Pixi stroke cap: `round` for rounded line ends. */
-    lineCap?: 'butt' | 'round' | 'square';
-    /** Pixi stroke join: `round` for rounded corners along the path. */
-    lineJoin?: 'miter' | 'round' | 'bevel';
-    /** Vector line reveal policy. */
-    reveal?: {
-      enabled?: boolean;
-      durationMs?: number;
-      easing?: EasingName;
-    };
-    /** Wider vector underlay glow pass. */
-    glow?: {
-      enabled?: boolean;
-      width?: number;
-      alpha?: number;
-      color?: number | string;
-    };
-  };
   /**
    * Win banner position relative to reel band (engine `WinPresenterFullConfig.textPosition`).
    * Positive `yOffset` moves the win text **down** (negative is above reel center).
@@ -166,17 +135,116 @@ export interface TemplateWinPresentationConfig {
   timing?: {
     singleWinDurationMs?: number;
     betweenWinsDelayMs?: number;
-    /** How long the combined win overlay stays visible after all wins resolve. */
     allWinsDurationMs?: number;
+  };
+  lineStyles?: {
+    default: {
+      line?: {
+        type?: 'graphic';
+        color?: number | string;
+        width?: number;
+        alpha?: number;
+        lineCap?: 'butt' | 'round' | 'square';
+        lineJoin?: 'miter' | 'round' | 'bevel';
+        paylineStartInsetPx?: number;
+        reveal?: {
+          enabled?: boolean;
+          durationMs?: number;
+          easing?: EasingName;
+          mode?: 'fromLineStart' | 'fromLineEnd' | 'leftToRight' | 'rightToLeft' | 'instant';
+        };
+        glow?: {
+          enabled?: boolean;
+          width?: number;
+          alpha?: number;
+          color?: number | string;
+        };
+      };
+      label?: {
+        enabled?: boolean;
+        position?: 'start' | 'end' | 'bothEnds' | 'left' | 'right';
+        background?: {
+          type?: 'graphic';
+          fill?: number | string;
+          alpha?: number;
+          stroke?: number | string;
+          strokeWidth?: number;
+          radius?: number;
+          paddingX?: number;
+          paddingY?: number;
+        };
+        text?: {
+          enabled?: boolean;
+          valueMode?: 'lineNumber' | 'lineId' | 'custom';
+          value?: string;
+          fontFamily?: string;
+          fontSize?: number;
+          fill?: number | string;
+          stroke?: number | string;
+          strokeWidth?: number;
+          fontWeight?: string;
+        };
+        offset?: {
+          x?: number;
+          y?: number;
+        };
+      };
+    };
+    byLineId?: Record<string, {
+      line?: {
+        type?: 'graphic';
+        color?: number | string;
+        width?: number;
+        alpha?: number;
+        lineCap?: 'butt' | 'round' | 'square';
+        lineJoin?: 'miter' | 'round' | 'bevel';
+        paylineStartInsetPx?: number;
+        reveal?: {
+          enabled?: boolean;
+          durationMs?: number;
+          easing?: EasingName;
+          mode?: 'fromLineStart' | 'fromLineEnd' | 'leftToRight' | 'rightToLeft' | 'instant';
+        };
+        glow?: {
+          enabled?: boolean;
+          width?: number;
+          alpha?: number;
+          color?: number | string;
+        };
+      };
+      label?: {
+        enabled?: boolean;
+        position?: 'start' | 'end' | 'bothEnds' | 'left' | 'right';
+        background?: {
+          type?: 'graphic';
+          fill?: number | string;
+          alpha?: number;
+          stroke?: number | string;
+          strokeWidth?: number;
+          radius?: number;
+          paddingX?: number;
+          paddingY?: number;
+        };
+        text?: {
+          enabled?: boolean;
+          valueMode?: 'lineNumber' | 'lineId' | 'custom';
+          value?: string;
+          fontFamily?: string;
+          fontSize?: number;
+          fill?: number | string;
+          stroke?: number | string;
+          strokeWidth?: number;
+          fontWeight?: string;
+        };
+        offset?: {
+          x?: number;
+          y?: number;
+        };
+      };
+    }>;
   };
   global?: {
     showPaylines?: boolean;
-    showLineLabels?: boolean;
-    /**
-     * Caps how many full presenter cycles run while the session is alive.
-     * Engine safety clamp: 1–100 (see `applyWinPresentationPlaybackSafetyClamps` in SL-Engine).
-     */
-    winLoopLimit?: number;
     /**
      * Cleopatra compose maps `false` → engine `visualizer.enabledModules.highlight: false` (tier rectangle highlights).
      * Omitted leaves stock highlight module on. Stripped before bootstrap merge — not an engine `global` key.
@@ -184,13 +252,7 @@ export interface TemplateWinPresentationConfig {
     showWinHighlight?: boolean;
   };
   visualizer?: {
-    /** WV-2 execution contract: all win presentation facets share a session start barrier. */
     executionMode?: 'parallel' | 'sequential';
-    /**
-     * When true with `global.winLoopLimit` > 1, the visualizer replays the win sequence that many times
-     * before the `untilNextSpin` idle wait. `untilNextSpin` alone only keeps the session open — it does not repeat cycles.
-     */
-    loopEnabled?: boolean;
     lifetime?: {
       durationPolicy?: 'fixedMs' | 'untilNextSpin' | 'once';
       durationMs?: number;
@@ -200,7 +262,7 @@ export interface TemplateWinPresentationConfig {
       animation?: {
         enabled?: boolean;
         animationKey?: string;
-        loopPolicy?: 'presentation' | 'untilNextSpin' | 'fixedMs' | 'once';
+        loopPolicy?: 'presentation' | 'step' | 'untilNextSpin' | 'fixedMs' | 'once';
         durationMs?: number;
       };
       overlay?:
@@ -220,17 +282,41 @@ export interface TemplateWinPresentationConfig {
     };
     lines?: {
       enabled?: boolean;
-      lifetime?: 'followPresentation' | 'fixedMs' | 'once';
+      lifetime?: 'followPresentation' | 'followStep' | 'fixedMs' | 'once';
       durationMs?: number;
     };
     winText?: {
       enabled?: boolean;
-      lifetime?: 'followPresentation' | 'fixedMs' | 'once';
+      lifetime?: 'followPresentation' | 'followStep' | 'fixedMs' | 'once';
       durationMs?: number;
     };
     linePresentationMode?: 'vector' | 'boundsOverlay';
-    /** Built-in win visualizer modules; partial merges with stock defaults. */
     enabledModules?: Partial<Record<'highlight' | 'linePath' | 'jackpot' | 'winText', boolean>>;
+  };
+  choreography?: {
+    enabled?: boolean;
+    sequence?: Array<'all' | 'each'>;
+    repeat?: {
+      policy?: 'once' | 'fixedCycles' | 'untilNextSpin' | 'fixedMs';
+      cycles?: number;
+      durationMs?: number;
+    };
+    singleGroupBehavior?: 'collapseToEach' | 'preserveSequence';
+    stepTiming?: {
+      allWinsDurationMs?: number;
+      individualWinDurationMs?: number;
+      betweenStepsDelayMs?: number;
+    };
+    amount?: {
+      allStep?: 'total' | 'none';
+      individualStep?: 'group' | 'total' | 'none';
+    };
+    render?: {
+      symbols?: boolean;
+      lines?: true | false | 'whenAvailable';
+      winText?: boolean;
+      overlays?: boolean;
+    };
   };
 }
 
@@ -468,40 +554,22 @@ export const templateGameConfig: TemplateGameConfig = {
     },
   },
 
-  /** Line wins: WV-2 session-owned presentation contract. */
+  /** Line wins: WV-3 choreography + WV-5 canonical lineStyles. */
   winPresentation: {
     timingPrecedence: 'presenterOverridesTier',
-    /** Keep the win amount in the visible reel band instead of below the Cleopatra frame. */
-    textPosition: { yOffset: 260 },
-
+    /** Reel-center placement (stock default). Positive y moves down; keep near 0 so text stays in the reel window. */
+    textPosition: { yOffset: 280 },
     timing: {
-      singleWinDurationMs: 3200,
-      betweenWinsDelayMs: 0,
-      allWinsDurationMs: 3600,
+      singleWinDurationMs: 1200,
+      betweenWinsDelayMs: 150,
+      allWinsDurationMs: 1800,
     },
-
     global: {
       showPaylines: true,
-      showLineLabels: false,
-      /** Maximum cycles per spin while waiting for next spin (engine clamps to 100). */
-      winLoopLimit: 100,
-      /** Maps to `visualizer.enabledModules.highlight: false` at compose (tier highlight rects). */
       showWinHighlight: false,
-    },
-    paylineStyle: {
-      color: 0xfbe72c,
-      width: 4,
-      lineJoin: 'round',
-      alpha: 0.95,
-      animateDrawing: true,
-      drawingDurationMs: 260,
-      reveal: { enabled: true, durationMs: 260, easing: 'quadOut' },
-      glow: { enabled: true, color: 0xfff1a8, width: 14, alpha: 0.34 },
-      labelColor : 0xfbe72c,
     },
     visualizer: {
       executionMode: 'parallel',
-      loopEnabled: true,
       lifetime: {
         durationPolicy: 'untilNextSpin',
       },
@@ -510,20 +578,131 @@ export const templateGameConfig: TemplateGameConfig = {
         animation: {
           enabled: true,
           animationKey: 'winStart',
-          loopPolicy: 'untilNextSpin',
+          loopPolicy: 'step',
         },
-        /** Graphic frame behind winning symbols — off if you only want animation + paylines/text. */
-        overlay: { enabled: false },
+        overlay: {
+          enabled: true,
+          type: 'graphic',
+          lifetime: 'followPresentation',
+        },
       },
       lines: {
         enabled: true,
-        lifetime: 'followPresentation',
+        lifetime: 'followStep',
       },
       winText: {
         enabled: true,
-        lifetime: 'followPresentation',
+        lifetime: 'followStep',
       },
       linePresentationMode: 'vector',
+    },
+    choreography: {
+      enabled: true,
+      sequence: ['all', 'each', 'all'],
+      repeat: {
+        policy: 'untilNextSpin',
+      },
+      singleGroupBehavior: 'collapseToEach',
+      stepTiming: {
+        allWinsDurationMs: 1800,
+        individualWinDurationMs: 1200,
+        betweenStepsDelayMs: 150,
+      },
+      amount: {
+        allStep: 'total',
+        individualStep: 'group',
+      },
+      render: {
+        symbols: true,
+        lines: 'whenAvailable',
+        winText: true,
+        overlays: true,
+      },
+    },
+    lineStyles: {
+      default: {
+        line: {
+          type: 'graphic',
+          color: 0xffd700,
+          width: 5,
+          alpha: 1,
+          reveal: {
+            mode: 'instant',
+            enabled: false,
+            durationMs: 280,
+          },
+          glow: {
+            enabled: true,
+            color: 0xfff1a8,
+            width: 8,
+            alpha: 0.55,
+          },
+        },
+        label: {
+          enabled: true,
+          position: 'start',
+          background: {
+            type: 'graphic',
+            fill: 0x3a1a00,
+            alpha: 0.95,
+            stroke: 0xffd700,
+            strokeWidth: 2,
+            radius: 12,
+            paddingX: 8,
+            paddingY: 5,
+          },
+          text: {
+            enabled: true,
+            valueMode: 'lineId',
+            fontSize: 15,
+            fill: 0xffffff,
+            stroke: 0x000000,
+            strokeWidth: 2,
+          },
+        },
+      },
+      byLineId: {
+        '1': {
+          line: { color: 0xff3b30 },
+          label: {
+            enabled: true,
+            background: { type: 'graphic', fill: 0xff3b30, stroke: 0xffffff },
+            text: { enabled: true, valueMode: 'lineId', fill: 0xffffff },
+          },
+        },
+        '2': {
+          line: { color: 0x007aff },
+          label: {
+            enabled: true,
+            background: { type: 'graphic', fill: 0x007aff, stroke: 0xffffff },
+            text: { enabled: true, valueMode: 'lineId', fill: 0xffffff },
+          },
+        },
+        '3': {
+          line: { color: 0x34c759 },
+          label: {
+            enabled: true,
+            background: { type: 'graphic', fill: 0x34c759, stroke: 0xffffff },
+            text: { enabled: true, valueMode: 'lineId', fill: 0xffffff },
+          },
+        },
+        '4': {
+          line: { color: 0xffcc00 },
+          label: {
+            enabled: true,
+            background: { type: 'graphic', fill: 0xffcc00, stroke: 0x000000 },
+            text: { enabled: true, valueMode: 'lineId', fill: 0x000000, stroke: 0xffffff },
+          },
+        },
+        '5': {
+          line: { color: 0xaf52de },
+          label: {
+            enabled: true,
+            background: { type: 'graphic', fill: 0xaf52de, stroke: 0xffffff },
+            text: { enabled: true, valueMode: 'lineId', fill: 0xffffff },
+          },
+        },
+      },
     },
   },
 };
