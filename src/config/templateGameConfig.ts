@@ -1,6 +1,6 @@
-import type { EasingName, SpinFeelConfigOverrides, SpinFeelPresetName } from '@fnx/sl-engine';
+import type { EasingName, SpinFeelAuthoringConfigOverrides, SpinFeelPresetName } from '@fnx/sl-engine';
 
-export const STARTER_SPIN_FEEL_PRESETS = ['premium', 'arcade', 'turbo', 'normal'] as const satisfies readonly SpinFeelPresetName[];
+export const STARTER_SPIN_FEEL_PRESETS = ['classic', 'premium', 'snappy', 'heavy', 'arcade'] as const satisfies readonly SpinFeelPresetName[];
 export type StarterSpinFeelPresetName = (typeof STARTER_SPIN_FEEL_PRESETS)[number];
 
 export type TemplateBackgroundFit = 'cover' | 'contain' | 'stretch' | 'screen-cover';
@@ -340,32 +340,17 @@ export interface TemplateGameConfig {
   winPresentation?: TemplateWinPresentationConfig;
   spinFeel?: {
     /**
-     * Supported preset ids are exactly `premium`, `arcade`, `turbo`, and `normal`.
-     * Custom spinFeel via `overrides` is deep-merged then validated by the engine at bootstrap (`spinFeelOverrides`).
-     * See `docs/STARTER_CONTRACT.md` and `@fnx/sl-engine` SpinFeel presets / validators.
+     * Supported preset ids: `classic`, `premium`, `snappy`, `heavy`, `arcade`.
+     * Custom spinFeel via `overrides` uses the nested authoring API (see docs/REEL_PRESENTATION.md).
      */
     preset: StarterSpinFeelPresetName;
     /**
-     * Active `SpinFeelConfig` fields merged on top of the preset (same as `bootstrap.spinFeelOverrides`).
-     * Nested objects are deep-merged, then the resolved spinFeel is validated.
+     * Partial nested authoring merged on top of the preset (same as `bootstrap.spinFeelOverrides`).
+     * Use `speed`, `timing`, `startFeel`, `stopFeel`, `turbo`, and optional `audioCues`.
      *
-     * **Classic-only fields** (no-op in gravity mode, rejected if used there):
-     * `startDelayMs`, `stopDelayMs`, `startMotion`, `stopMotion`, `snap`,
-     * `reelStopOrder`, `stopTravelSymbolsMin`, `stopTravelSymbolsMax`,
-     * `spinSpeedPxPerSec`, `maxScrollPerFrame`, `symbolStripStopSettle`.
-     *
-     * **Gravity-only fields** (no-op in classic mode, rejected if used there):
-     * `gravityMotion`, `turbo.dropDurationMs`, `turbo.fillDurationMs`.
-     *
-     * **Shared fields** (valid in both modes):
-     * `minSpinMs`, `maxSpinMs`, `symbolHeightPx`, `audioCues`, `turbo` (base fields).
-     *
-     * Invalid mode-specific overrides fail fast at boot — no silent no-ops.
-     * Removed fields (`spinEase`, `snap.thresholdPx`, `anticipation`) are also rejected.
-     *
-     * Example: `{ symbolStripStopSettle: { mode: 'none' } }` removes the stock sprite stop bounce.
+     * Example: `{ stopFeel: { symbolSettle: { mode: 'none' } } }` removes the stock sprite stop bounce.
      */
-    overrides?: SpinFeelConfigOverrides;
+    overrides?: SpinFeelAuthoringConfigOverrides;
   };
 }
 
@@ -524,32 +509,56 @@ export const templateGameConfig: TemplateGameConfig = {
     },
   },
   spinFeel: {
-    preset: 'normal',
+    preset: 'premium',
     overrides: {
-      symbolHeightPx: CLASSIC_PORTRAIT_COMPOSITION.symbolHeight,
-  
-      spinSpeedPxPerSec: 2400,
-      minSpinMs: 1600,
-  
-      startDelayMs: [0, 90, 180, 270, 360],
-      stopDelayMs: [0, 100, 200, 300, 400],
-  
-      startMotion: {
-        durationMs: 450,
+      speed: { pxPerSec: 3000 },
+      timing: {
+      minSpinMs: 1200,
+        startDelayMs: [0, 70, 140, 210, 280],
+        stopDelayMs: [0, 90, 180, 270, 360],
       },
-  
-      stopMotion: {
-        ease: 'quartOut',
-        durationMs: 450,
+      startFeel: {
+        motion: {
+          accelerationEase: 'quadOut',
+          accelerationDurationMs: 400,
+          anticipation: 'pushUp',
+          anticipationReleaseRatio: 0.5,
+          anticipationDistanceRatio: 0.5,
+        
+          anticipationDurationMs: 400,
+
+        },
+
       },
-      symbolStripStopSettle: { mode: 'none' },
+      stopFeel: {
+        motion: { durationMs: 280 },
+        settle: {
+  
+          enabled: true,
+  
+          ease: 'symbolBounce',
+  
+          strength: 0.9,
+  
+          symbolHeightRatio: 0.3,
+  
+          durationMs: 200
+  
+        },
+        symbolSettle: { mode: 'none' },
+        completion:{
+          postStopHoldMs: 0,
+        }
+
+  
+      },
       turbo: {
         skipWinAnimations: false,
-        stopDelayMs: 50,
-        startDelayMs: 200,
-        minSpinMs: 1400,
+        stopDelayMs: 40,
+        startDelayMs: 120,
+        minSpinMs: 700,
         stopMotionDurationMs: 140,
-        snapDurationMs: 12,
+        postStopHoldMs: 12,
       },
     },
   },
@@ -665,7 +674,7 @@ export const templateGameConfig: TemplateGameConfig = {
         '1': {
           line: { color: 0xff3b30 },
           label: {
-            enabled: true,
+            enabled: false,
             background: { type: 'graphic', fill: 0xff3b30, stroke: 0xffffff },
             text: { enabled: true, valueMode: 'lineId', fill: 0xffffff },
           },
@@ -673,7 +682,7 @@ export const templateGameConfig: TemplateGameConfig = {
         '2': {
           line: { color: 0x007aff },
           label: {
-            enabled: true,
+            enabled: false,
             background: { type: 'graphic', fill: 0x007aff, stroke: 0xffffff },
             text: { enabled: true, valueMode: 'lineId', fill: 0xffffff },
           },
@@ -681,7 +690,7 @@ export const templateGameConfig: TemplateGameConfig = {
         '3': {
           line: { color: 0x34c759 },
           label: {
-            enabled: true,
+            enabled: false,
             background: { type: 'graphic', fill: 0x34c759, stroke: 0xffffff },
             text: { enabled: true, valueMode: 'lineId', fill: 0xffffff },
           },
@@ -689,7 +698,7 @@ export const templateGameConfig: TemplateGameConfig = {
         '4': {
           line: { color: 0xffcc00 },
           label: {
-            enabled: true,
+            enabled: false,
             background: { type: 'graphic', fill: 0xffcc00, stroke: 0x000000 },
             text: { enabled: true, valueMode: 'lineId', fill: 0x000000, stroke: 0xffffff },
           },
@@ -697,7 +706,7 @@ export const templateGameConfig: TemplateGameConfig = {
         '5': {
           line: { color: 0xaf52de },
           label: {
-            enabled: true,
+            enabled: false,
             background: { type: 'graphic', fill: 0xaf52de, stroke: 0xffffff },
             text: { enabled: true, valueMode: 'lineId', fill: 0xffffff },
           },

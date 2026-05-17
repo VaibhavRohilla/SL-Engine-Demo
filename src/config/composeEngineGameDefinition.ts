@@ -4,7 +4,7 @@ import type {
   BootstrapInput,
   ISpinResultSource,
   SlotConfig,
-  SpinFeelConfigOverrides,
+  SpinFeelAuthoringConfigOverrides,
   SpinFeelPresetName,
 } from '@fnx/sl-engine';
 import type { StarterAudioProfile } from './audioConfig.ts';
@@ -37,9 +37,9 @@ export interface StarterGameDefinition {
   spinFeelPreset: SpinFeelPresetName;
   /**
    * Merged after the preset via engine `resolveSpinFeelConfig` (same channel as `bootstrap.spinFeelOverrides`).
-   * Use for timings, `symbolStripStopSettle`, reel order, etc., without hand-authoring a full `SpinFeelConfig`.
+   * Nested authoring fields: `speed`, `timing`, `startFeel`, `stopFeel`, `turbo`, `audioCues`.
    */
-  spinFeelOverrides?: SpinFeelConfigOverrides;
+  spinFeelOverrides?: SpinFeelAuthoringConfigOverrides;
   audioConfig: StarterAudioProfile;
   featureConfig: StarterFeatureConfig;
   createResultSource: () => ISpinResultSource;

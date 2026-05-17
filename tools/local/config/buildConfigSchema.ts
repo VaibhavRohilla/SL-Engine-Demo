@@ -28,7 +28,7 @@ export const BuildConfigSchema = z.object({
     skipStartScreen: z.boolean().default(false),
   }).default({}),
   spinFeel: z.object({
-    preset: z.enum(['premium', 'arcade', 'turbo', 'normal']).default('premium'),
+    preset: z.enum(['classic', 'premium', 'snappy', 'heavy', 'arcade']).default('premium'),
   }).default({}),
 }).strict();
 
@@ -99,7 +99,7 @@ export const BUILD_CONFIG_SCHEMA_JSON = {
       type: 'object',
       additionalProperties: false,
       properties: {
-        preset: { type: 'string', enum: ['premium', 'arcade', 'turbo', 'normal'], default: 'premium' },
+        preset: { type: 'string', enum: ['classic', 'premium', 'snappy', 'heavy', 'arcade'], default: 'premium' },
       },
     },
   },

@@ -63,7 +63,7 @@
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "preset": { "type": "string", "enum": ["premium", "arcade", "turbo", "normal"], "default": "premium" }
+        "preset": { "type": "string", "enum": ["classic", "premium", "snappy", "heavy", "arcade"], "default": "premium" }
       }
     }
   }

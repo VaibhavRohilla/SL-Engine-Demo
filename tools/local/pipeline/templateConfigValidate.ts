@@ -12,7 +12,7 @@ import {
 } from './pipelineTypes.ts';
 
 const TEMPLATE_CONFIG_FILE = 'src/config/templateGameConfig.ts';
-const SUPPORTED_SPIN_FEEL_PRESETS = ['premium', 'arcade', 'turbo', 'normal'] as const;
+const SUPPORTED_SPIN_FEEL_PRESETS = ['classic', 'premium', 'snappy', 'heavy', 'arcade'] as const;
 const SUPPORTED_SPIN_FEEL_PRESET_SET = new Set<string>(SUPPORTED_SPIN_FEEL_PRESETS);
 
 /** Must match engine `BootImageScaleMode` / template `TemplateBackgroundFit`. */
@@ -412,7 +412,6 @@ function validateWinPresentation(issues: PipelineIssue[], config: Record<string,
   validateWinPresentationChoreography(issues, wp.choreography);
 
   const choreography = asRecord(wp.choreography);
-  const visualizer = asRecord(wp.visualizer);
   if (choreography?.enabled === true) {
     const animation = asRecord(asRecord(visualizer?.symbolWins)?.animation);
     const loopPolicy = animation?.loopPolicy;

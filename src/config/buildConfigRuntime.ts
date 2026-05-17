@@ -1,7 +1,7 @@
 import type { SpinFeelPresetName } from '@fnx/sl-engine';
 import buildConfig from '../../build-config.json';
 
-const SPIN_FEEL_PRESETS = ['premium', 'arcade', 'turbo', 'normal'] as const;
+const SPIN_FEEL_PRESETS = ['classic', 'premium', 'snappy', 'heavy', 'arcade'] as const;
 const SPIN_FEEL_PRESET_SET = new Set<string>(SPIN_FEEL_PRESETS);
 
 interface StarterRawBuildConfig {

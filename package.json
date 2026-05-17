@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "@esotericsoftware/spine-pixi-v8": "4.2.110",
-    "@fnx/sl-engine": "./vendor/sl-engine",
+    "@fnx/sl-engine": "file:../SL-Engine",
     "@tweenjs/tween.js": "25.0.0",
     "howler": "2.2.4",
     "pixi.js": "8.18.1"

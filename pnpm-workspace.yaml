@@ -1,5 +1,2 @@
-# Single-package workspace (Cleopatra). Keeps dependency layout explicit for pnpm.
-packages:
-  - '.'
 allowBuilds:
   esbuild: false
