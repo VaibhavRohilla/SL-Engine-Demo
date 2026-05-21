@@ -47,6 +47,11 @@ type LineWinBuildInput = {
 
 const DETERMINISTIC_TIMESTAMP_BASE = 1_700_000_000_000;
 
+function isBrowserSmokeTestMode(): boolean {
+  if (typeof window === 'undefined') return false;
+  return new URLSearchParams(window.location.search).get('slTest') === '1';
+}
+
 /**
  * Real-feeling deterministic scenario rhythm.
  *
@@ -675,6 +680,13 @@ export function createDemoResultSource(slotConfig: SlotConfig): ISpinResultSourc
   return {
     async getSpinResult(request: SpinRequest): Promise<SpinOutcome> {
       spinCounter += 1;
+      if (isBrowserSmokeTestMode()) {
+        return spinCounter % 2 === 0
+          ? buildNoWinOutcome(slotConfig, request, spinCounter)
+          : slotConfig.evaluationMode === 'lines'
+            ? buildSingleLineOutcome(slotConfig, request, spinCounter, 3)
+            : buildWaysOutcome(slotConfig, request, spinCounter, 3);
+      }
       return buildClassicOutcome(slotConfig, request, spinCounter);
     },
 

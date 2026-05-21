@@ -567,7 +567,7 @@ export const templateGameConfig: TemplateGameConfig = {
   winPresentation: {
     timingPrecedence: 'presenterOverridesTier',
     /** Reel-center placement (stock default). Positive y moves down; keep near 0 so text stays in the reel window. */
-    textPosition: { yOffset: 280 },
+    textPosition: { yOffset: 250 },
     timing: {
       singleWinDurationMs: 1200,
       betweenWinsDelayMs: 150,
@@ -593,6 +593,11 @@ export const templateGameConfig: TemplateGameConfig = {
           enabled: true,
           type: 'graphic',
           lifetime: 'followPresentation',
+          pulse : {
+            enabled: true,
+            alpha: 0.07,
+            durationMs: 900,
+          },
         },
       },
       lines: {

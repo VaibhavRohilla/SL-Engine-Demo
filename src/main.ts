@@ -33,6 +33,8 @@ type StarterBrowserSmokeBoard = {
   columnLengths: number[];
 };
 
+type CommercialHudBrowserProbe = import('@fnx/sl-engine/testing').CommercialHudBrowserProbe;
+
 type StarterBrowserSmokeState = {
   ready: boolean;
   bootCount: number;
@@ -47,6 +49,7 @@ type StarterBrowserSmokeState = {
   handleRunning: boolean;
   layout: StarterBrowserSmokeLayout;
   board: StarterBrowserSmokeBoard | null;
+  commercialHudProbe: CommercialHudBrowserProbe | null;
 };
 
 declare global {
@@ -75,6 +78,7 @@ const browserSmokeState: StarterBrowserSmokeState = {
   handleRunning: false,
   layout: { rowsPerReel: [...gameDefinition.slotConfig.layout.rowsPerReel] },
   board: null,
+  commercialHudProbe: null,
 };
 
 let readyResolver: ((state: StarterBrowserSmokeState) => void) | null = null;
@@ -130,6 +134,7 @@ function readBrowserSmokeState(): StarterBrowserSmokeState {
   browserSmokeState.handleRunning = currentHandle?.isRunning() ?? false;
   browserSmokeState.layout = { rowsPerReel: [...gameDefinition.slotConfig.layout.rowsPerReel] };
   browserSmokeState.board = readBrowserSmokeBoard();
+  browserSmokeState.commercialHudProbe = readCommercialHudProbe();
   return {
     ...browserSmokeState,
     layout: { rowsPerReel: [...browserSmokeState.layout.rowsPerReel] },
@@ -140,7 +145,21 @@ function readBrowserSmokeState(): StarterBrowserSmokeState {
         }
       : null,
     lastSpin: browserSmokeState.lastSpin ? { ...browserSmokeState.lastSpin } : null,
+    commercialHudProbe: browserSmokeState.commercialHudProbe
+      ? {
+          ...browserSmokeState.commercialHudProbe,
+          controls: browserSmokeState.commercialHudProbe.controls.map((control) => ({ ...control })),
+        }
+      : null,
   };
+}
+
+type CommercialHudBrowserProbeReader = (handle: GameHandle | null | undefined) => CommercialHudBrowserProbe | null;
+let commercialHudBrowserProbeReader: CommercialHudBrowserProbeReader | null = null;
+
+function readCommercialHudProbe(): CommercialHudBrowserProbe | null {
+  if (!commercialHudBrowserProbeReader) return null;
+  return commercialHudBrowserProbeReader(currentHandle);
 }
 
 function resetReadyWaiter(): void {
@@ -228,8 +247,11 @@ function ensureSmokeCanvasToken(canvas: HTMLCanvasElement): void {
   canvas.dataset.slSmokeHostToken ||= 'sl-engine-generated-smoke-host';
 }
 
-function installBrowserSmokeHook(): void {
+async function installBrowserSmokeHook(): Promise<void> {
   if (!isBrowserSmokeHookEnabled() || window.__SL_ENGINE_TEST__) return;
+
+  const testingBarrel = await import('@fnx/sl-engine/testing');
+  commercialHudBrowserProbeReader = testingBarrel.readCommercialHudBrowserProbe;
 
   window.__SL_ENGINE_TEST__ = {
     waitForReady: async () => {
@@ -432,5 +454,4 @@ async function main(): Promise<void> {
   }
 }
 
-installBrowserSmokeHook();
-main();
+void installBrowserSmokeHook().then(() => main());

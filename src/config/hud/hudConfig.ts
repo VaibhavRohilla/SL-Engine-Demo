@@ -21,6 +21,7 @@ const betPanelShared = {
   title: 'Bet',
   backdrop: 'dim' as const,
   closeButton: true,
+  closeButtonPlacement: 'top-right' as const,
   bet: betPanelConfig,
 };
 
@@ -39,11 +40,109 @@ export const hudConfig = {
     enabled: true,
     preset: 'commercial-slot',
     presentationMode: 'demo',
+    statusDisplay: {
+      enabled: true,
+      idleMessage: 'PLACE YOUR BETS!',
+      spinningMessage: 'GOOD LUCK!',
+      noWinMessage: 'PLACE YOUR BETS!',
+      showZeroWinAmount: false,
+      preservePreviousWinUntilNextSpin: false,
+      visibility: {
+        idleMessage: false,
+        spinningMessage: false,
+        noWinMessage: false,
+        win: false,
+        winDetail: false,
+      },
+      creditLabel: 'CREDIT',
+      betLabel: 'BET',
+      winLabel: 'WIN',
+      linePaysTemplate: 'LINE {lineId} PAYS {amount}',
+      fallbackWinDetailTemplate: 'TOTAL WIN {amount}',
+      pairSpacingPx: 6,
+      sideGroupGapPx: 12,
+      layout: {
+        pad: 12,
+        sideLayout: 'stacked-left',
+        stackRowGapPx: 4,
+        portraitCenterOffsetY: -2,
+        clusters: {
+          credit: { groupAnchor: 'center', offsetX: 0, offsetY: 0 },
+          bet: { groupAnchor: 'center', offsetX: 0, offsetY: 0 },
+          center: { groupAnchor: 'center', offsetX: -80, offsetY: 0 },
+          detail: { groupAnchor: 'center', offsetX: -80, offsetY: 0 }        },
+      },
+      styles: {
+        creditLabel: {
+          fontSize: 24,
+          fontWeight: 'normal',
+          align: 'left',
+          fill: 0xffd54f,
+          strokeThickness: 0,
+        },
+        betLabel: {
+          fontSize: 24,
+          fontWeight: 'normal',
+          align: 'left',
+          fill: 0xffd54f,
+          strokeThickness: 0,
+        },
+        winLabel: {
+
+          fontSize: 24,
+          fontWeight: 'normal',
+          align: 'left',
+          fill: 0xffd54f,
+          strokeThickness: 0,
+        },
+        creditAmount: {
+          fontSize: 24,
+          fontWeight: 'normal',
+          align: 'left',
+          fill: 0xffffff,
+          strokeThickness: 0,
+        },
+        betAmount: {
+          fontSize: 24,
+          fontWeight: 'normal',
+          align: 'left',
+          fill: 0xffffff,
+          strokeThickness: 0,
+        },
+        winAmount: {
+          fontSize: 24,
+          fontWeight: 'normal',
+          align: 'left',
+          fill: 0xffffff,
+          strokeThickness: 0,
+        },
+        idleMessage: { fontSize: 32, fontWeight: 'normal', fill: 0xffffff, align: 'center', strokeThickness: 0 },
+        spinningMessage: { fontSize: 32, fontWeight: 'normal', fill: 0xe3f2fd, align: 'center' },
+        noWinMessage: { fontSize: 32, fontWeight: 'normal', fill: 0xffffff, align: 'center' },
+        detail: { fontSize: 24, fill: 0xb0bec5, align: 'center', minFontSize: 16, maxFontSize: 24, strokeThickness: 0 },
+      },
+    },
+    layout: {
+      mode: 'bottom-console',
+      margins: { top: 12, right: 12, bottom: 20, left: 12 },
+      spinClusterSize: { width: 228, height: 72 },
+      utilityClusterSize: { width: 168, height: 60 },
+      bottomBarHeight: 80,
+      statusCenterMinFontSize: 11,
+      statusDetailMinFontSize: 9,
+      statusCreditClusterWidth: 200,
+      statusBetClusterWidth: 130,
+      controlStrips: {
+        utility: { anchor: 'left', padX: 4, gap: 6, fitToLabels: true, labelPadX: 12 },
+        spin: { anchor: 'right', padX: 8, gap: 6, fitToLabels: true, labelPadX: 12 },
+      },
+    },
     /** Visual-only; does not change zone layout rects — see engine docs (COMMERCIAL_HUD_CONTRACT). */
     skin: {
       zoneCornerRadius: 10,
       zoneContentInset: 4,
-      // Keep default chrome for critical controls, but style side rails independently.
+      spinClusterRingAlpha: 0,
+      spinClusterFillBoostAlpha: 0,
       zoneOverrides: {
         leftFeatureRail: {
           zoneBackgroundAlpha: 0,
@@ -54,8 +153,123 @@ export const hudConfig = {
           zoneBorderAlpha: 0,
         },
         bottomHudBar: {
+          zoneBackgroundAlpha: 0.55,
+          zoneBorderAlpha: 0.22,
+        },
+        spinControlCluster: {
           zoneBackgroundAlpha: 0,
           zoneBorderAlpha: 0,
+        },
+        utilityControlCluster: {
+          zoneBackgroundAlpha: 0,
+          zoneBorderAlpha: 0,
+        },
+      },
+    },
+    board: {
+      enabled: false,
+      layers: ['overlay'],
+      elements: {
+        brandLogo: {
+          type: 'sprite',
+          layer: 'overlay',
+          assetKey: 'Vase',
+          anchorTo: 'viewport',
+          anchor: 'top-left',
+          offset: { x: 28, y: 26 },
+          zIndex: 10,
+        },
+        promoButton: {
+          type: 'button',
+          enabled: false,
+          layer: 'overlay',
+          action: 'panel.paytable.open',
+          enabledWhen: 'spin.canOpenPanel',
+          anchorTo: 'element',
+          target: 'brandLogo',
+          anchor: 'bottom-left',
+          offset: { x: 0, y: 18 },
+          width: 132,
+          height: 40,
+          scale: 1.5,
+          zIndex: 20,
+          label: {
+            type: 'text',
+            textKey: 'hud.board.bonusInfo',
+            styleRole: 'buttonLabel',
+            offset: { x: 0, y: 12 },
+          },
+          states: {
+            hover: { scale: 1.04 },
+            pressed: { scale: 0.98 },
+            disabled: { alpha: 0.5 },
+          },
+        },
+        balanceValue: {
+          type: 'text',
+          layer: 'overlay',
+          textFrom: 'balance.formatted',
+          styleRole: 'statusPrimary',
+          anchorTo: 'viewport',
+          anchor: 'top-right',
+          offset: { x: -30, y: 28 },
+          scale: 1.55,
+          zIndex: 30,
+        },
+        betValue: {
+          type: 'text',
+          layer: 'overlay',
+          textFrom: 'bet.formatted',
+          styleRole: 'statusPrimary',
+          anchorTo: 'element',
+          target: 'balanceValue',
+          anchor: 'bottom-right',
+          offset: { x: 0, y: 16 },
+          scale: 1.55,
+          zIndex: 31,
+        },
+        winValue: {
+          type: 'text',
+          layer: 'overlay',
+          textFrom: 'win.formatted',
+          styleRole: 'statusPrimary',
+          visibleWhen: 'win.visible',
+          anchorTo: 'element',
+          target: 'betValue',
+          anchor: 'bottom-right',
+          offset: { x: 0, y: 16 },
+          scale: 1.55,
+          zIndex: 32,
+        },
+      },
+      portrait: {
+        elements: {
+          brandLogo: {
+            anchor: 'top-center',
+            offset: { x: 0, y: 28 },
+          },
+          promoButton: {
+            anchor: 'bottom-center',
+            offset: { x: 0, y: 22 },
+          },
+          balanceValue: {
+            offset: { x: -26, y: 32 },
+          },
+        },
+      },
+      landscape: {
+        elements: {
+          brandLogo: {
+            anchor: 'top-left',
+            offset: { x: 28, y: 26 },
+          },
+          promoButton: {
+            anchor: 'bottom-left',
+            offset: { x: 0, y: 18 },
+          },
+          balanceValue: {
+            offset: { x: -30, y: 28 },
+          },
         },
       },
     },
@@ -85,11 +299,7 @@ export const hudConfig = {
       },
       bottomHudBar: {
         enabled: true,
-        showCredit: true,
-        showBet: true,
-        showWin: true,
-        showTurboHint: true,
-        
+        showTurboHint: false,
       },
       spinControlCluster: {
         enabled: true,
@@ -103,6 +313,7 @@ export const hudConfig = {
         showMenu: true,
         showInfo: true,
         showSound: true,
+        placement: 'bottom-bar-left',
       },
       modalLayer: {
         enabled: true,
@@ -138,17 +349,19 @@ export const hudConfig = {
     systemSettingsPanel: {
       enabled: true,
       title: 'System Settings',
-      backdrop: 'dim',
+      backdrop: 'dim' ,
       closeButton: true,
-      position: { anchor: 'center', x: -210, y: -190 },
+
+      position: { anchor: 'center', x: -210, y: -250 },
       settings: settingsPanelConfig,
     },
     soundPopover: {
       enabled: true,
+
       title: 'Sound',
       backdrop: 'dim',
       closeButton: false,
-      position: { anchor: 'bottom-right', x: -228, y: -212 },
+      position: { anchor: 'bottom-left', x: 130, y: -230 },
     },
   },
 } satisfies SlotHudConfig;

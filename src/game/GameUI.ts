@@ -10,7 +10,12 @@
  * wallet/cashier API.
  */
 
-import type { ISlotUI } from '@fnx/sl-engine';
+import type { ISlotUI, SpinOutcome } from '@fnx/sl-engine';
+import {
+  EMPTY_HUD_WIN_SUMMARY,
+  extractHudWinSummaryFromSpinOutcome,
+  type HudWinSummarySnapshot,
+} from '@fnx/sl-engine';
 
 export interface GameUIOptions {
   initialBalance?: number;
@@ -24,6 +29,7 @@ export function createGameUI(options: GameUIOptions = {}): ISlotUI {
   let balance = initialBalance;
   let currentBet = defaultBet;
   let lastWinAmount = 0;
+  let hudWinSummary: HudWinSummarySnapshot = EMPTY_HUD_WIN_SUMMARY;
 
   const formatAmount = (amount: number): string =>
     `$${amount.toFixed(2)}`;
@@ -34,6 +40,7 @@ export function createGameUI(options: GameUIOptions = {}): ISlotUI {
     getFormattedBalance: () => formatAmount(balance),
     getLastWinAmount: () => lastWinAmount,
     getFormattedLastWin: () => formatAmount(lastWinAmount),
+    getHudWinSummary: () => hudWinSummary,
 
     canAffordBet: (bet: number) => balance >= bet,
 
@@ -58,9 +65,13 @@ export function createGameUI(options: GameUIOptions = {}): ISlotUI {
 
     onSpinStart: () => {
       lastWinAmount = 0;
+      hudWinSummary = EMPTY_HUD_WIN_SUMMARY;
     },
 
-    onSpinCycleSettledEvent: () => {},
+    onSpinCycleSettledEvent: (result: SpinOutcome) => {
+      hudWinSummary = extractHudWinSummaryFromSpinOutcome(result, formatAmount);
+      lastWinAmount = result.totalWin ?? 0;
+    },
 
     onWinUpdate: (amount: number) => {
       lastWinAmount = amount;

@@ -5,6 +5,6 @@ export const autoplayPanelConfig = {
   title: 'Autoplay',
   allowedSpinCounts: [10, 25, 50, 100],
   defaultSpinCount: 25,
-  allowTurboSpin: true,
+  // allowTurboSpin: true,
   stopPolicy: 'after_current',
 } satisfies SlotHudAutoplayPanelConfig;
