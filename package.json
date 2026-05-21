@@ -5,11 +5,11 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "tsx tools/dev.ts",
-    "build": "tsx tools/build.ts",
+    "dev": "node tools/run-ts.mjs tools/dev.ts",
+    "build": "node tools/run-ts.mjs tools/build.ts",
     "typecheck": "tsc --noEmit",
-    "assets": "tsx tools/assets.ts",
-    "doctor": "tsx tools/doctor.ts",
+    "assets": "node tools/run-ts.mjs tools/assets.ts",
+    "doctor": "node tools/run-ts.mjs tools/doctor.ts",
     "clean": "node -e \"const fs=require('node:fs');fs.rmSync('dist',{recursive:true,force:true});const dir='generated';if(fs.existsSync(dir)){for(const file of fs.readdirSync(dir)){if(file.endsWith('.json'))fs.rmSync(dir+'/'+file,{force:true});}}\""
   },
   "dependencies": {
@@ -21,16 +21,13 @@
   },
   "devDependencies": {
     "@types/node": "22.10.2",
-    "esbuild": "0.24.2",
+    "esbuild": "0.28.0",
     "tsx": "4.21.0",
     "typescript": "5.9.3",
     "zod": "3.25.76"
   },
-  "pnpm": {
-    "onlyBuiltDependencies": ["esbuild"]
-  },
   "engines": {
     "node": ">=18.0.0",
-    "pnpm": ">=8.0.0"
+    "pnpm": ">=9.0.0"
   }
 }

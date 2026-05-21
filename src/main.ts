@@ -2,7 +2,7 @@ import { bootstrap, EngineEventRegistry, SlotGameScene } from '@fnx/sl-engine';
 import type { BootstrapInput, GameHandle, GameSceneFactory, IReelsView, LayoutState } from '@fnx/sl-engine';
 import { gameDefinition } from './config/gameDefinition.ts';
 import { isAuthoredWinPresentationTemplate, type StarterGameDefinition } from './config/composeEngineGameDefinition.ts';
-import { runtimeShellConfig } from './config/hud/index.ts';
+import { cleopatraBoardVisualProofConfig, hudConfig, runtimeShellConfig } from './config/hud/index.ts';
 import {
   createTemplateHookPresentationSurfaces,
   notifyTemplateBootComplete,
@@ -34,6 +34,7 @@ type StarterBrowserSmokeBoard = {
 };
 
 type CommercialHudBrowserProbe = import('@fnx/sl-engine/testing').CommercialHudBrowserProbe;
+type HudBoardVisualProofProbe = import('@fnx/sl-engine/testing').HudBoardVisualProofProbe;
 
 type StarterBrowserSmokeState = {
   ready: boolean;
@@ -50,6 +51,7 @@ type StarterBrowserSmokeState = {
   layout: StarterBrowserSmokeLayout;
   board: StarterBrowserSmokeBoard | null;
   commercialHudProbe: CommercialHudBrowserProbe | null;
+  hudBoardVisualProof: HudBoardVisualProofProbe | null;
 };
 
 declare global {
@@ -79,6 +81,7 @@ const browserSmokeState: StarterBrowserSmokeState = {
   layout: { rowsPerReel: [...gameDefinition.slotConfig.layout.rowsPerReel] },
   board: null,
   commercialHudProbe: null,
+  hudBoardVisualProof: null,
 };
 
 let readyResolver: ((state: StarterBrowserSmokeState) => void) | null = null;
@@ -96,6 +99,12 @@ function createReadyPromise(): Promise<StarterBrowserSmokeState> {
 function isBrowserSmokeHookEnabled(): boolean {
   if (typeof window === 'undefined') return false;
   return new URLSearchParams(window.location.search).get('slTest') === '1';
+}
+
+function isHudBoardVisualProofEnabled(): boolean {
+  if (typeof window === 'undefined') return false;
+  const params = new URLSearchParams(window.location.search);
+  return params.get('slTest') === '1' && params.get('slBoardVisualProof') === '1';
 }
 
 function readBrowserSmokeBoard(): StarterBrowserSmokeBoard | null {
@@ -135,6 +144,9 @@ function readBrowserSmokeState(): StarterBrowserSmokeState {
   browserSmokeState.layout = { rowsPerReel: [...gameDefinition.slotConfig.layout.rowsPerReel] };
   browserSmokeState.board = readBrowserSmokeBoard();
   browserSmokeState.commercialHudProbe = readCommercialHudProbe();
+  browserSmokeState.hudBoardVisualProof = isHudBoardVisualProofEnabled()
+    ? hudBoardVisualProofReader?.(currentHandle) ?? null
+    : null;
   return {
     ...browserSmokeState,
     layout: { rowsPerReel: [...browserSmokeState.layout.rowsPerReel] },
@@ -151,11 +163,21 @@ function readBrowserSmokeState(): StarterBrowserSmokeState {
           controls: browserSmokeState.commercialHudProbe.controls.map((control) => ({ ...control })),
         }
       : null,
+    hudBoardVisualProof: browserSmokeState.hudBoardVisualProof
+      ? {
+          rootFound: browserSmokeState.hudBoardVisualProof.rootFound,
+          elements: browserSmokeState.hudBoardVisualProof.elements.map((element) => ({ ...element })),
+        }
+      : null,
   };
 }
 
-type CommercialHudBrowserProbeReader = (handle: GameHandle | null | undefined) => CommercialHudBrowserProbe | null;
-let commercialHudBrowserProbeReader: CommercialHudBrowserProbeReader | null = null;
+let commercialHudBrowserProbeReader:
+  | ((handle: GameHandle | null | undefined) => CommercialHudBrowserProbe | null)
+  | null = null;
+let hudBoardVisualProofReader:
+  | ((handle: GameHandle | null | undefined) => HudBoardVisualProofProbe | null)
+  | null = null;
 
 function readCommercialHudProbe(): CommercialHudBrowserProbe | null {
   if (!commercialHudBrowserProbeReader) return null;
@@ -251,7 +273,14 @@ async function installBrowserSmokeHook(): Promise<void> {
   if (!isBrowserSmokeHookEnabled() || window.__SL_ENGINE_TEST__) return;
 
   const testingBarrel = await import('@fnx/sl-engine/testing');
-  commercialHudBrowserProbeReader = testingBarrel.readCommercialHudBrowserProbe;
+  commercialHudBrowserProbeReader = testingBarrel.readCommercialHudBrowserProbe as (
+    handle: GameHandle | null | undefined,
+  ) => CommercialHudBrowserProbe | null;
+  if (isHudBoardVisualProofEnabled()) {
+    hudBoardVisualProofReader = testingBarrel.readHudBoardVisualProofProbe as (
+      handle: GameHandle | null | undefined,
+    ) => HudBoardVisualProofProbe | null;
+  }
 
   window.__SL_ENGINE_TEST__ = {
     waitForReady: async () => {
@@ -308,7 +337,7 @@ function buildBootstrapInput(): BootstrapInput {
     canvas,
     slotConfig: gameDefinition.slotConfig,
     backgroundColor: gameDefinition.canvasBackgroundColor,
-    gameUI: createGameUI(),
+    gameUI: isHudBoardVisualProofEnabled() ? createGameUI({ initialBalance: 9846 }) : createGameUI(),
     winFormatter: createWinFormatter(),
     spinFeel: gameDefinition.spinFeelPreset,
     spinFeelOverrides: {
@@ -351,7 +380,17 @@ function buildBootstrapInput(): BootstrapInput {
     //     : null,
 
     useDefaultHud: true,
-    runtimeShell: runtimeShellConfig,
+    runtimeShell: isHudBoardVisualProofEnabled()
+      ? {
+          hud: {
+            ...hudConfig,
+            commercial: {
+              ...hudConfig.commercial,
+              board: cleopatraBoardVisualProofConfig,
+            },
+          },
+        }
+      : runtimeShellConfig,
     maxDpr: 2,
     logLevel: 'debug',
 

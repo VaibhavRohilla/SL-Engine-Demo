@@ -7,6 +7,7 @@ export { paytableConfig } from './paytableConfig.ts';
 export { betPanelConfig } from './betPanelConfig.ts';
 export { autoplayPanelConfig } from './autoplayPanelConfig.ts';
 export { settingsPanelConfig } from './settingsPanelConfig.ts';
+export { cleopatraBoardVisualProofConfig } from './cleopatraBoardVisualProofConfig.ts';
 
 export const runtimeShellConfig = {
   hud: hudConfig,

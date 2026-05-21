@@ -11,6 +11,8 @@ generated/*.json
 .DS_Store
 __MACOSX/
 Thumbs.db
+# macOS AppleDouble/resource-fork sidecars (common on exFAT/APFS external volumes)
+._*
 
 # === Package artifacts ===
 *.tgz

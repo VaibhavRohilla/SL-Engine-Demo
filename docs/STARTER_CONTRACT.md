@@ -7,6 +7,7 @@ This repo is **not** a generated starter tarball; it uses a **sibling** SDK for 
 - `dependencies["@fnx/sl-engine"]` is `file:../SL-Engine` (see root `package.json`).
 - Run `pnpm build:sdk` in `../SL-Engine` before `pnpm build` / production-like runs so `node_modules/@fnx/sl-engine` resolves to a built SDK.
 - TypeScript may still map `@fnx/sl-engine` to engine **sources** via `tsconfig.json` `paths` for IDE go-to-definition.
+- **HUD board visual proof (opt-in):** `?slTest=1&slBoardVisualProof=1` enables `cleopatraBoardVisualProofConfig` at bootstrap. Normal demo URLs are unchanged. Run proof from SL-Engine: `pnpm test:cleopatra-board-visual-proof` (requires `pnpm build` here first).
 
 Generated starters keep the stricter **vendored** contract below.
 
@@ -41,11 +42,11 @@ tools/
 
 ```json
 {
-  "dev": "tsx tools/dev.ts",
-  "build": "tsx tools/build.ts",
+  "dev": "node tools/run-ts.mjs tools/dev.ts",
+  "build": "node tools/run-ts.mjs tools/build.ts",
   "typecheck": "tsc --noEmit",
-  "assets": "tsx tools/assets.ts",
-  "doctor": "tsx tools/doctor.ts",
+  "assets": "node tools/run-ts.mjs tools/assets.ts",
+  "doctor": "node tools/run-ts.mjs tools/doctor.ts",
   "clean": "node -e \"const fs=require('node:fs');fs.rmSync('dist',{recursive:true,force:true});const dir='generated';if(fs.existsSync(dir)){for(const file of fs.readdirSync(dir)){if(file.endsWith('.json'))fs.rmSync(dir+'/'+file,{force:true});}}\""
 }
 ```

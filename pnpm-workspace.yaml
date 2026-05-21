@@ -1,2 +1,7 @@
+# Single-package workspace root (required when this file exists).
+packages:
+  - '.'
+
+# pnpm 11+: allow esbuild postinstall. package.json `pnpm` field is ignored by pnpm 11.
 allowBuilds:
-  esbuild: false
+  esbuild: true

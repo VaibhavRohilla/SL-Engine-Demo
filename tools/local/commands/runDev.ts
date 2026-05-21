@@ -85,8 +85,39 @@ async function findFirstFreePort(startPort: number, host: string, maxAttempts = 
 }
 
 function browserHost(host: string): string {
-  if (host === '0.0.0.0' || host === '::' || host === '') return 'localhost';
+  // Normalize bind-all / loopback addresses to a friendly localhost URL for logs.
+  if (
+    host === '0.0.0.0' ||
+    host === '::' ||
+    host === '' ||
+    host === '127.0.0.1' ||
+    host === '::1' ||
+    host === '[::1]'
+  ) {
+    return 'localhost';
+  }
   return host;
+}
+
+function resolveServedHost(
+  served: { host?: string; hosts?: readonly string[] },
+  listenHost: string,
+): string {
+  return served.host ?? served.hosts?.[0] ?? listenHost;
+}
+
+function printDevServerBanner(options: {
+  browse: string;
+  liveReloadLine: string;
+  onLan: string;
+  entry: string;
+  gameName: string;
+}): void {
+  const { browse, liveReloadLine, onLan, entry, gameName } = options;
+  console.log(`\n  Open:      ${browse}/`);
+  console.log(`  Bundle:    ${browse}/main.js${liveReloadLine}${onLan}`);
+  console.log(`  TS entry:  ${entry}`);
+  console.log(`  Game:      ${gameName}\n`);
 }
 
 function buildLiveReloadSnippet(allowLan: boolean): string {
@@ -257,19 +288,6 @@ export async function runDev(options: RunDevOptions = {}): Promise<{ host: strin
     console.log('  [html] dist/index.html updated');
   }, debounceMs);
 
-  const assetsSrc = path.join(projectRoot, 'assets');
-  if (fs.existsSync(assetsSrc)) {
-    console.log(`  Watching assets/ (debounce ${debounceMs}ms)\n`);
-    watch(assetsSrc, { recursive: true }, (_event, filename) => {
-      if (filename) debouncedSyncAssets();
-    });
-  }
-
-  const htmlSrc = path.join(projectRoot, 'src', 'index.html');
-  if (fs.existsSync(htmlSrc)) {
-    watch(htmlSrc, () => debouncedWriteHtml());
-  }
-
   const chosenPort = await findFirstFreePort(requestedPort, listenHost);
   if (chosenPort !== requestedPort) {
     console.log(`\n  Port ${requestedPort} was already in use — serving on ${chosenPort} instead.\n`);
@@ -281,7 +299,8 @@ export async function runDev(options: RunDevOptions = {}): Promise<{ host: strin
     host: listenHost,
   });
 
-  const browse = `http://${browserHost(served.host)}:${served.port}`;
+  const servedHost = resolveServedHost(served, listenHost);
+  const browse = `http://${browserHost(servedHost)}:${served.port}`;
   const lanIps = getLanIPv4Addresses();
   const onLan =
     listenHost === '0.0.0.0' || listenHost === '::'
@@ -296,10 +315,26 @@ export async function runDev(options: RunDevOptions = {}): Promise<{ host: strin
       : '\n  Reload:    auto on localhost only (LAN/iPhone: no poll; use DEV_LIVE_RELOAD_LAN=1 or DEV_LIVE_RELOAD=0)'
     : '\n  Reload:    off (DEV_LIVE_RELOAD=0)';
 
-  console.log(`\n  Open:      ${browse}/`);
-  console.log(`  Bundle:    ${browse}/main.js${liveReloadLine}${onLan}`);
-  console.log(`  TS entry:  ${entry}`);
-  console.log(`  Game:      ${buildConfig.game?.name ?? 'unknown'}\n`);
+  printDevServerBanner({
+    browse,
+    liveReloadLine,
+    onLan,
+    entry,
+    gameName: buildConfig.game?.name ?? 'unknown',
+  });
 
-  return { host: served.host, port: served.port };
+  const assetsSrc = path.join(projectRoot, 'assets');
+  if (fs.existsSync(assetsSrc)) {
+    console.log(`  Watching assets/ (debounce ${debounceMs}ms)`);
+    watch(assetsSrc, { recursive: true }, (_event, filename) => {
+      if (filename) debouncedSyncAssets();
+    });
+  }
+
+  const htmlSrc = path.join(projectRoot, 'src', 'index.html');
+  if (fs.existsSync(htmlSrc)) {
+    watch(htmlSrc, () => debouncedWriteHtml());
+  }
+
+  return { host: browserHost(servedHost), port: served.port };
 }

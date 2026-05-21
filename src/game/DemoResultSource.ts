@@ -52,6 +52,12 @@ function isBrowserSmokeTestMode(): boolean {
   return new URLSearchParams(window.location.search).get('slTest') === '1';
 }
 
+function isHudBoardVisualProofMode(): boolean {
+  if (typeof window === 'undefined') return false;
+  const params = new URLSearchParams(window.location.search);
+  return params.get('slTest') === '1' && params.get('slBoardVisualProof') === '1';
+}
+
 /**
  * Real-feeling deterministic scenario rhythm.
  *
@@ -363,6 +369,33 @@ function buildLineWin(input: LineWinBuildInput) {
       paylinePattern: [...input.payline.pattern],
       direction: 'left-to-right' as const,
     },
+  };
+}
+
+function buildHudBoardVisualProofWinOutcome(
+  slotConfig: SlotConfig,
+  request: SpinRequest,
+  spinCounter: number,
+): SpinOutcome {
+  const grid = buildGridFromStrips(slotConfig, spinCounter);
+  const winAmount = 2500;
+  return {
+    version: SCHEMA_VERSION,
+    spinId: createDeterministicSpinId(spinCounter),
+    sequence: spinCounter - 1,
+    bet: request.bet,
+    totalWin: winAmount,
+    stages: [
+      {
+        stageId: 0,
+        stageType: StageType.BASE,
+        grid,
+        wins: [],
+        stageWin: winAmount,
+        triggers: [],
+      },
+    ],
+    timestamp: DETERMINISTIC_TIMESTAMP_BASE + spinCounter,
   };
 }
 
@@ -680,6 +713,9 @@ export function createDemoResultSource(slotConfig: SlotConfig): ISpinResultSourc
   return {
     async getSpinResult(request: SpinRequest): Promise<SpinOutcome> {
       spinCounter += 1;
+      if (isHudBoardVisualProofMode()) {
+        return buildHudBoardVisualProofWinOutcome(slotConfig, request, spinCounter);
+      }
       if (isBrowserSmokeTestMode()) {
         return spinCounter % 2 === 0
           ? buildNoWinOutcome(slotConfig, request, spinCounter)
