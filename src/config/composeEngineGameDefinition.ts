@@ -7,7 +7,7 @@ import type {
   SpinFeelAuthoringConfigOverrides,
   SpinFeelPresetName,
 } from '@fnx/sl-engine';
-import type { StarterAudioProfile } from './audioConfig.ts';
+import type { CleopatraAudioProfile } from './audioConfig.ts';
 import type { StarterFeatureConfig } from './featureConfig.ts';
 import { STARTER_SPIN_FEEL_PRESETS } from './templateGameConfig.ts';
 import type {
@@ -40,7 +40,7 @@ export interface StarterGameDefinition {
    * Nested authoring fields: `speed`, `timing`, `startFeel`, `stopFeel`, `turbo`, `audioCues`.
    */
   spinFeelOverrides?: SpinFeelAuthoringConfigOverrides;
-  audioConfig: StarterAudioProfile;
+  audioConfig: CleopatraAudioProfile;
   featureConfig: StarterFeatureConfig;
   createResultSource: () => ISpinResultSource;
   background?: BootstrapInput['background'];
@@ -61,7 +61,7 @@ export interface ComposeEngineGameDefinitionInputs {
   slotConfig: SlotConfig;
   bootConfig: BootConfigInput;
   fallbackSpinFeelPreset: SpinFeelPresetName;
-  audioConfig: StarterAudioProfile;
+  audioConfig: CleopatraAudioProfile;
   featureConfig: StarterFeatureConfig;
   createResultSource: () => ISpinResultSource;
   /**
@@ -592,12 +592,6 @@ export function composeEngineGameDefinition(
   const frame = composeFrame(sceneSlotFrame);
   const orientation = composeOrientation(templateConfig, slotShape, background, sceneSlotFrame);
   const fallbackReelMasks = orientation ? undefined : baseProfile.reelMasks;
-  if (orientation?.portrait?.reelMasks) {
-    console.debug('[Cleopatra][compose] portrait.reelMasks', orientation.portrait.reelMasks);
-  }
-  if (orientation?.landscape?.reelMasks) {
-    console.debug('[Cleopatra][compose] landscape.reelMasks', orientation.landscape.reelMasks);
-  }
   const canvasBackgroundColor = resolveCanvasBackgroundColor(background, inputs.canvasClearColorFromBuild);
 
   return {

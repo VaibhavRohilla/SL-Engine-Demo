@@ -61,6 +61,9 @@
 | `doctor` / `assets` gate not in Phase 12 commit | Commit `pipeline.ts` + `runDoctor.ts` |
 | Phase 11 report claimed doctor/assets 0 errors | Report corrected — SFX gate failures documented |
 | Legacy duplicate audio authority | Removed — single `cleopatraSfxManifestAssets` list |
+| `StarterAudioProfile` stale in `composeEngineGameDefinition.ts` | Use `CleopatraAudioProfile` (no compat alias) |
+| `pnpm doctor` crashed on Node 22+ (JSON import attribute) | `build-config.json` import uses `with { type: 'json' }` |
+| Symbol keys dropped from `referenced-keys:validate` | `getCleopatraSymbolSpriteKeys()` from `slotConfig` (no regex surface) |
 
 ---
 
@@ -134,9 +137,11 @@ Cleopatra production SFX validation: FAIL
 |------|--------|-------|
 | `pnpm validate:production-sfx` | **FAIL** | 7× `SFX_PLACEHOLDER_BYTE_IDENTICAL` |
 | `pnpm assets` | **FAIL** | Same 7 SFX errors (sfx-production:validate wired) |
-| `pnpm doctor` | **FAIL** | Same 7 SFX errors (step 9 production SFX) |
-| `pnpm typecheck` | **PASS** | No audio content dependency |
+| `pnpm doctor` | **FAIL** | Same 7 SFX errors (step 8/10 production SFX) after tooling reaches validation |
+| `pnpm typecheck` | **PASS** | `CleopatraAudioProfile` aligned with `composeEngineGameDefinition` |
 | `pnpm build` | **PASS** | No audio content dependency |
+
+`build-config.json` is loaded with ESM `import … with { type: 'json' }` in `buildConfigRuntime.ts` so `pnpm doctor` runs on Node 22+ without import-attribute crashes.
 
 No `doctor:dev` bypass was added — default `doctor` stays production-strict.
 

@@ -1,0 +1,42 @@
+{
+  "captureMode": "recon-derived",
+  "runtimeFreshness": {
+    "engineVersion": "2.0.0",
+    "engineDistTimestamp": "2026-05-28 15:41",
+    "status": "FRESH"
+  },
+  "sourceArtifacts": [
+    "src/game/DemoResultSource.ts",
+    "src/config/templateGameConfig.ts"
+  ],
+  "scenario": {
+    "name": "EPIC_HIGH_FIVE_OF_KIND",
+    "scriptSlot": 7,
+    "totalWin": "DETERMINISTIC_FROM_PAYTABLE_AND_BET",
+    "totalBet": 1,
+    "multiplier": ">= 100 (paytable-driven)",
+    "classificationBasis": "LINE_SCENARIO_SCRIPT includes fiveOfKind and bigMultiLineWin as high-intensity outcomes"
+  },
+  "tierResolution": {
+    "resolvedTierId": "default",
+    "tierPriority": "default",
+    "matchReason": "No Cleopatra tier split configured in template winPresentation"
+  },
+  "firstStepExpectation": {
+    "kind": "all",
+    "durationMs": 2400,
+    "targetSymbolCount": "higher than low in fiveOfKind/bigMultiLine scenarios",
+    "lineWinCount": ">= 1 and potentially multi-line",
+    "amount": "higher than low"
+  },
+  "symbolPresentationExpectation": {
+    "requestedAnimationKey": "winStart",
+    "resolvedAnimationKey": "idle",
+    "aliasesIdle": true,
+    "overlayExpected": true
+  },
+  "runtimeCaptureStatus": {
+    "directEpicBrowserProbe": "UNAVAILABLE_IN_THIS_RUN",
+    "reason": "No installed browser driver/module in this workspace during recon execution"
+  }
+}

@@ -1,0 +1,64 @@
+{
+  "capturedAt": "2026-05-28T10:20:41.493Z",
+  "url": "http://localhost:8084/?slTest=1&slWinSymbolProbe=1&slFirstLoop=1",
+  "spin": {
+    "kind": "accepted",
+    "totalWin": 0.5,
+    "spinId": "00000000-0000-4000-8000-000000000001",
+    "stageCount": 1,
+    "failure": null
+  },
+  "overlayConfig": {
+    "alpha": 0.4,
+    "pulseAlpha": 0.45,
+    "pulseDurationMs": 520,
+    "strokeWidth": 4,
+    "paddingPx": 6
+  },
+  "traceEventCount": 34,
+  "layerEventCount": 6,
+  "displayOnWinStart": [
+    {
+      "phase": "onWinStart",
+      "displayClass": "AnimatedSpriteSymbolDisplay",
+      "symbolId": 0,
+      "visible": true,
+      "containerAlpha": 1,
+      "hasParent": true,
+      "requestedAnimationKey": "winStart",
+      "resolvedWinAnimation": "idle",
+      "aliasesIdle": true,
+      "overlayEnabled": true,
+      "atMs": 1779963639011,
+      "order": 1
+    },
+    {
+      "phase": "onWinStart",
+      "displayClass": "AnimatedSpriteSymbolDisplay",
+      "symbolId": 0,
+      "visible": true,
+      "containerAlpha": 1,
+      "hasParent": true,
+      "requestedAnimationKey": "winStart",
+      "resolvedWinAnimation": "idle",
+      "aliasesIdle": true,
+      "overlayEnabled": true,
+      "atMs": 1779963639011,
+      "order": 3
+    },
+    {
+      "phase": "onWinStart",
+      "displayClass": "AnimatedSpriteSymbolDisplay",
+      "symbolId": 0,
+      "visible": true,
+      "containerAlpha": 1,
+      "hasParent": true,
+      "requestedAnimationKey": "winStart",
+      "resolvedWinAnimation": "idle",
+      "aliasesIdle": true,
+      "overlayEnabled": true,
+      "atMs": 1779963639012,
+      "order": 5
+    }
+  ]
+}

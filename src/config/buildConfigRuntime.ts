@@ -1,5 +1,5 @@
 import type { SpinFeelPresetName } from '@fnx/sl-engine';
-import buildConfig from '../../build-config.json';
+import buildConfig from '../../build-config.json' with { type: 'json' };
 
 const SPIN_FEEL_PRESETS = ['classic', 'premium', 'snappy', 'heavy', 'arcade'] as const;
 const SPIN_FEEL_PRESET_SET = new Set<string>(SPIN_FEEL_PRESETS);

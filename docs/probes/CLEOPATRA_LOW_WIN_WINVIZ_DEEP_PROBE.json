@@ -1,0 +1,42 @@
+{
+  "captureMode": "recon-derived",
+  "runtimeFreshness": {
+    "engineVersion": "2.0.0",
+    "engineDistTimestamp": "2026-05-28 15:41",
+    "status": "FRESH"
+  },
+  "sourceArtifacts": [
+    "docs/CLEOPATRA_LOW_WIN_SYMBOL_VISIBILITY_PROBE.json",
+    "../SL-Engine/docs/internal/probes/CLEOPATRA_WINVIZ_FIRST_LOOP_ALIGNMENT_PROBE.json"
+  ],
+  "scenario": {
+    "name": "LOW_NORMAL_SINGLE_LINE",
+    "spinId": "00000000-0000-4000-8000-000000000001",
+    "totalWin": 0.5,
+    "totalBet": 1,
+    "multiplier": 0.5
+  },
+  "tierResolution": {
+    "resolvedTierId": "default",
+    "tierPriority": "default",
+    "matchReason": "No Cleopatra tier split configured in template winPresentation"
+  },
+  "firstStep": {
+    "kind": "all",
+    "durationMs": 2400,
+    "targetSymbolCount": 3,
+    "lineWinCount": 1,
+    "amount": 0.5
+  },
+  "symbolPresentation": {
+    "requestedAnimationKey": "winStart",
+    "resolvedAnimationKey": "idle",
+    "aliasesIdle": true,
+    "onWinStartCount": 3,
+    "overlayEnabledCount": 3
+  },
+  "limitations": [
+    "No per-frame (first 5 frames) capture in available probe payload.",
+    "No explicit display instance-id equality fields in available payload."
+  ]
+}

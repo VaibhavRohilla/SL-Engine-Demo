@@ -206,3 +206,14 @@ export const slotConfig: SlotConfig = {
     betSteps: [0.2, 0.5, 1, 2, 5, 10, 20, 50, 100],
   },
 };
+
+/** Manifest spritesheet keys referenced by `slotConfig.symbols` — tooling derives from runtime config, no duplicate list. */
+export function getCleopatraSymbolSpriteKeys(): readonly string[] {
+  const keys = new Set<string>();
+  for (const symbol of slotConfig.symbols) {
+    if ('spriteKey' in symbol && typeof symbol.spriteKey === 'string') {
+      keys.add(symbol.spriteKey);
+    }
+  }
+  return [...keys];
+}

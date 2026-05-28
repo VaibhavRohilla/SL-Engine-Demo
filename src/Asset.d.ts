@@ -5,7 +5,7 @@
  * Regenerate with: pnpm assets
  *
  * DX only — runtime does not depend on this file.
- * Generated: 2026-05-28T16:11:02.279Z
+ * Generated: 2026-05-28T16:45:34.571Z
  */
 
 export type AssetType = 'texture' | 'spritesheet' | 'spine' | 'audio' | 'audioSprite' | 'json' | 'font';
