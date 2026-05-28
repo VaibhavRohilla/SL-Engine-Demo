@@ -40,77 +40,122 @@
         {
           "key": "Symbols/10",
           "type": "spritesheet",
-          "url": "Symbols/10.json"
+          "url": "Symbols/10.json",
+          "meta": {
+            "symbolId": "0"
+          }
         },
         {
           "key": "Symbols/A",
           "type": "spritesheet",
-          "url": "Symbols/A.json"
+          "url": "Symbols/A.json",
+          "meta": {
+            "symbolId": "4"
+          }
         },
         {
           "key": "Symbols/Ankh",
           "type": "spritesheet",
-          "url": "Symbols/Ankh.json"
+          "url": "Symbols/Ankh.json",
+          "meta": {
+            "symbolId": "5"
+          }
         },
         {
           "key": "Symbols/Bonus",
           "type": "spritesheet",
-          "url": "Symbols/Bonus.json"
+          "url": "Symbols/Bonus.json",
+          "meta": {
+            "symbolId": "12"
+          }
         },
         {
           "key": "Symbols/Eye",
           "type": "spritesheet",
-          "url": "Symbols/Eye.json"
+          "url": "Symbols/Eye.json",
+          "meta": {
+            "symbolId": "6"
+          }
         },
         {
           "key": "Symbols/FreeSpin",
           "type": "spritesheet",
-          "url": "Symbols/FreeSpin.json"
+          "url": "Symbols/FreeSpin.json",
+          "meta": {
+            "symbolId": "13"
+          }
         },
         {
           "key": "Symbols/J",
           "type": "spritesheet",
-          "url": "Symbols/J.json"
+          "url": "Symbols/J.json",
+          "meta": {
+            "symbolId": "1"
+          }
         },
         {
           "key": "Symbols/Jackpot",
           "type": "spritesheet",
-          "url": "Symbols/Jackpot.json"
+          "url": "Symbols/Jackpot.json",
+          "meta": {
+            "symbolId": "14"
+          }
         },
         {
           "key": "Symbols/k",
           "type": "spritesheet",
-          "url": "Symbols/k.json"
+          "url": "Symbols/k.json",
+          "meta": {
+            "symbolId": "3"
+          }
         },
         {
           "key": "Symbols/Lotus",
           "type": "spritesheet",
-          "url": "Symbols/Lotus.json"
+          "url": "Symbols/Lotus.json",
+          "meta": {
+            "symbolId": "7"
+          }
         },
         {
           "key": "Symbols/Q",
           "type": "spritesheet",
-          "url": "Symbols/Q.json"
+          "url": "Symbols/Q.json",
+          "meta": {
+            "symbolId": "2"
+          }
         },
         {
           "key": "Symbols/Scatter",
           "type": "spritesheet",
-          "url": "Symbols/Scatter.json"
+          "url": "Symbols/Scatter.json",
+          "meta": {
+            "symbolId": "11"
+          }
         },
         {
           "key": "Symbols/Shen",
           "type": "spritesheet",
-          "url": "Symbols/Shen.json"
+          "url": "Symbols/Shen.json",
+          "meta": {
+            "symbolId": "8"
+          }
         },
         {
           "key": "Symbols/Wick",
           "type": "spritesheet",
-          "url": "Symbols/Wick.json"
+          "url": "Symbols/Wick.json",
+          "meta": {
+            "symbolId": "9"
+          }
         },
         {
           "key": "Symbols/Wild",
           "type": "spritesheet",
-          "url": "Symbols/Wild.json"
+          "url": "Symbols/Wild.json",
+          "meta": {
+            "symbolId": "10"
+          }
         },
         {
           "key": "Vase",
@@ -122,7 +167,7 @@
           "type": "spritesheet",
           "url": "ViewButtons/viewbuttons.json"
         }
-      ], 
+      ],
       "payloadClass": "reelsSymbolCore",
       "decodeCostClass": "medium",
       "uploadCostClass": "medium"

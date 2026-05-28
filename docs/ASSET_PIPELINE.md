@@ -20,8 +20,17 @@ Optional JSON diagnostics:
 ## Pipeline Inputs
 
 - `build-config.json`
-- authored assets under `assets/**`
+- `src/config/assetManifestIntent.ts` — sole authoring source for manifest keys, paths, and bundles
+- asset files under `assets/**` (validated on disk; not scanned to invent manifest keys)
 - starter runtime config surfaces used by validation
+
+## Manifest authority
+
+`cleopatraAssetManifestIntent` → `pnpm assets` → `assets/manifest.json` → runtime loader.
+
+- No disk-scan manifest authority
+- Intent types `image` / `spritesheet` convert to runtime `texture` / `spritesheet` (see `INTENT_TO_RUNTIME_ASSET_TYPE` in `tools/local/pipeline/manifestFromIntent.ts`)
+- Doctor and `validate:manifest-intent` fail with `MANIFEST_STALE` when the committed manifest differs from intent-generated output
 
 ## Pipeline Outputs
 
@@ -37,6 +46,7 @@ Optional JSON diagnostics:
 ## Runtime Alignment Rules
 
 - manifest output must satisfy runtime manifest validation
-- generated outputs are derived from authored assets plus config input
+- generated manifest is derived from asset manifest intent plus build config (version, baseUrl)
+- disk checks validate referenced files and warn on orphans; they do not author manifest keys
 - runtime does not depend on DX artifacts (`src/Asset.d.ts`, `generated/*.json`)
 - if manifest/artifact outputs drift, run `pnpm assets`

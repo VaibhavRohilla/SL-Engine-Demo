@@ -15,6 +15,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { z } from 'zod';
 import { loadBuildConfig } from '../config/buildConfigLoader.ts';
+import { checkManifestIntentDrift } from './manifestFromIntent.ts';
 import {
   type PipelineIssue,
   IssueCategory,
@@ -108,6 +109,8 @@ export function validateManifest(rootDir?: string): ReturnType<typeof createRepo
   const { config, rootDir: projectRoot } = loadBuildConfig(rootDir);
   const manifestPath = path.join(projectRoot, config.assets.manifestPath);
   const assetsDir = path.join(projectRoot, 'assets');
+
+  issues.push(...checkManifestIntentDrift(projectRoot));
 
   if (!fs.existsSync(manifestPath)) {
     issues.push({
