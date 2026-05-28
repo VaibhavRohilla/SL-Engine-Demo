@@ -1,4 +1,10 @@
-import type { EasingName, SpinFeelAuthoringConfigOverrides, SpinFeelPresetName } from '@fnx/sl-engine';
+import type {
+  ClassicLineWinPresentationOptions,
+  SpinFeelAuthoringConfigOverrides,
+  SpinFeelPresetName,
+} from '@fnx/sl-engine';
+import type { LineStyleRegistryConfig } from '@view/win/line-style/lineStyleTypes.ts';
+import type { CleopatraPresenterLayoutOverrides } from './composeWinPresentationOverrides.ts';
 
 export const STARTER_SPIN_FEEL_PRESETS = ['classic', 'premium', 'snappy', 'heavy', 'arcade'] as const satisfies readonly SpinFeelPresetName[];
 export type StarterSpinFeelPresetName = (typeof STARTER_SPIN_FEEL_PRESETS)[number];
@@ -115,210 +121,8 @@ export interface TemplateSlotLayoutOverride {
   frame?: Partial<TemplateSlotFrameConfig>;
 }
 
-/**
- * Payline / line-win presentation overrides for the stock win presenter.
- * Forwarded to bootstrap as `scenes.game` + `SlotGameScene.fromContext` `winPresenterConfigOverrides`
- * (same nesting as engine `WinPresenterFullConfig`: `lineStyles`, `global`, `visualizer`, `choreography`, `timing`, `textPosition`).
- */
-export interface TemplateWinPresentationConfig {
-  /** Shared per-event timing authority. Cleopatra owns authored root timing for WV-3. */
-  timingPrecedence?: 'presenterOverridesTier' | 'tierOverridesPresenter';
-  /**
-   * Win banner position relative to reel band (engine `WinPresenterFullConfig.textPosition`).
-   * Positive `yOffset` moves the win text **down** (negative is above reel center).
-   */
-  textPosition?: {
-    xOffset?: number;
-    yOffset?: number;
-  };
-  /** Durations merged into engine `WinPresenterFullConfig.timing`. */
-  timing?: {
-    singleWinDurationMs?: number;
-    betweenWinsDelayMs?: number;
-    allWinsDurationMs?: number;
-  };
-  lineStyles?: {
-    default: {
-      line?: {
-        type?: 'graphic';
-        color?: number | string;
-        width?: number;
-        alpha?: number;
-        lineCap?: 'butt' | 'round' | 'square';
-        lineJoin?: 'miter' | 'round' | 'bevel';
-        paylineStartInsetPx?: number;
-        reveal?: {
-          enabled?: boolean;
-          durationMs?: number;
-          easing?: EasingName;
-          mode?: 'fromLineStart' | 'fromLineEnd' | 'leftToRight' | 'rightToLeft' | 'instant';
-        };
-        glow?: {
-          enabled?: boolean;
-          width?: number;
-          alpha?: number;
-          color?: number | string;
-        };
-      };
-      label?: {
-        enabled?: boolean;
-        position?: 'start' | 'end' | 'bothEnds' | 'left' | 'right';
-        background?: {
-          type?: 'graphic';
-          fill?: number | string;
-          alpha?: number;
-          stroke?: number | string;
-          strokeWidth?: number;
-          radius?: number;
-          paddingX?: number;
-          paddingY?: number;
-        };
-        text?: {
-          enabled?: boolean;
-          valueMode?: 'lineNumber' | 'lineId' | 'custom';
-          value?: string;
-          fontFamily?: string;
-          fontSize?: number;
-          fill?: number | string;
-          stroke?: number | string;
-          strokeWidth?: number;
-          fontWeight?: string;
-        };
-        offset?: {
-          x?: number;
-          y?: number;
-        };
-      };
-    };
-    byLineId?: Record<string, {
-      line?: {
-        type?: 'graphic';
-        color?: number | string;
-        width?: number;
-        alpha?: number;
-        lineCap?: 'butt' | 'round' | 'square';
-        lineJoin?: 'miter' | 'round' | 'bevel';
-        paylineStartInsetPx?: number;
-        reveal?: {
-          enabled?: boolean;
-          durationMs?: number;
-          easing?: EasingName;
-          mode?: 'fromLineStart' | 'fromLineEnd' | 'leftToRight' | 'rightToLeft' | 'instant';
-        };
-        glow?: {
-          enabled?: boolean;
-          width?: number;
-          alpha?: number;
-          color?: number | string;
-        };
-      };
-      label?: {
-        enabled?: boolean;
-        position?: 'start' | 'end' | 'bothEnds' | 'left' | 'right';
-        background?: {
-          type?: 'graphic';
-          fill?: number | string;
-          alpha?: number;
-          stroke?: number | string;
-          strokeWidth?: number;
-          radius?: number;
-          paddingX?: number;
-          paddingY?: number;
-        };
-        text?: {
-          enabled?: boolean;
-          valueMode?: 'lineNumber' | 'lineId' | 'custom';
-          value?: string;
-          fontFamily?: string;
-          fontSize?: number;
-          fill?: number | string;
-          stroke?: number | string;
-          strokeWidth?: number;
-          fontWeight?: string;
-        };
-        offset?: {
-          x?: number;
-          y?: number;
-        };
-      };
-    }>;
-  };
-  global?: {
-    showPaylines?: boolean;
-    /**
-     * Cleopatra compose maps `false` → engine `visualizer.enabledModules.highlight: false` (tier rectangle highlights).
-     * Omitted leaves stock highlight module on. Stripped before bootstrap merge — not an engine `global` key.
-     */
-    showWinHighlight?: boolean;
-  };
-  visualizer?: {
-    executionMode?: 'parallel' | 'sequential';
-    lifetime?: {
-      durationPolicy?: 'fixedMs' | 'untilNextSpin' | 'once';
-      durationMs?: number;
-    };
-    symbolWins?: {
-      enabled?: boolean;
-      animation?: {
-        enabled?: boolean;
-        animationKey?: string;
-        loopPolicy?: 'presentation' | 'step' | 'untilNextSpin' | 'fixedMs' | 'once';
-        durationMs?: number;
-      };
-      overlay?:
-        | { enabled: false }
-        | {
-            enabled?: true;
-            type?: 'graphic';
-            lifetime?: 'followPresentation' | 'fixedMs' | 'once';
-            durationMs?: number;
-            fill?: number | string;
-            alpha?: number;
-            stroke?: { color?: number | string; width?: number; alpha?: number };
-            paddingPx?: number;
-            cornerRadius?: number;
-            pulse?: { enabled: boolean; alpha?: number; durationMs?: number };
-          };
-    };
-    lines?: {
-      enabled?: boolean;
-      lifetime?: 'followPresentation' | 'followStep' | 'fixedMs' | 'once';
-      durationMs?: number;
-    };
-    winText?: {
-      enabled?: boolean;
-      lifetime?: 'followPresentation' | 'followStep' | 'fixedMs' | 'once';
-      durationMs?: number;
-    };
-    linePresentationMode?: 'vector' | 'boundsOverlay';
-    enabledModules?: Partial<Record<'highlight' | 'linePath' | 'jackpot' | 'winText', boolean>>;
-  };
-  choreography?: {
-    enabled?: boolean;
-    sequence?: Array<'all' | 'each'>;
-    repeat?: {
-      policy?: 'once' | 'fixedCycles' | 'untilNextSpin' | 'fixedMs';
-      cycles?: number;
-      durationMs?: number;
-    };
-    singleGroupBehavior?: 'collapseToEach' | 'preserveSequence';
-    stepTiming?: {
-      allWinsDurationMs?: number;
-      individualWinDurationMs?: number;
-      betweenStepsDelayMs?: number;
-    };
-    amount?: {
-      allStep?: 'total' | 'none';
-      individualStep?: 'group' | 'total' | 'none';
-    };
-    render?: {
-      symbols?: boolean;
-      lines?: true | false | 'whenAvailable';
-      winText?: boolean;
-      overlays?: boolean;
-    };
-  };
-}
+/** Template-owned payline / label theme styling (forwarded as `winPresenterConfigOverrides.lineStyles`). */
+export type TemplateWinPresentationLineStyles = LineStyleRegistryConfig;
 
 export interface TemplateGameConfig {
   game: {
@@ -336,8 +140,15 @@ export interface TemplateGameConfig {
     portrait?: TemplateSlotLayoutOverride;
     landscape?: TemplateSlotLayoutOverride;
   };
-  /** Optional payline colors, thickness, draw animation, line mode — see `TemplateWinPresentationConfig`. */
-  winPresentation?: TemplateWinPresentationConfig;
+  /**
+   * High-level classic-line win presentation intent.
+   * Resolved at composition via engine `createClassicLineWinPresentation`.
+   */
+  winPresentationIntent?: ClassicLineWinPresentationOptions;
+  /** Optional payline / label theme styling. */
+  winPresentationLineStyles?: TemplateWinPresentationLineStyles;
+  /** Presenter timing / text placement patches (not part of intent — valid engine override surface). */
+  winPresenterLayout?: CleopatraPresenterLayoutOverrides;
   spinFeel?: {
     /**
      * Supported preset ids: `classic`, `premium`, `snappy`, `heavy`, `arcade`.
@@ -563,77 +374,43 @@ export const templateGameConfig: TemplateGameConfig = {
     },
   },
 
-  /** Line wins: WV-3 choreography + WV-5 canonical lineStyles. */
-  winPresentation: {
+  /**
+   * Line wins: engine intent (choreography + overlay layers) + Cleopatra payline theme.
+   * `clipWithOverlay` keeps symbol clip + overlay pulse visible when win clips alias idle.
+   */
+  winPresentationIntent: {
+    /** `minimal` → choreography sequence `['each']` only (no `all` intro/outro beats). */
+    intensity: 'minimal',
+    symbolFeedback: 'clipWithOverlay',
+    lineFeedback: 'payline',
+    amountText: 'countUp',
+  },
+  winPresenterLayout: {
     timingPrecedence: 'presenterOverridesTier',
-    /** Reel-center placement (stock default). Positive y moves down; keep near 0 so text stays in the reel window. */
+    /** Positive Y moves amount text down from reel midline (Pixi +Y). Restores pre–intent-migration placement. */
     textPosition: { yOffset: 250 },
+    /** Banner / hook pacing (not overlay step windows). */
     timing: {
-      singleWinDurationMs: 1200,
-      betweenWinsDelayMs: 150,
-      allWinsDurationMs: 1800,
+      singleWinDurationMs: 5000,
+      betweenWinsDelayMs: 180,
+      allWinsDurationMs: 5000,
+    },
+    /**
+     * Overlay step windows (not root `timing`). Shared across all tiers until tier-aware
+     * intent exists — must be >= longest catalog amount tween (epic 1500ms). 1600/2200
+     * gives count-up breathing room for mega/epic without weakening duration validation.
+     */
+    /** How long the overlay count-up runs (0 → win amount). Must be <= individualWinDurationMs below. */
+    amountTweenDurationMs: 2000,
+    choreographyStepTiming: {
+      individualWinDurationMs: 5000,
+      betweenStepsDelayMs: 180,
     },
     global: {
       showPaylines: true,
-      showWinHighlight: false,
     },
-    visualizer: {
-      executionMode: 'parallel',
-      lifetime: {
-        durationPolicy: 'untilNextSpin',
-      },
-      symbolWins: {
-        enabled: true,
-        animation: {
-          enabled: true,
-          animationKey: 'winStart',
-          loopPolicy: 'step',
-        },
-        overlay: {
-          enabled: true,
-          type: 'graphic',
-          lifetime: 'followPresentation',
-          pulse : {
-            enabled: true,
-            alpha: 0.07,
-            durationMs: 900,
-          },
-        },
-      },
-      lines: {
-        enabled: true,
-        lifetime: 'followStep',
-      },
-      winText: {
-        enabled: true,
-        lifetime: 'followStep',
-      },
-      linePresentationMode: 'vector',
-    },
-    choreography: {
-      enabled: true,
-      sequence: ['all', 'each', 'all'],
-      repeat: {
-        policy: 'untilNextSpin',
-      },
-      singleGroupBehavior: 'collapseToEach',
-      stepTiming: {
-        allWinsDurationMs: 1800,
-        individualWinDurationMs: 1200,
-        betweenStepsDelayMs: 150,
-      },
-      amount: {
-        allStep: 'total',
-        individualStep: 'group',
-      },
-      render: {
-        symbols: true,
-        lines: 'whenAvailable',
-        winText: true,
-        overlays: true,
-      },
-    },
-    lineStyles: {
+  },
+  winPresentationLineStyles: {
       default: {
         line: {
           type: 'graphic',
@@ -717,6 +494,5 @@ export const templateGameConfig: TemplateGameConfig = {
           },
         },
       },
-    },
   },
 };

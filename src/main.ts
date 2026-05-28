@@ -1,7 +1,10 @@
 import { bootstrap, EngineEventRegistry, SlotGameScene } from '@fnx/sl-engine';
 import type { BootstrapInput, GameHandle, GameSceneFactory, IReelsView, LayoutState } from '@fnx/sl-engine';
 import { gameDefinition } from './config/gameDefinition.ts';
-import { isAuthoredWinPresentationTemplate, type StarterGameDefinition } from './config/composeEngineGameDefinition.ts';
+import {
+  isAuthoredWinPresenterOverrides,
+  type StarterGameDefinition,
+} from './config/composeEngineGameDefinition.ts';
 import { cleopatraBoardVisualProofConfig, hudConfig, runtimeShellConfig } from './config/hud/index.ts';
 import {
   createTemplateHookPresentationSurfaces,
@@ -361,7 +364,7 @@ function buildBootstrapInput(): BootstrapInput {
       }),
     ],
 
-    ...(isAuthoredWinPresentationTemplate(gameDefinition.winPresenterConfigOverrides)
+    ...(isAuthoredWinPresenterOverrides(gameDefinition.winPresenterConfigOverrides)
       ? {
           scenes: {
             game: createGameSceneWithWinPresentation(gameDefinition.winPresenterConfigOverrides),

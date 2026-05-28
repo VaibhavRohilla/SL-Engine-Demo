@@ -7,8 +7,13 @@ import type {
   SpinFeelAuthoringConfigOverrides,
   SpinFeelPresetName,
 } from '@fnx/sl-engine';
+import type { DeepPartial, WinPresenterFullConfig } from '@view/win/WinPresenterConfig.ts';
 import type { CleopatraAudioProfile } from './audioConfig.ts';
 import type { StarterFeatureConfig } from './featureConfig.ts';
+import {
+  composeWinPresenterConfigOverrides,
+  isAuthoredWinPresenterOverrides,
+} from './composeWinPresentationOverrides.ts';
 import { STARTER_SPIN_FEEL_PRESETS } from './templateGameConfig.ts';
 import type {
   TemplateBackgroundConfig,
@@ -20,8 +25,9 @@ import type {
   TemplateSlotLayoutOverride,
   TemplateSymbolLayoutConfig,
   TemplateViewportConfig,
-  TemplateWinPresentationConfig,
 } from './templateGameConfig.ts';
+
+export { isAuthoredWinPresenterOverrides } from './composeWinPresentationOverrides.ts';
 
 type EngineBackgroundConfig = NonNullable<BootstrapInput['background']>;
 type EngineFrameConfig = NonNullable<BootstrapInput['frame']>;
@@ -54,7 +60,7 @@ export interface StarterGameDefinition {
    * When set, bootstrap uses a stock game scene factory that passes these values as
    * `SlotGameScene.fromContext(..., { slotSceneConfigOverrides: { winPresenterConfigOverrides } })`.
    */
-  winPresenterConfigOverrides?: TemplateWinPresentationConfig;
+  winPresenterConfigOverrides?: DeepPartial<WinPresenterFullConfig>;
 }
 
 export interface ComposeEngineGameDefinitionInputs {
@@ -508,79 +514,6 @@ function composeBootConfig(
   };
 }
 
-function isNonArrayObject(value: unknown): value is Record<string, unknown> {
-  return value !== null && typeof value === 'object' && !Array.isArray(value);
-}
-
-/**
- * `global.showWinHighlight` is template authoring only — engine reads highlights via `visualizer.enabledModules.highlight`.
- */
-function materializeWinPresentationOverridesForEngine(wp: TemplateWinPresentationConfig): TemplateWinPresentationConfig {
-  const alias = wp.global?.showWinHighlight;
-  if (alias === undefined) return wp;
-
-  const { showWinHighlight: _omit, ...globalRest } = {
-    ...(wp.global ?? {}),
-  } as TemplateWinPresentationConfig['global'] & { showWinHighlight?: boolean };
-
-  const out: TemplateWinPresentationConfig = {
-    ...wp,
-    visualizer:
-      alias === false
-        ? {
-            ...wp.visualizer,
-            enabledModules: {
-              ...wp.visualizer?.enabledModules,
-              highlight: false,
-            },
-          }
-        : wp.visualizer,
-  };
-
-  if (Object.keys(globalRest).length > 0) {
-    out.global = globalRest;
-  } else {
-    delete out.global;
-  }
-
-  return out;
-}
-
-function hasAuthoredLineStyleEntry(entry: unknown): boolean {
-  if (!isNonArrayObject(entry)) return false;
-  const line = entry.line;
-  if (isNonArrayObject(line) && line.type === 'graphic' && Object.keys(line).length > 1) return true;
-  const label = entry.label;
-  if (isNonArrayObject(label) && Object.keys(label).length > 0) return true;
-  return false;
-}
-
-function hasAuthoredLineStyles(lineStyles: TemplateWinPresentationConfig['lineStyles']): boolean {
-  if (!isNonArrayObject(lineStyles)) return false;
-  if (hasAuthoredLineStyleEntry(lineStyles.default)) return true;
-  const byLineId = lineStyles.byLineId;
-  if (!isNonArrayObject(byLineId)) return false;
-  return Object.values(byLineId).some((entry) => hasAuthoredLineStyleEntry(entry));
-}
-
-/**
- * True when `winPresentation` carries at least one non-empty section.
- * Empty `{}` or `{ lineStyles: { default: {} } }` must not force a custom game scene factory (no-op vs stock path).
- */
-export function isAuthoredWinPresentationTemplate(
-  wp: TemplateWinPresentationConfig | undefined,
-): wp is TemplateWinPresentationConfig {
-  if (wp == null) return false;
-  if (wp.timingPrecedence !== undefined) return true;
-  if (isNonArrayObject(wp.timing) && Object.keys(wp.timing).length > 0) return true;
-  if (hasAuthoredLineStyles(wp.lineStyles)) return true;
-  if (isNonArrayObject(wp.global) && Object.keys(wp.global).length > 0) return true;
-  if (isNonArrayObject(wp.visualizer) && Object.keys(wp.visualizer).length > 0) return true;
-  if (isNonArrayObject(wp.choreography) && Object.keys(wp.choreography).length > 0) return true;
-  if (isNonArrayObject(wp.textPosition) && Object.keys(wp.textPosition).length > 0) return true;
-  return false;
-}
-
 export function composeEngineGameDefinition(
   templateConfig: TemplateGameConfig,
   inputs: ComposeEngineGameDefinitionInputs,
@@ -613,10 +546,13 @@ export function composeEngineGameDefinition(
     reelMasks: fallbackReelMasks,
     orientation,
     canvasBackgroundColor,
-    ...(isAuthoredWinPresentationTemplate(templateConfig.winPresentation)
-      ? {
-          winPresenterConfigOverrides: materializeWinPresentationOverridesForEngine(templateConfig.winPresentation),
-        }
-      : {}),
+    ...(() => {
+      const winPresenterConfigOverrides = composeWinPresenterConfigOverrides({
+        intent: templateConfig.winPresentationIntent,
+        lineStyles: templateConfig.winPresentationLineStyles,
+        presenterLayout: templateConfig.winPresenterLayout,
+      });
+      return winPresenterConfigOverrides ? { winPresenterConfigOverrides } : {};
+    })(),
   };
 }
