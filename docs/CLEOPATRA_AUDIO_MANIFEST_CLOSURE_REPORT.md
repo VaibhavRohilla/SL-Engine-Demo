@@ -1,8 +1,10 @@
 # Cleopatra Audio Manifest Closure (Phase 10)
 
+> **Historical (Phase 10 only).** This report reflects manifest closure **before** the Phase 11 production SFX gate. At Phase 10, `pnpm doctor` reported 0 errors because placeholder-byte detection was not yet enforced. **Current tree:** `pnpm doctor` and `pnpm assets` **fail** with 7× `SFX_PLACEHOLDER_BYTE_IDENTICAL` until Cleopatra production WAVs replace starter bytes. See [CLEOPATRA_PRODUCTION_SFX_HANDOFF.md](./CLEOPATRA_PRODUCTION_SFX_HANDOFF.md).
+
 ## Executive verdict
 
-**PASS.** All seven SFX keys referenced by `audioConfig.REFERENCED_AUDIO_ASSET_KEYS` now resolve through `cleopatraAssetManifestIntent` to real on-disk `.wav` files and generated `assets/manifest.json` entries. `pnpm assets`, `pnpm doctor`, `pnpm validate:manifest-intent`, `pnpm validate:template-intent`, `pnpm typecheck`, and `pnpm build` pass. Doctor reports **0 errors** (21 pre-existing warnings only).
+**PASS (Phase 10 manifest closure).** All seven SFX keys now resolve through `cleopatraSfxManifestAssets` (authored in `audioConfig.ts`) → `cleopatraAssetManifestIntent` → on-disk `.wav` files and generated `assets/manifest.json` entries. At Phase 10 completion, `pnpm validate:manifest-intent`, `pnpm validate:template-intent`, `pnpm typecheck`, and `pnpm build` passed; `pnpm doctor` reported **0 errors** (21 pre-existing warnings only).
 
 **No SL-Engine runtime, starter template, runtime loader, symbol display runtime, WinViz runtime, or old module runtime files were changed.**
 
@@ -13,10 +15,10 @@
 | `sfx_spin_start` | `ASSET_FILE_MISSING` (no Cleopatra file; starter had file) | `audioConfig` → `spinFeelAudioCues.spinStart` | **EXISTING_FILE_MISSING_MANIFEST_ENTRY** — copied `sfx_spin_start.wav` from SL-Engine classic starter; declared in intent |
 | `sfx_reel_stop_a` | `ASSET_FILE_MISSING` | `audioConfig` → `spinFeelAudioCues.reelStop[0]` | Same — `sfx_reel_stop_a.wav` + intent |
 | `sfx_reel_stop_b` | `ASSET_FILE_MISSING` | `audioConfig` → `spinFeelAudioCues.reelStop[1]` | Same — `sfx_reel_stop_b.wav` + intent |
-| `sfx_win_small` | `ASSET_FILE_MISSING` | `REFERENCED_AUDIO_ASSET_KEYS` only (not wired in Cleopatra spin cues) | Same — `sfx_win_small.wav` + intent (reserved for engine win-tier audio) |
-| `sfx_win_medium` | `ASSET_FILE_MISSING` | `REFERENCED_AUDIO_ASSET_KEYS` only | Same — `sfx_win_medium.wav` + intent |
-| `sfx_win_big` | `ASSET_FILE_MISSING` | `REFERENCED_AUDIO_ASSET_KEYS` only | Same — `sfx_win_big.wav` + intent |
-| `sfx_win_mega` | `ASSET_FILE_MISSING` | `REFERENCED_AUDIO_ASSET_KEYS` only | Same — `sfx_win_mega.wav` + intent |
+| `sfx_win_small` | `ASSET_FILE_MISSING` | `cleopatraSfxManifestAssets` + `cleopatraSpinFeelAudioCues.winSmall` | Same — `sfx_win_small.wav` + intent |
+| `sfx_win_medium` | `ASSET_FILE_MISSING` | `cleopatraSfxManifestAssets` + `cleopatraSpinFeelAudioCues.winMedium` | Same — `sfx_win_medium.wav` + intent |
+| `sfx_win_big` | `ASSET_FILE_MISSING` | `cleopatraSfxManifestAssets` + `cleopatraSpinFeelAudioCues.winBig` | Same — `sfx_win_big.wav` + intent |
+| `sfx_win_mega` | `ASSET_FILE_MISSING` | `cleopatraSfxManifestAssets` + `cleopatraSpinFeelAudioCues.winMega` | Same — `sfx_win_mega.wav` + intent |
 
 **Recon notes**
 
@@ -58,7 +60,7 @@ Stale refs removed: **none.**
 pnpm assets
 pnpm validate:manifest-intent   # PASS — 30 keys; audio keys in intent + manifest
 pnpm validate:template-intent   # PASS
-pnpm doctor                     # PASS — 0 errors, 21 warnings
+pnpm doctor                     # PASS at Phase 10 — 0 errors, 21 warnings (pre–SFX gate)
 pnpm typecheck                  # PASS
 pnpm build                      # PASS
 # determinism: cp manifest → pnpm assets → diff (no change)
@@ -83,8 +85,11 @@ pnpm build                      # PASS
 ## Remaining issues
 
 - **Warnings only (unchanged):** symbol `winStart` idle-alias (15), win presentation theme tokens not applied (5), oversized `gui/Guibuttons.png` (1).
-- **Production audio:** starter stub WAVs are placeholders; replace with Cleopatra-branded SFX when art/audio is ready. `assets/audio/sfx/` sprite pipeline remains unused (no dir — skipped).
-- **Win tier SFX:** manifest + files exist; Cleopatra does not yet wire win-tier keys into `spinFeelAudioCues` or win presenter overrides (engine defaults may reference them elsewhere).
+- **Production audio:** starter stub WAVs are placeholders; replace with Cleopatra-branded SFX when art/audio is ready.
+
+## Post-closure hardening (10/10)
+
+See `docs/CLEOPATRA_AUDIO_PRODUCTION_HARDENING.md`. Summary: single audio authoring source in `audioConfig.ts`, win-tier cues wired, dormant audio-sprite pipeline removed, no backward-compat shims.
 
 ## Commit message
 

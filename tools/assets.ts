@@ -2,7 +2,7 @@ import { runAssets } from './local/commands/runAssets.ts';
 
 async function main(): Promise<void> {
   const writeReports = process.argv.includes('--json');
-  const { success } = runAssets({
+  const { success } = await runAssets({
     rootDir: process.cwd(),
     writeReports,
   });

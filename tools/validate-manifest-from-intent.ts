@@ -11,8 +11,11 @@ import {
   validateSlotAssetManifest,
 } from '@fnx/sl-engine';
 import { cleopatraAssetManifestIntent } from '../src/config/assetManifestIntent.ts';
-import { REFERENCED_AUDIO_ASSET_KEYS } from '../src/config/audioConfig.ts';
-import { extractAudioConfigReferencedKeys } from './local/runtime-surfaces/audioConfigSurface.ts';
+import {
+  cleopatraSpinFeelAudioCues,
+  collectSpinAudioCueAssetKeys,
+  getCleopatraReferencedAudioKeys,
+} from '../src/config/audioConfig.ts';
 import {
   buildRuntimeManifestFromNormalizedIntent,
   checkManifestIntentDrift,
@@ -61,15 +64,14 @@ function main(): void {
   );
 
   const intentKeys = new Set<string>(cleopatraAssetManifestIntent.assets.map((asset) => asset.key));
-  for (const audioKey of REFERENCED_AUDIO_ASSET_KEYS) {
-    assert(intentKeys.has(audioKey), `referenced audio key "${audioKey}" missing from cleopatraAssetManifestIntent`);
-    assert(assetKeys.has(audioKey), `referenced audio key "${audioKey}" missing from generated manifest`);
+  for (const audioKey of getCleopatraReferencedAudioKeys()) {
+    assert(intentKeys.has(audioKey), `manifest audio key "${audioKey}" missing from cleopatraAssetManifestIntent`);
+    assert(assetKeys.has(audioKey), `manifest audio key "${audioKey}" missing from generated manifest`);
   }
 
-  const extractedAudioKeys = extractAudioConfigReferencedKeys(projectRoot);
-  for (const audioKey of extractedAudioKeys) {
-    assert(intentKeys.has(audioKey), `audioConfig key "${audioKey}" missing from cleopatraAssetManifestIntent`);
-    assert(assetKeys.has(audioKey), `audioConfig key "${audioKey}" missing from generated manifest`);
+  for (const audioKey of collectSpinAudioCueAssetKeys(cleopatraSpinFeelAudioCues)) {
+    assert(intentKeys.has(audioKey), `spinFeelAudioCues key "${audioKey}" missing from cleopatraAssetManifestIntent`);
+    assert(assetKeys.has(audioKey), `spinFeelAudioCues key "${audioKey}" missing from generated manifest`);
   }
 
   assert(convertIntentAssetTypeToRuntime('image') === 'texture', 'image → texture');

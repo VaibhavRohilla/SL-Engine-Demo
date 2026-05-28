@@ -5,13 +5,13 @@ export interface RunAssetsCommandOptions extends RunAssetPipelineOptions {
   logger?: Pick<Console, 'log'>;
 }
 
-export function runAssets(options: RunAssetsCommandOptions = {}): { success: boolean } {
+export async function runAssets(options: RunAssetsCommandOptions = {}): Promise<{ success: boolean }> {
   const logger = options.logger ?? console;
 
   logger.log('SL-Engine Asset Pipeline\n');
   logger.log('='.repeat(60));
 
-  const { overall, steps } = runAssetPipeline(options);
+  const { overall, steps } = await runAssetPipeline(options);
 
   for (const step of steps) {
     const icon = step.passed ? '✓' : '✗';

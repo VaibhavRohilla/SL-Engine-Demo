@@ -11,6 +11,7 @@
     "assets": "node tools/run-ts.mjs tools/assets.ts",
     "doctor": "node tools/run-ts.mjs tools/doctor.ts",
     "validate:manifest-intent": "node tools/run-ts.mjs tools/validate-manifest-from-intent.ts",
+    "validate:production-sfx": "node tools/run-ts.mjs tools/validate-production-sfx.ts",
     "clean": "node -e \"const fs=require('node:fs');fs.rmSync('dist',{recursive:true,force:true});const dir='generated';if(fs.existsSync(dir)){for(const file of fs.readdirSync(dir)){if(file.endsWith('.json'))fs.rmSync(dir+'/'+file,{force:true});}}\""
   },
   "dependencies": {

@@ -2,7 +2,7 @@
  * Asset Pipeline Types — Shared contracts for all pipeline tools.
  *
  * Defines issue codes, severity levels, and report structures
- * used across manifest generation, validation, audio sprite building,
+ * used across manifest generation, validation, production SFX gates,
  * and doctor checks. Every pipeline tool produces a PipelineReport
  * using these types, ensuring consistent output and machine-readable
  * quality gating.
@@ -15,7 +15,6 @@ export const IssueCategory = {
   MANIFEST: 'MANIFEST',
   ASSET: 'ASSET',
   REFERENCED: 'REFERENCED',
-  AUDIO: 'AUDIO',
   SPINE: 'SPINE',
   LOADING: 'LOADING',
   PIPELINE: 'PIPELINE',
@@ -64,12 +63,12 @@ export const IssueCodes = {
   ASSET_OVERSIZED: 'ASSET_OVERSIZED',
   ASSET_OVERSIZED_CRITICAL: 'ASSET_OVERSIZED_CRITICAL',
   ASSET_MISSING_DIR: 'ASSET_MISSING_DIR',
-
-  AUDIO_FFMPEG_MISSING: 'AUDIO_FFMPEG_MISSING',
-  AUDIO_NO_INPUT: 'AUDIO_NO_INPUT',
-  AUDIO_SPRITE_STALE: 'AUDIO_SPRITE_STALE',
-  AUDIO_OUTPUT_MISSING: 'AUDIO_OUTPUT_MISSING',
-  AUDIO_FORMAT_INVALID: 'AUDIO_FORMAT_INVALID',
+  /** Required SFX on disk are byte-identical (starter placeholder tone). */
+  SFX_PLACEHOLDER_BYTE_IDENTICAL: 'SFX_PLACEHOLDER_BYTE_IDENTICAL',
+  /** Required SFX file missing from assets root. */
+  SFX_FILE_MISSING: 'SFX_FILE_MISSING',
+  /** Required SFX file is zero bytes. */
+  SFX_FILE_EMPTY: 'SFX_FILE_EMPTY',
 
   SPINE_MISSING_SKELETON: 'SPINE_MISSING_SKELETON',
   SPINE_MISSING_ATLAS: 'SPINE_MISSING_ATLAS',
@@ -153,13 +152,6 @@ export const ArtifactPolicy = {
     requiredBeforeRuntime: true,
     generatedBy: 'manifest:generate',
     description: 'Asset manifest consumed by runtime ManifestProvider',
-  },
-  'assets/audio/sprites/': {
-    type: 'generated',
-    committed: true,
-    requiredBeforeRuntime: true,
-    generatedBy: 'audio:build',
-    description: 'Audio sprite outputs consumed by runtime AudioBus',
   },
   'generated/': {
     type: 'generated',

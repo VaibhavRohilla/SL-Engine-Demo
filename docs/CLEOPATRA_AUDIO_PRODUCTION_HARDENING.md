@@ -45,12 +45,13 @@ Fail-fast at module load: every `cleopatraSpinFeelAudioCues` key must exist in `
 ## Commands
 
 ```bash
-pnpm assets
-pnpm validate:manifest-intent
-pnpm validate:template-intent
-pnpm doctor
-pnpm typecheck
-pnpm build
+pnpm validate:manifest-intent   # PASS — intent authority
+pnpm validate:template-intent  # PASS — template intent
+pnpm typecheck                 # PASS
+pnpm build                     # PASS
+pnpm validate:production-sfx   # FAIL until real Cleopatra WAVs (7 placeholder errors today)
+pnpm assets                    # FAIL — same SFX gate wired in pipeline
+pnpm doctor                    # FAIL — same SFX gate at step 9/12
 ```
 
 ## Commit message

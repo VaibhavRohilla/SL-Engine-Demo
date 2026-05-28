@@ -22,8 +22,7 @@ import {
   IssueCodes,
   createReport,
 } from './pipelineTypes.ts';
-
-const ASSET_TYPES = ['texture', 'spritesheet', 'spine', 'audio', 'audioSprite', 'json', 'font'] as const;
+import { RUNTIME_MANIFEST_ASSET_TYPES } from './runtimeAssetTypes.ts';
 
 /**
  * Mirror of runtime ManifestSchema from ManifestTypes.ts.
@@ -31,7 +30,7 @@ const ASSET_TYPES = ['texture', 'spritesheet', 'spine', 'audio', 'audioSprite', 
  */
 const AssetSchema = z.object({
   key: z.string().min(1),
-  type: z.enum(ASSET_TYPES),
+  type: z.enum(RUNTIME_MANIFEST_ASSET_TYPES),
   url: z.string().min(1),
   urls: z.record(z.string(), z.string()).optional(),
   meta: z.record(z.string(), z.unknown()).optional(),
@@ -64,7 +63,7 @@ const KNOWN_ASSET_EXTS = new Set([
   '.skel',
 ]);
 
-/** Raster extensions; must stay aligned with manifestGenerate.ts (JSON + same basename → spritesheet). */
+/** Raster extensions for spritesheet companion detection (JSON + same basename → spritesheet). */
 const TEXTURE_EXT_ORDER = ['.png', '.jpg', '.jpeg', '.webp', '.avif'] as const;
 const TEXTURE_EXT_SET = new Set<string>(TEXTURE_EXT_ORDER);
 

@@ -29,7 +29,38 @@
 | `tools/local/pipeline/sfxProductionValidate.ts` | Clearer error messages (key, path, placeholder md5, fix commands) |
 | `tools/validate-production-sfx.ts` | FAIL footer with handoff doc paths and next commands |
 
-**Not changed:** `assets/sfx_*.wav`, `assets/manifest.json`, `src/config/audioConfig.ts`, `src/main.ts`, `templateGameConfig.ts`, SL-Engine, runtime loader, WinViz, symbol clips.
+**Phase 12 commit boundary (`refactor(cleopatra): close production sfx gate and audio authority`):**
+
+- **In scope:** audio authority (`cleopatraSfxManifestAssets`), manifest-from-intent wiring, production SFX gate in `validate:production-sfx` / `pnpm assets` / `pnpm doctor`, legacy audio sprite + regex config surface removal, supporting pipeline/docs listed in this report.
+- **Out of scope (unstaged):** template-intent, WinViz, symbol intent migration, layout/HUD/spin-feel, `DemoResultSource`, unrelated probes/reports.
+- **Production SFX content:** still **BLOCKED** — gate intentionally fails on seven starter placeholder WAVs until real Cleopatra audio lands.
+- **No runtime/gameplay behavior changed** in this commit boundary (tooling + manifest authority only).
+
+**Prior Phase 12 docs commit (`bde0992`):** handoff + replacement checklist + validator messaging only.
+
+**Integration closure (this commit):**
+
+| File | Why |
+|------|-----|
+| `src/config/audioConfig.ts` | `cleopatraSfxManifestAssets` — validator import target |
+| `package.json` | `validate:production-sfx` script |
+| `tools/local/pipeline/pipeline.ts` | `sfx-production:validate` in `pnpm assets` |
+| `tools/local/commands/runDoctor.ts` | production SFX step 9/12 |
+| Deleted: `audioSpriteBuild.ts`, `manifestGenerate.ts`, `audioConfigSurface.ts`, `slotConfigSurface.ts` | legacy removed, no backward compat |
+
+**Not changed in Phase 12:** `assets/sfx_*.wav` bytes, SL-Engine runtime, WinViz runtime, symbol clip disks.
+
+---
+
+## Post-audit closure (10/10 target)
+
+| Gap (hostile audit) | Resolution |
+|---------------------|------------|
+| Validator imported `cleopatraSfxManifestAssets` not on commit `bde0992` | Commit `audioConfig.ts` hardening with gate wiring |
+| `validate:production-sfx` missing from committed `package.json` | Commit `package.json` script |
+| `doctor` / `assets` gate not in Phase 12 commit | Commit `pipeline.ts` + `runDoctor.ts` |
+| Phase 11 report claimed doctor/assets 0 errors | Report corrected — SFX gate failures documented |
+| Legacy duplicate audio authority | Removed — single `cleopatraSfxManifestAssets` list |
 
 ---
 
@@ -132,14 +163,30 @@ No `doctor:dev` bypass was added — default `doctor` stays production-strict.
 | No fake audio | **PASS** |
 | No runtime/gameplay changes | **PASS** |
 | typecheck/build pass | **PASS** |
+| assets/doctor fail only on placeholder gate | **PASS** (expected) |
+| Commit excludes template-intent/WinViz/symbol migration | **PASS** |
 | Report exists | **PASS** |
 
 **Phase 12 verdict: PASS (readiness).** **Audio content verdict: BLOCKED (unchanged).**
 
 ---
 
-## Commit message
+## Commit messages
+
+**Phase 12 (docs + validator messaging) — landed:**
 
 ```
 docs(cleopatra): add production sfx handoff and replacement checklist
+```
+
+**Integration closure (commit with hardening — required for self-contained tree):**
+
+```
+refactor(cleopatra): close production sfx gate and audio authority
+
+- cleopatraSfxManifestAssets sole audio authoring source
+- wire sfx-production:validate into assets and doctor
+- add validate:production-sfx script
+- remove legacy sprite pipeline and regex config surfaces
+- no backward-compat shims
 ```

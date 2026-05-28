@@ -29,9 +29,12 @@ import {
   IssueCodes,
   createReport,
 } from './pipelineTypes.ts';
+import {
+  RUNTIME_MANIFEST_ASSET_TYPES,
+  type RuntimeManifestAssetType,
+} from './runtimeAssetTypes.ts';
 
-const RUNTIME_ASSET_TYPES = ['texture', 'spritesheet', 'spine', 'audio', 'audioSprite', 'json', 'font'] as const;
-type RuntimeAssetType = (typeof RUNTIME_ASSET_TYPES)[number];
+type RuntimeAssetType = RuntimeManifestAssetType;
 
 /**
  * Explicit intent authoring type → runtime loader manifest type.
@@ -94,7 +97,7 @@ const RuntimeManifestSchema = z.object({
     name: z.string().min(1),
     assets: z.array(z.object({
       key: z.string().min(1),
-      type: z.enum(RUNTIME_ASSET_TYPES),
+      type: z.enum(RUNTIME_MANIFEST_ASSET_TYPES),
       url: z.string().min(1),
       urls: z.record(z.string(), z.string()).optional(),
       meta: z.record(z.string(), z.unknown()).optional(),
@@ -299,9 +302,15 @@ export interface GenerateManifestFromIntentOptions {
   manifestIntent?: SlotAssetManifestIntent;
 }
 
+export interface ManifestGenerationResult {
+  /** Null when validation or generation failed — never a partial/empty stub manifest. */
+  manifest: RuntimeManifest | null;
+  report: ReturnType<typeof createReport>;
+}
+
 export function generateManifestFromIntent(
   options: GenerateManifestFromIntentOptions = {},
-): { manifest: RuntimeManifest; report: ReturnType<typeof createReport> } {
+): ManifestGenerationResult {
   const issues: PipelineIssue[] = [];
   const { config, rootDir: projectRoot } = loadBuildConfig(options.rootDir);
   const manifestIntent = options.manifestIntent ?? cleopatraAssetManifestIntent;
@@ -312,10 +321,9 @@ export function generateManifestFromIntent(
   issues.push(...mapValidationIssuesToPipeline(validation.warnings));
 
   if (!validation.valid) {
-    const report = createReport('manifest:generate', issues);
     return {
-      manifest: { version: config.game.version, baseUrl: config.assets.baseUrl, bundles: [] },
-      report,
+      manifest: null,
+      report: createReport('manifest:generate', issues),
     };
   }
 
@@ -330,10 +338,9 @@ export function generateManifestFromIntent(
       message: error instanceof Error ? error.message : String(error),
       file: 'src/config/assetManifestIntent.ts',
     });
-    const report = createReport('manifest:generate', issues);
     return {
-      manifest: { version: config.game.version, baseUrl: config.assets.baseUrl, bundles: [] },
-      report,
+      manifest: null,
+      report: createReport('manifest:generate', issues),
     };
   }
 
@@ -353,12 +360,35 @@ export function generateManifestFromIntent(
     bundles: manifest.bundles.map((bundle) => ({ name: bundle.name, assets: bundle.assets.length })),
   });
 
+  const hasErrors = issues.some((issue) => issue.severity === 'error');
+  if (hasErrors) {
+    return {
+      manifest: null,
+      report,
+    };
+  }
+
   return { manifest, report };
 }
 
-/** @deprecated Use generateManifestFromIntent — kept for pipeline import stability. */
-export function generateManifest(rootDir?: string): ReturnType<typeof generateManifestFromIntent> {
-  return generateManifestFromIntent({ rootDir });
+/**
+ * Generate manifest from intent and write to disk only when generation passes.
+ * Failed validation never overwrites the committed manifest.
+ */
+export function writeManifestFromIntent(
+  options: GenerateManifestFromIntentOptions = {},
+): ManifestGenerationResult & { written: boolean } {
+  const { config, rootDir: projectRoot } = loadBuildConfig(options.rootDir);
+  const manifestPath = path.join(projectRoot, config.assets.manifestPath);
+  const result = generateManifestFromIntent(options);
+
+  if (!result.report.passed || result.manifest == null) {
+    return { ...result, written: false };
+  }
+
+  fs.mkdirSync(path.dirname(manifestPath), { recursive: true });
+  fs.writeFileSync(manifestPath, serializeRuntimeManifest(result.manifest), 'utf-8');
+  return { ...result, written: true };
 }
 
 export function collectRuntimeManifestAssetKeys(manifest: RuntimeManifest): Set<string> {
@@ -384,9 +414,8 @@ export function checkManifestIntentDrift(
     manifestIntent: options.manifestIntent,
   });
 
-  const generationErrors = generationReport.issues.filter((issue) => issue.severity === 'error');
-  if (generationErrors.length > 0) {
-    issues.push(...generationErrors);
+  if (!generationReport.passed || expected == null) {
+    issues.push(...generationReport.issues.filter((issue) => issue.severity === 'error'));
     return issues;
   }
 

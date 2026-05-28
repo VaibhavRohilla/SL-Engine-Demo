@@ -4,6 +4,7 @@
  */
 
 import { defineSlotAssetManifest } from '@fnx/sl-engine';
+import { buildCleopatraAudioIntentAssets, cleopatraSfxManifestAssetKeys } from './audioConfig.ts';
 
 const MAIN_BUNDLE_ASSET_KEYS = [
   'Background',
@@ -11,13 +12,7 @@ const MAIN_BUNDLE_ASSET_KEYS = [
   'Fire/Fire',
   'gui/Guibuttons',
   'PayLines',
-  'sfx_reel_stop_a',
-  'sfx_reel_stop_b',
-  'sfx_spin_start',
-  'sfx_win_big',
-  'sfx_win_medium',
-  'sfx_win_mega',
-  'sfx_win_small',
+  ...cleopatraSfxManifestAssetKeys,
   'SlotMachine_3x5',
   'Symbols/10',
   'Symbols/A',
@@ -45,13 +40,7 @@ export const cleopatraAssetManifestIntent = defineSlotAssetManifest({
     { key: 'Fire/Fire', type: 'spritesheet', path: 'Fire/Fire.json', tags: ['fx'] },
     { key: 'gui/Guibuttons', type: 'spritesheet', path: 'gui/Guibuttons.json', tags: ['hud'] },
     { key: 'PayLines', type: 'image', path: 'PayLines.png', tags: ['payline'] },
-    { key: 'sfx_reel_stop_a', type: 'audio', path: 'sfx_reel_stop_a.wav', tags: ['audio', 'sfx', 'reel'] },
-    { key: 'sfx_reel_stop_b', type: 'audio', path: 'sfx_reel_stop_b.wav', tags: ['audio', 'sfx', 'reel'] },
-    { key: 'sfx_spin_start', type: 'audio', path: 'sfx_spin_start.wav', tags: ['audio', 'sfx', 'spin'] },
-    { key: 'sfx_win_big', type: 'audio', path: 'sfx_win_big.wav', tags: ['audio', 'sfx', 'win'] },
-    { key: 'sfx_win_medium', type: 'audio', path: 'sfx_win_medium.wav', tags: ['audio', 'sfx', 'win'] },
-    { key: 'sfx_win_mega', type: 'audio', path: 'sfx_win_mega.wav', tags: ['audio', 'sfx', 'win'] },
-    { key: 'sfx_win_small', type: 'audio', path: 'sfx_win_small.wav', tags: ['audio', 'sfx', 'win'] },
+    ...buildCleopatraAudioIntentAssets(),
     { key: 'SlotMachine_3x5', type: 'image', path: 'SlotMachine_3x5.png', tags: ['frame'] },
     { key: 'Symbols/10', type: 'spritesheet', path: 'Symbols/10.json', tags: ['symbol'], metadata: { symbolId: '0' } },
     { key: 'Symbols/J', type: 'spritesheet', path: 'Symbols/J.json', tags: ['symbol'], metadata: { symbolId: '1' } },

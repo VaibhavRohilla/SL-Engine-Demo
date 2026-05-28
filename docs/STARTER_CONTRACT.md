@@ -8,6 +8,7 @@ This repo is **not** a generated starter tarball; it uses a **sibling** SDK for 
 - Run `pnpm build:sdk` in `../SL-Engine` before `pnpm build` / production-like runs so `node_modules/@fnx/sl-engine` resolves to a built SDK.
 - TypeScript may still map `@fnx/sl-engine` to engine **sources** via `tsconfig.json` `paths` for IDE go-to-definition.
 - **HUD board visual proof (opt-in):** `?slTest=1&slBoardVisualProof=1` enables `cleopatraBoardVisualProofConfig` at bootstrap. Normal demo URLs are unchanged. Run proof from SL-Engine: `pnpm test:cleopatra-board-visual-proof` (requires `pnpm build` here first).
+- **Production SFX gate:** `pnpm validate:production-sfx` (also wired into `pnpm assets` and `pnpm doctor`). Fails while starter placeholder WAV bytes remain — see `docs/CLEOPATRA_PRODUCTION_SFX_HANDOFF.md`. `pnpm typecheck` and `pnpm build` do not depend on production audio content.
 
 Generated starters keep the stricter **vendored** contract below.
 
@@ -78,7 +79,7 @@ tools/
 ## Artifact Policy
 
 - `assets/manifest.json`: generated, committed, runtime-required
-- `assets/audio/sprites/*`: generated, committed, runtime-required when audio sprites are used
+- `assets/sfx_*.wav`: authored per `src/config/audioConfig.ts`, committed, runtime-required
 - `src/Asset.d.ts`: generated, committed, DX-only
 - `generated/*.json`: generated, uncommitted, DX diagnostics only
 - `dist/`: generated, uncommitted, build output only

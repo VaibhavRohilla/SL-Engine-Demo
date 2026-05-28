@@ -11,9 +11,13 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { loadBuildConfig, resolveAssetPath } from '../config/buildConfigLoader.ts';
 import { STARTER_CONVENTIONS } from '../constants/conventions.ts';
+import {
+  RUNTIME_MANIFEST_ASSET_TYPES,
+  RUNTIME_MANIFEST_ASSET_TYPE_UNION,
+  type RuntimeManifestAssetType,
+} from './runtimeAssetTypes.ts';
 
-const ASSET_TYPES = ['texture', 'spritesheet', 'spine', 'audio', 'audioSprite', 'json', 'font'] as const;
-type AssetType = (typeof ASSET_TYPES)[number];
+type AssetType = RuntimeManifestAssetType;
 
 interface ManifestAsset {
   key: string;
@@ -47,7 +51,7 @@ function loadManifest(manifestPath: string): Manifest | null {
 
 function collectKeysByType(manifest: Manifest): Record<AssetType, string[]> {
   const byType: Record<string, string[]> = {};
-  for (const t of ASSET_TYPES) {
+  for (const t of RUNTIME_MANIFEST_ASSET_TYPES) {
     byType[t] = [];
   }
   for (const bundle of manifest.bundles) {
@@ -58,7 +62,7 @@ function collectKeysByType(manifest: Manifest): Record<AssetType, string[]> {
       }
     }
   }
-  for (const t of ASSET_TYPES) {
+  for (const t of RUNTIME_MANIFEST_ASSET_TYPES) {
     const arr = byType[t];
     if (arr) arr.sort();
   }
@@ -92,11 +96,11 @@ function generateAssetDts(byType: Record<AssetType, string[]>): string {
     ` * Generated: ${new Date().toISOString()}`,
     ' */',
     '',
-    "export type AssetType = 'texture' | 'spritesheet' | 'spine' | 'audio' | 'audioSprite' | 'json' | 'font';",
+    `export type AssetType = ${RUNTIME_MANIFEST_ASSET_TYPE_UNION};`,
     '',
   ];
 
-  for (const t of ASSET_TYPES) {
+  for (const t of RUNTIME_MANIFEST_ASSET_TYPES) {
     const keys = byType[t];
     const typeName = (t.charAt(0).toUpperCase() + t.slice(1)) as string;
     const union = keys.length > 0 ? keys.map(k => `'${k.replace(/'/g, "\\'")}'`).join(' | ') : 'never';
@@ -104,7 +108,7 @@ function generateAssetDts(byType: Record<AssetType, string[]>): string {
     lines.push('');
   }
 
-  const allUnion = ASSET_TYPES.map(t => `${(t.charAt(0).toUpperCase() + t.slice(1))}AssetKey`).join(' | ');
+  const allUnion = RUNTIME_MANIFEST_ASSET_TYPES.map(t => `${(t.charAt(0).toUpperCase() + t.slice(1))}AssetKey`).join(' | ');
   lines.push(`export type AssetKey = ${allUnion};`);
   lines.push('');
   lines.push('export interface AssetEntry {');
@@ -131,7 +135,7 @@ function generateAssetDts(byType: Record<AssetType, string[]>): string {
 
   lines.push('/** Type-safe asset key lists by type (for autocomplete). */');
   lines.push('export const AssetKeys = {');
-  for (const t of ASSET_TYPES) {
+  for (const t of RUNTIME_MANIFEST_ASSET_TYPES) {
     const keys = byType[t];
     const arr = keys.length > 0 ? keys.map(k => `'${k.replace(/'/g, "\\'")}'`).join(', ') : '';
     const typeName = (t.charAt(0).toUpperCase() + t.slice(1)) as string;

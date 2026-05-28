@@ -6,14 +6,14 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { loadBuildConfig } from '../config/buildConfigLoader.ts';
 import { type PipelineReport, createReport, IssueCategory, IssueCodes } from './pipelineTypes.ts';
-import { generateManifest } from './manifestGenerate.ts';
-import { buildAudioSprites } from './audioSpriteBuild.ts';
+import { writeManifestFromIntent } from './manifestFromIntent.ts';
 import { generateAssetDx } from './assetDxGenerate.ts';
 import { validateManifest } from './manifestValidate.ts';
 import { validateReferencedKeys } from './referencedKeysValidate.ts';
 import { validateAssets } from './assetsValidate.ts';
 import { validateSpine } from './spineValidate.ts';
 import { validateLoading } from './loadingValidate.ts';
+import { validateCleopatraProductionSfx } from './sfxProductionValidate.ts';
 
 export interface RunAssetPipelineOptions {
   rootDir?: string;
@@ -25,7 +25,7 @@ export interface RunAssetPipelineResult {
   steps: PipelineReport[];
 }
 
-export function runAssetPipeline(options: RunAssetPipelineOptions = {}): RunAssetPipelineResult {
+export async function runAssetPipeline(options: RunAssetPipelineOptions = {}): Promise<RunAssetPipelineResult> {
   const steps: PipelineReport[] = [];
 
   let configPath: string;
@@ -52,14 +52,8 @@ export function runAssetPipeline(options: RunAssetPipelineOptions = {}): RunAsse
     };
   }
 
-  const audioReport = buildAudioSprites(projectRoot);
-  steps.push(audioReport);
-
-  const { manifest, report: manifestGenerationReport } = generateManifest(projectRoot);
+  const { report: manifestGenerationReport } = writeManifestFromIntent({ rootDir: projectRoot });
   steps.push(manifestGenerationReport);
-
-  fs.mkdirSync(path.dirname(manifestPath), { recursive: true });
-  fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2) + '\n', 'utf-8');
 
   generateAssetDx(projectRoot);
 
@@ -70,6 +64,8 @@ export function runAssetPipeline(options: RunAssetPipelineOptions = {}): RunAsse
   if (!referencedKeysReport.metadata?.skipped) {
     steps.push(referencedKeysReport);
   }
+
+  steps.push(validateCleopatraProductionSfx(projectRoot));
 
   steps.push(validateAssets(projectRoot));
   steps.push(validateSpine(projectRoot));

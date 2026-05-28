@@ -4,7 +4,19 @@
 
 **PARTIAL (architecture PASS, content BLOCKED).**
 
-Phase 10 manifest authority remains intact: all seven required SFX keys resolve through `cleopatraSfxManifestAssets` → `cleopatraAssetManifestIntent` → `pnpm assets` → `assets/manifest.json` → runtime loader. `pnpm assets`, `pnpm validate:manifest-intent`, `pnpm validate:template-intent`, `pnpm doctor`, `pnpm typecheck`, and `pnpm build` all pass with **0 errors**.
+Phase 10 manifest authority remains intact: all seven required SFX keys resolve through `cleopatraSfxManifestAssets` → `cleopatraAssetManifestIntent` → `assets/manifest.json` → runtime loader.
+
+**Gate split (honest):**
+
+| Command | Result | Notes |
+|---------|--------|-------|
+| `pnpm validate:manifest-intent` | **PASS** | Intent ↔ manifest authority |
+| `pnpm validate:template-intent` | **PASS** | Template intent schema |
+| `pnpm typecheck` | **PASS** | No audio-byte dependency |
+| `pnpm build` | **PASS** | No audio-byte dependency |
+| `pnpm validate:production-sfx` | **FAIL** | 7× `SFX_PLACEHOLDER_BYTE_IDENTICAL` (expected) |
+| `pnpm assets` | **FAIL** | Same 7 SFX errors via `sfx-production:validate` (+ non-blocking warnings) |
+| `pnpm doctor` | **FAIL** | Same 7 SFX errors at step 9/12 (+ non-blocking warnings) |
 
 **Audio content is not production-ready.** Every required `.wav` is the SL-Engine classic starter placeholder (~200ms, mono PCM 44.1kHz, 17,684 bytes, MD5 `9454fce1ce41278f4f5e9619f1a19413`). No Cleopatra-owned production SFX files exist anywhere in the repository or workspace recon scope.
 
@@ -103,7 +115,9 @@ cleopatraSfxManifestAssets (audioConfig.ts)
 | `src/config/winPresentationOverrideExample.ts` | Renamed from legacy `winVisualizerOverrideExample` |
 | `package.json` | `validate:production-sfx` script |
 
-**Not changed:** `assets/sfx_*.wav`, `assets/manifest.json` (regenerated only for drift proof), `src/config/audioConfig.ts`, `src/config/assetManifestIntent.ts`, runtime, WinViz, symbols, SL-Engine.
+**Also hardened (same release train as gate wiring):** `src/config/audioConfig.ts` — `cleopatraSfxManifestAssets` sole authority; win-tier cues in `cleopatraSpinFeelAudioCues`; legacy `REFERENCED_AUDIO_ASSET_KEYS` removed.
+
+**Not changed:** `assets/sfx_*.wav` bytes, SL-Engine runtime, WinViz runtime, symbol clip disks.
 
 ### Real files replaced/added
 
@@ -130,14 +144,13 @@ All seven required keys remain starter placeholders.
 find assets -iname "*.wav" -o -iname "*.mp3" -o -iname "*.ogg"
 md5 assets/*.wav
 file assets/*.wav
-# duration via soxi
-pnpm assets                          # PASS (0 errors, 21 warnings)
 pnpm validate:manifest-intent          # PASS
 pnpm validate:template-intent          # PASS
-pnpm doctor                            # PASS (0 errors, 21 warnings)
 pnpm typecheck                         # PASS
 pnpm build                             # PASS
-pnpm validate:production-sfx         # FAIL (expected — 7 placeholder errors)
+pnpm validate:production-sfx           # FAIL — 7× SFX_PLACEHOLDER_BYTE_IDENTICAL (expected)
+pnpm assets                            # FAIL — 7 SFX errors only (+ warnings)
+pnpm doctor                            # FAIL — 7 SFX errors only (+ warnings)
 ```
 
 ---
@@ -177,7 +190,8 @@ When production WAVs land: replace files in-place at existing paths, run `pnpm a
 | All seven SFX use real production audio | **FAIL** — all placeholder |
 | No duplicate placeholder audio for required SFX | **FAIL** — all byte-identical |
 | Manifest generated from intent | **PASS** |
-| `pnpm assets` / doctor / typecheck / build | **PASS** |
+| `pnpm validate:manifest-intent` / `template-intent` / typecheck / build | **PASS** |
+| `pnpm assets` / `doctor` / `validate:production-sfx` | **FAIL** (SFX gate — expected until real WAVs) |
 | No unrelated runtime/gameplay changes | **PASS** |
 | Report exists | **PASS** |
 

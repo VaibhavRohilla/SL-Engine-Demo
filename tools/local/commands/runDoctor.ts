@@ -20,6 +20,7 @@ import { validateSpine } from '../pipeline/spineValidate.ts';
 import { validateLoading } from '../pipeline/loadingValidate.ts';
 import { validateTemplateGameConfig } from '../pipeline/templateConfigValidate.ts';
 import { validateStarterHudConfig } from '../pipeline/hudConfigValidate.ts';
+import { validateCleopatraProductionSfx } from '../pipeline/sfxProductionValidate.ts';
 import { resolveProjectRoot } from '../utils/paths.ts';
 import { composeEngineGameDefinition } from '../../../src/config/composeEngineGameDefinition.ts';
 import { audioProfile } from '../../../src/config/audioConfig.ts';
@@ -132,6 +133,7 @@ function checkConfigFiles(projectRoot: string, issues: PipelineIssue[]): void {
     'src/config/slotConfig.ts',
     'src/config/starterTotalBetSteps.ts',
     'src/config/templateGameConfig.ts',
+    'src/config/assetManifestIntent.ts',
     'src/config/templateHooks.ts',
     'src/config/bootConfig.ts',
     'src/config/featureConfig.ts',
@@ -465,16 +467,16 @@ export async function runDoctor(options: RunDoctorOptions = {}): Promise<Pipelin
   const projectRoot = resolveProjectRoot(options.rootDir);
   const writeJson = options.writeJson === true;
 
-  logger.log('SL-Engine Starter Doctor\n');
+  logger.log('Cleopatra Doctor\n');
   logger.log('='.repeat(60));
 
   const allIssues: PipelineIssue[] = [];
   const subReports: PipelineReport[] = [];
 
-  logger.log('\n  [1/9] Build config...');
+  logger.log('\n  [1/10] Build config...');
   const configValid = checkBuildConfig(projectRoot, allIssues);
 
-  logger.log('  [2/9] HUD runtime shell config...');
+  logger.log('  [2/10] HUD runtime shell config...');
   const hudReport = await validateStarterHudConfig(projectRoot);
   subReports.push(hudReport);
   allIssues.push(...hudReport.issues);
@@ -482,7 +484,7 @@ export async function runDoctor(options: RunDoctorOptions = {}): Promise<Pipelin
   const manifestPath = path.join(projectRoot, 'assets', 'manifest.json');
 
   if (configValid) {
-    logger.log('  [3/9] Project structure & canonical consumer...');
+    logger.log('  [3/10] Project structure & canonical consumer...');
     checkProjectStructure(projectRoot, allIssues);
     checkSdkInstalled(projectRoot, allIssues);
     checkEntryPoints(projectRoot, allIssues);
@@ -492,24 +494,24 @@ export async function runDoctor(options: RunDoctorOptions = {}): Promise<Pipelin
     checkCanonicalConsumer(projectRoot, allIssues);
     checkMaskTopology(allIssues);
 
-    logger.log('  [4/9] Template game config...');
+    logger.log('  [4/10] Template game config...');
     const templateConfigReport = validateTemplateGameConfig(projectRoot);
     subReports.push(templateConfigReport);
     allIssues.push(...templateConfigReport.issues);
 
-    logger.log('  [5/9] Asset validation...');
+    logger.log('  [5/10] Asset validation...');
     const assetReport = validateAssets(projectRoot);
     subReports.push(assetReport);
     allIssues.push(...assetReport.issues);
 
-    logger.log('  [6/9] Manifest validation...');
+    logger.log('  [6/10] Manifest validation...');
     if (fs.existsSync(manifestPath)) {
       const manifestReport = validateManifest(projectRoot);
       subReports.push(manifestReport);
       allIssues.push(...manifestReport.issues);
     }
 
-    logger.log('  [7/9] Referenced asset keys...');
+    logger.log('  [7/10] Referenced asset keys...');
     if (fs.existsSync(manifestPath)) {
       const referencedKeysReport = validateReferencedKeys(projectRoot);
       if (!referencedKeysReport.metadata?.skipped) {
@@ -518,19 +520,25 @@ export async function runDoctor(options: RunDoctorOptions = {}): Promise<Pipelin
       }
     }
 
-    logger.log('  [8/9] Spine validation...');
+    logger.log('  [8/10] Production SFX (no starter placeholders)...');
+    const productionSfxReport = validateCleopatraProductionSfx(projectRoot);
+    subReports.push(productionSfxReport);
+    allIssues.push(...productionSfxReport.issues);
+
+    logger.log('  [9/10] Spine validation...');
     const spineReport = validateSpine(projectRoot);
     subReports.push(spineReport);
     allIssues.push(...spineReport.issues);
 
-    logger.log('  [9/9] Loading validation...');
+    logger.log('  [10/10] Loading validation...');
     if (fs.existsSync(manifestPath)) {
       const loadingReport = validateLoading(projectRoot);
       subReports.push(loadingReport);
       allIssues.push(...loadingReport.issues);
     }
+
   } else {
-    logger.log('  [3-9] Skipped — build-config.json is invalid');
+    logger.log('  [3-10] Skipped — build-config.json is invalid');
   }
 
   const report = createReport('doctor', allIssues, {

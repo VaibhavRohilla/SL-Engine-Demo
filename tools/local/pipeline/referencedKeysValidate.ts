@@ -1,17 +1,16 @@
 /**
  * Referenced Keys Validation — Ensures asset keys used in runtime config exist in manifest.
  *
- * Supported surfaces:
- * - slotConfig.symbols[].spriteKey
- * - audioConfig.REFERENCED_AUDIO_ASSET_KEYS
+ * Symbol sprite keys are owned by `templateIntentValidate` (intent + composed slotConfig).
+ * This validator covers template scene surfaces and audio only.
  */
 
-import * as fs from 'fs';
-import * as path from 'path';
+import * as fs from 'node:fs';
+import * as path from 'node:path';
 import { loadBuildConfig } from '../config/buildConfigLoader.ts';
-import { extractAudioConfigReferencedKeys } from '../runtime-surfaces/audioConfigSurface.ts';
-import { extractSlotConfigSpriteKeys } from '../runtime-surfaces/slotConfigSurface.ts';
+import { getCleopatraReferencedAudioKeys } from '../../../src/config/audioConfig.ts';
 import { extractTemplateConfigAssetKeys } from '../runtime-surfaces/templateGameConfigSurface.ts';
+import { readGeneratedManifestKeys } from './manifestKeys.ts';
 import {
   type PipelineIssue,
   IssueCategory,
@@ -27,17 +26,9 @@ interface ReferencedSurface {
 
 export const AUDIO_REFERENCED_KEY_SURFACE: ReferencedSurface = {
   file: 'src/config/audioConfig.ts',
-  sourceLabel: 'audioConfig.REFERENCED_AUDIO_ASSET_KEYS',
-  extract(projectRoot: string): Set<string> {
-    return extractAudioConfigReferencedKeys(projectRoot);
-  },
-};
-
-const SLOT_REFERENCED_KEY_SURFACE: ReferencedSurface = {
-  file: 'src/config/slotConfig.ts',
-  sourceLabel: 'slotConfig.symbols[].spriteKey',
-  extract(projectRoot: string): Set<string> {
-    return extractSlotConfigSpriteKeys(projectRoot);
+  sourceLabel: 'audioConfig.cleopatraSfxManifestAssets',
+  extract(_projectRoot: string): Set<string> {
+    return new Set(getCleopatraReferencedAudioKeys());
   },
 };
 
@@ -49,35 +40,14 @@ const TEMPLATE_CONFIG_REFERENCED_KEY_SURFACE: ReferencedSurface = {
   },
 };
 
-function getManifestKeys(manifestPath: string): Set<string> {
-  if (!fs.existsSync(manifestPath)) return new Set();
-
-  const raw = fs.readFileSync(manifestPath, 'utf-8');
-  let manifest: { bundles?: Array<{ assets?: Array<{ key?: string }> }> };
-  try {
-    manifest = JSON.parse(raw);
-  } catch {
-    return new Set();
-  }
-
-  const keys = new Set<string>();
-  for (const bundle of manifest.bundles ?? []) {
-    for (const asset of bundle.assets ?? []) {
-      if (asset.key) keys.add(asset.key);
-    }
-  }
-
-  return keys;
-}
+const SUPPORTED_SURFACES: ReferencedSurface[] = [
+  TEMPLATE_CONFIG_REFERENCED_KEY_SURFACE,
+  AUDIO_REFERENCED_KEY_SURFACE,
+];
 
 export function validateReferencedKeys(rootDir?: string): ReturnType<typeof createReport> {
   const issues: PipelineIssue[] = [];
   const { config, rootDir: projectRoot } = loadBuildConfig(rootDir);
-  const supportedSurfaces: ReferencedSurface[] = [
-    SLOT_REFERENCED_KEY_SURFACE,
-    TEMPLATE_CONFIG_REFERENCED_KEY_SURFACE,
-    AUDIO_REFERENCED_KEY_SURFACE,
-  ];
   const manifestPath = path.join(projectRoot, config.assets.manifestPath);
 
   if (!fs.existsSync(manifestPath)) {
@@ -87,10 +57,10 @@ export function validateReferencedKeys(rootDir?: string): ReturnType<typeof crea
     });
   }
 
-  const manifestKeys = getManifestKeys(manifestPath);
+  const manifestKeys = readGeneratedManifestKeys(manifestPath);
   let totalReferenced = 0;
 
-  for (const surface of supportedSurfaces) {
+  for (const surface of SUPPORTED_SURFACES) {
     const keys = surface.extract(projectRoot);
     totalReferenced += keys.size;
 
@@ -111,6 +81,6 @@ export function validateReferencedKeys(rootDir?: string): ReturnType<typeof crea
   return createReport('referenced-keys:validate', issues, {
     referencedCount: totalReferenced,
     missingCount: issues.length,
-    supportedSurfaces: supportedSurfaces.map((surface) => surface.sourceLabel),
+    supportedSurfaces: SUPPORTED_SURFACES.map((surface) => surface.sourceLabel),
   });
 }
