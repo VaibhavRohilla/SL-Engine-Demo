@@ -11,6 +11,8 @@ import {
   validateSlotAssetManifest,
 } from '@fnx/sl-engine';
 import { cleopatraAssetManifestIntent } from '../src/config/assetManifestIntent.ts';
+import { REFERENCED_AUDIO_ASSET_KEYS } from '../src/config/audioConfig.ts';
+import { extractAudioConfigReferencedKeys } from './local/runtime-surfaces/audioConfigSurface.ts';
 import {
   buildRuntimeManifestFromNormalizedIntent,
   checkManifestIntentDrift,
@@ -18,6 +20,7 @@ import {
   generateManifestFromIntent,
   INTENT_TO_RUNTIME_ASSET_TYPE,
   serializeRuntimeManifest,
+  writeManifestFromIntent,
 } from './local/pipeline/manifestFromIntent.ts';
 import { resolveProjectRoot } from './local/utils/paths.ts';
 
@@ -35,9 +38,15 @@ function main(): void {
   assert(validation.valid, `cleopatra intent invalid: ${validation.errors.map((e) => e.code).join(', ')}`);
 
   const normalized = normalizeSlotAssetManifest(cleopatraAssetManifestIntent);
-  const { manifest, report } = generateManifestFromIntent({ rootDir: projectRoot });
-  const errors = report.issues.filter((issue) => issue.severity === 'error');
-  assert(errors.length === 0, `generation errors: ${errors.map((e) => e.message).join('; ')}`);
+  const { manifest: generatedManifest, report } = generateManifestFromIntent({ rootDir: projectRoot });
+  if (generatedManifest == null || !report.passed) {
+    const messages = report.issues
+      .filter((issue) => issue.severity === 'error')
+      .map((issue) => issue.message)
+      .join('; ');
+    throw new Error(`valid intent must produce a manifest: ${messages}`);
+  }
+  const manifest = generatedManifest;
 
   const assetKeys = new Set<string>();
   for (const bundle of manifest.bundles) {
@@ -45,7 +54,23 @@ function main(): void {
       assetKeys.add(asset.key);
     }
   }
-  assert(assetKeys.size === 23, `expected 23 manifest keys, got ${assetKeys.size}`);
+  const expectedManifestKeyCount = cleopatraAssetManifestIntent.assets.length;
+  assert(
+    assetKeys.size === expectedManifestKeyCount,
+    `expected ${expectedManifestKeyCount} manifest keys, got ${assetKeys.size}`,
+  );
+
+  const intentKeys = new Set<string>(cleopatraAssetManifestIntent.assets.map((asset) => asset.key));
+  for (const audioKey of REFERENCED_AUDIO_ASSET_KEYS) {
+    assert(intentKeys.has(audioKey), `referenced audio key "${audioKey}" missing from cleopatraAssetManifestIntent`);
+    assert(assetKeys.has(audioKey), `referenced audio key "${audioKey}" missing from generated manifest`);
+  }
+
+  const extractedAudioKeys = extractAudioConfigReferencedKeys(projectRoot);
+  for (const audioKey of extractedAudioKeys) {
+    assert(intentKeys.has(audioKey), `audioConfig key "${audioKey}" missing from cleopatraAssetManifestIntent`);
+    assert(assetKeys.has(audioKey), `audioConfig key "${audioKey}" missing from generated manifest`);
+  }
 
   assert(convertIntentAssetTypeToRuntime('image') === 'texture', 'image → texture');
   assert(convertIntentAssetTypeToRuntime('spritesheet') === 'spritesheet', 'spritesheet unchanged');
@@ -81,6 +106,15 @@ function main(): void {
     'missing source must fail validation before write',
   );
 
+  const ambiguousSourceIntent = defineSlotAssetManifest({
+    assets: [{ key: 'ambig', type: 'image', path: 'Background.png', url: 'https://example.com/bg.png' }],
+  });
+  const ambiguousSourceResult = validateSlotAssetManifest(ambiguousSourceIntent);
+  assert(
+    ambiguousSourceResult.errors.some((issue) => issue.code === 'TEMPLATE_ASSET_AMBIGUOUS_SOURCE'),
+    'ambiguous source must fail validation before write',
+  );
+
   let unknownRuntimeConversionFailed = false;
   try {
     convertIntentAssetTypeToRuntime('not-a-real-type');
@@ -88,6 +122,25 @@ function main(): void {
     unknownRuntimeConversionFailed = true;
   }
   assert(unknownRuntimeConversionFailed, 'unknown runtime conversion must throw');
+
+  const failedGeneration = generateManifestFromIntent({
+    rootDir: projectRoot,
+    manifestIntent: duplicateIntent,
+  });
+  assert(failedGeneration.manifest == null, 'failed generation must not return a manifest object');
+  assert(!failedGeneration.report.passed, 'failed generation report must not pass');
+
+  const committedBeforeFailedWrite = fs.readFileSync(manifestPath, 'utf-8');
+  const failedWrite = writeManifestFromIntent({
+    rootDir: projectRoot,
+    manifestIntent: duplicateIntent,
+  });
+  assert(!failedWrite.written, 'failed generation must not write manifest to disk');
+  assert(failedWrite.manifest == null, 'failed write must not return manifest');
+  assert(
+    fs.readFileSync(manifestPath, 'utf-8') === committedBeforeFailedWrite,
+    'failed generation must not mutate committed manifest on disk',
+  );
 
   const serializedOnce = serializeRuntimeManifest(manifest);
   const serializedTwice = serializeRuntimeManifest(

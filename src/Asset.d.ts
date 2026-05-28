@@ -5,7 +5,7 @@
  * Regenerate with: pnpm assets
  *
  * DX only — runtime does not depend on this file.
- * Generated: 2026-05-07T17:21:42.908Z
+ * Generated: 2026-05-28T16:11:02.279Z
  */
 
 export type AssetType = 'texture' | 'spritesheet' | 'spine' | 'audio' | 'audioSprite' | 'json' | 'font';
@@ -16,7 +16,7 @@ export type SpritesheetAssetKey = 'Fire/Fire' | 'Symbols/10' | 'Symbols/A' | 'Sy
 
 export type SpineAssetKey = never;
 
-export type AudioAssetKey = never;
+export type AudioAssetKey = 'sfx_reel_stop_a' | 'sfx_reel_stop_b' | 'sfx_spin_start' | 'sfx_win_big' | 'sfx_win_medium' | 'sfx_win_mega' | 'sfx_win_small';
 
 export type AudioSpriteAssetKey = never;
 
@@ -52,7 +52,7 @@ export const AssetKeys = {
   texture: ['Background', 'CoinSheet', 'PayLines', 'SlotMachine_3x5', 'Vase'] as const satisfies readonly TextureAssetKey[],
   spritesheet: ['Fire/Fire', 'Symbols/10', 'Symbols/A', 'Symbols/Ankh', 'Symbols/Bonus', 'Symbols/Eye', 'Symbols/FreeSpin', 'Symbols/J', 'Symbols/Jackpot', 'Symbols/Lotus', 'Symbols/Q', 'Symbols/Scatter', 'Symbols/Shen', 'Symbols/Wick', 'Symbols/Wild', 'Symbols/k', 'ViewButtons/viewbuttons', 'gui/Guibuttons'] as const satisfies readonly SpritesheetAssetKey[],
   spine: [] as const satisfies readonly SpineAssetKey[],
-  audio: [] as const satisfies readonly AudioAssetKey[],
+  audio: ['sfx_reel_stop_a', 'sfx_reel_stop_b', 'sfx_spin_start', 'sfx_win_big', 'sfx_win_medium', 'sfx_win_mega', 'sfx_win_small'] as const satisfies readonly AudioAssetKey[],
   audioSprite: [] as const satisfies readonly AudioSpriteAssetKey[],
   json: [] as const satisfies readonly JsonAssetKey[],
   font: [] as const satisfies readonly FontAssetKey[],

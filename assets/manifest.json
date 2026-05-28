@@ -33,6 +33,41 @@
           "url": "PayLines.png"
         },
         {
+          "key": "sfx_reel_stop_a",
+          "type": "audio",
+          "url": "sfx_reel_stop_a.wav"
+        },
+        {
+          "key": "sfx_reel_stop_b",
+          "type": "audio",
+          "url": "sfx_reel_stop_b.wav"
+        },
+        {
+          "key": "sfx_spin_start",
+          "type": "audio",
+          "url": "sfx_spin_start.wav"
+        },
+        {
+          "key": "sfx_win_big",
+          "type": "audio",
+          "url": "sfx_win_big.wav"
+        },
+        {
+          "key": "sfx_win_medium",
+          "type": "audio",
+          "url": "sfx_win_medium.wav"
+        },
+        {
+          "key": "sfx_win_mega",
+          "type": "audio",
+          "url": "sfx_win_mega.wav"
+        },
+        {
+          "key": "sfx_win_small",
+          "type": "audio",
+          "url": "sfx_win_small.wav"
+        },
+        {
           "key": "SlotMachine_3x5",
           "type": "texture",
           "url": "SlotMachine_3x5.png"
