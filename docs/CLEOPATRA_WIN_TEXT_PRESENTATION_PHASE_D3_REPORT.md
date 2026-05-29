@@ -1,5 +1,7 @@
 # Cleopatra Win Text Presentation Phase D3 Report
 
+> **SUPERSEDED — Phase E1.1 (2026-05-29):** Cleopatra migrated to `winPresentationIntent.winOverlay` via `src/config/cleopatraWinOverlayPresentation.ts`. `winPresentationIntent.winText` and `cleopatraWinTextPresentation.ts` are removed. Engine authority: SL-Engine [`WIN_OVERLAY_SINGLE_AUTHORITY_CONSOLIDATION_REPORT.md`](../../SL-Engine/docs/internal/WIN_OVERLAY_SINGLE_AUTHORITY_CONSOLIDATION_REPORT.md).
+
 ## Executive verdict
 
 **PASS.** Cleopatra is the first production consumer of intent-level `winPresentationIntent.winText` with `amountText: 'none'`, dynamic timelines for default/mega/epic tiers, and composition-time overlay layer cutover onto stock tiers.
