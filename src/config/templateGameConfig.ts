@@ -4,7 +4,6 @@ import type {
   SpinFeelPresetName,
 } from '@fnx/sl-engine';
 import type { LineStyleRegistryConfig } from '@view/win/line-style/lineStyleTypes.ts';
-import type { CleopatraPresenterLayoutOverrides } from './composeWinPresentationOverrides.ts';
 
 export const STARTER_SPIN_FEEL_PRESETS = ['classic', 'premium', 'snappy', 'heavy', 'arcade'] as const satisfies readonly SpinFeelPresetName[];
 export type StarterSpinFeelPresetName = (typeof STARTER_SPIN_FEEL_PRESETS)[number];
@@ -147,8 +146,6 @@ export interface TemplateGameConfig {
   winPresentationIntent?: ClassicLineWinPresentationOptions;
   /** Optional payline / label theme styling. */
   winPresentationLineStyles?: TemplateWinPresentationLineStyles;
-  /** Presenter timing / text placement patches (not part of intent — valid engine override surface). */
-  winPresenterLayout?: CleopatraPresenterLayoutOverrides;
   spinFeel?: {
     /**
      * Supported preset ids: `classic`, `premium`, `snappy`, `heavy`, `arcade`.
@@ -402,18 +399,8 @@ export const templateGameConfig: TemplateGameConfig = {
         },
       },
     },
-  },
-  winPresenterLayout: {
-    timingPrecedence: 'presenterOverridesTier',
-    /** Positive Y moves amount text down from reel midline (Pixi +Y). */
-    textPosition: { yOffset: 250 },
-    /** Banner / hook pacing (not choreography overlay step windows). */
-    timing: {
-      singleWinDurationMs: 5000,
-      betweenWinsDelayMs: 180,
-      allWinsDurationMs: 5000,
-    },
-    global: {
+    layout: {
+      textPosition: { yOffset: 250 },
       showPaylines: true,
     },
   },

@@ -1,4 +1,5 @@
 import {
+  applyWinPresentationLayoutIntentToOverrides,
   applyWinPresentationTimingIntentToTiers,
   createClassicLineWinPresentation,
   type ClassicLineWinPresentationOptions,
@@ -8,19 +9,9 @@ import { CATALOG_MANUAL_WIN_PRESENTER_MERGE_BASE } from '@view/win/WinPresenterC
 import type { LineStyleRegistryConfig } from '@view/win/line-style/lineStyleTypes.ts';
 import type { WinTextPresentationConfig } from '@view/win/text/WinTextTypes.ts';
 
-/** Cleopatra-owned presenter timing / placement patches (valid engine override surface). */
-export interface CleopatraPresenterLayoutOverrides {
-  readonly timingPrecedence?: WinPresenterFullConfig['timingPrecedence'];
-  /** Banner / hook pacing (not choreography overlay step windows). */
-  readonly timing?: DeepPartial<WinPresenterFullConfig['timing']>;
-  readonly textPosition?: DeepPartial<WinPresenterFullConfig['textPosition']>;
-  readonly global?: DeepPartial<WinPresenterFullConfig['global']>;
-}
-
 export interface TemplateWinPresentationComposeInput {
   readonly intent?: ClassicLineWinPresentationOptions;
   readonly lineStyles?: LineStyleRegistryConfig;
-  readonly presenterLayout?: CleopatraPresenterLayoutOverrides;
 }
 
 type ResolvedPresentationProfile = ReturnType<typeof createClassicLineWinPresentation> & {
@@ -52,7 +43,7 @@ function hasAuthoredLineStyles(
 
 /**
  * Resolves template win presentation intent at the composition boundary into
- * engine `winPresenterConfigOverrides` (choreography, tier step timing, layout patches, payline theme).
+ * engine `winPresenterConfigOverrides` (choreography shell, tier timing, layout, payline theme).
  */
 export function composeWinPresenterConfigOverrides(
   input: TemplateWinPresentationComposeInput,
@@ -72,20 +63,20 @@ export function composeWinPresenterConfigOverrides(
         intensity: input.intent.intensity,
       });
     }
-  }
 
-  const layout = input.presenterLayout;
-  if (layout?.timingPrecedence !== undefined) {
-    overrides.timingPrecedence = layout.timingPrecedence;
-  }
-  if (isNonArrayObject(layout?.timing) && Object.keys(layout.timing).length > 0) {
-    overrides.timing = { ...overrides.timing, ...layout.timing };
-  }
-  if (isNonArrayObject(layout?.textPosition) && Object.keys(layout.textPosition).length > 0) {
-    overrides.textPosition = { ...overrides.textPosition, ...layout.textPosition };
-  }
-  if (isNonArrayObject(layout?.global) && Object.keys(layout.global).length > 0) {
-    overrides.global = { ...overrides.global, ...layout.global };
+    const layoutOverrides = applyWinPresentationLayoutIntentToOverrides(input.intent.layout);
+    if (layoutOverrides?.textPosition != null) {
+      overrides.textPosition = {
+        ...(overrides.textPosition ?? {}),
+        ...layoutOverrides.textPosition,
+      };
+    }
+    if (layoutOverrides?.global != null) {
+      overrides.global = {
+        ...(overrides.global ?? {}),
+        ...layoutOverrides.global,
+      };
+    }
   }
 
   if (hasAuthoredLineStyles(input.lineStyles)) {
@@ -95,18 +86,14 @@ export function composeWinPresenterConfigOverrides(
   return isAuthoredWinPresenterOverrides(overrides) ? overrides : undefined;
 }
 
-/**
- * True when composed overrides carry choreography, layout patches, and/or authored payline theme.
- */
 export function isAuthoredWinPresenterOverrides(
   overrides: DeepPartial<WinPresenterFullConfig> | undefined,
 ): overrides is DeepPartial<WinPresenterFullConfig> {
   if (overrides == null) return false;
   if (overrides.choreography != null) return true;
   if (overrides.tiers != null) return true;
-  if (overrides.timingPrecedence !== undefined) return true;
-  if (isNonArrayObject(overrides.timing) && Object.keys(overrides.timing).length > 0) return true;
   if (isNonArrayObject(overrides.textPosition) && Object.keys(overrides.textPosition).length > 0) return true;
+  if (isNonArrayObject(overrides.global) && Object.keys(overrides.global).length > 0) return true;
   if (hasAuthoredLineStyles(overrides.lineStyles)) return true;
   return false;
 }

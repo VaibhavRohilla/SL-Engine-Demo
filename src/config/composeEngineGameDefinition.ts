@@ -550,7 +550,6 @@ export function composeEngineGameDefinition(
       const winPresenterConfigOverrides = composeWinPresenterConfigOverrides({
         intent: templateConfig.winPresentationIntent,
         lineStyles: templateConfig.winPresentationLineStyles,
-        presenterLayout: templateConfig.winPresenterLayout,
       });
       return winPresenterConfigOverrides ? { winPresenterConfigOverrides } : {};
     })(),
