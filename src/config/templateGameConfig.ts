@@ -379,32 +379,39 @@ export const templateGameConfig: TemplateGameConfig = {
    * `clipWithOverlay` keeps symbol clip + overlay pulse visible when win clips alias idle.
    */
   winPresentationIntent: {
-    /** `minimal` → choreography sequence `['each']` only (no `all` intro/outro beats). */
-    intensity: 'minimal',
+    intensity: 'balanced',
     symbolFeedback: 'clipWithOverlay',
     lineFeedback: 'payline',
     amountText: 'countUp',
+    timing: {
+      defaultStepTiming: {
+        individualWinDurationMs: 1000,
+        allWinsDurationMs: 1400,
+        betweenStepsDelayMs: 100,
+      },
+      tierStepTiming: {
+        mega: {
+          individualWinDurationMs: 1500,
+          allWinsDurationMs: 2100,
+          betweenStepsDelayMs: 160,
+        },
+        epic: {
+          individualWinDurationMs: 1800,
+          allWinsDurationMs: 2600,
+          betweenStepsDelayMs: 200,
+        },
+      },
+    },
   },
   winPresenterLayout: {
     timingPrecedence: 'presenterOverridesTier',
-    /** Positive Y moves amount text down from reel midline (Pixi +Y). Restores pre–intent-migration placement. */
+    /** Positive Y moves amount text down from reel midline (Pixi +Y). */
     textPosition: { yOffset: 250 },
-    /** Banner / hook pacing (not overlay step windows). */
+    /** Banner / hook pacing (not choreography overlay step windows). */
     timing: {
       singleWinDurationMs: 5000,
       betweenWinsDelayMs: 180,
       allWinsDurationMs: 5000,
-    },
-    /**
-     * Overlay step windows (not root `timing`). Shared across all tiers until tier-aware
-     * intent exists — must be >= longest catalog amount tween (epic 1500ms). 1600/2200
-     * gives count-up breathing room for mega/epic without weakening duration validation.
-     */
-    /** How long the overlay count-up runs (0 → win amount). Must be <= individualWinDurationMs below. */
-    amountTweenDurationMs: 2000,
-    choreographyStepTiming: {
-      individualWinDurationMs: 5000,
-      betweenStepsDelayMs: 180,
     },
     global: {
       showPaylines: true,

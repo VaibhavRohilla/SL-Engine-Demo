@@ -1,25 +1,18 @@
 import {
+  applyWinPresentationTimingIntentToTiers,
   createClassicLineWinPresentation,
   type ClassicLineWinPresentationOptions,
 } from '@fnx/sl-engine';
-import type { DeepPartial, WinChoreographyConfig, WinPresenterFullConfig } from '@view/win/WinPresenterConfig.ts';
+import type { DeepPartial, WinPresenterFullConfig } from '@view/win/WinPresenterConfig.ts';
+import { CATALOG_MANUAL_WIN_PRESENTER_MERGE_BASE } from '@view/win/WinPresenterConfig.ts';
 import type { LineStyleRegistryConfig } from '@view/win/line-style/lineStyleTypes.ts';
 import type { WinTextPresentationConfig } from '@view/win/text/WinTextTypes.ts';
 
 /** Cleopatra-owned presenter timing / placement patches (valid engine override surface). */
 export interface CleopatraPresenterLayoutOverrides {
   readonly timingPrecedence?: WinPresenterFullConfig['timingPrecedence'];
+  /** Banner / hook pacing (not choreography overlay step windows). */
   readonly timing?: DeepPartial<WinPresenterFullConfig['timing']>;
-  /**
-   * Choreography step windows (overlay duration validation uses these, not root `timing`).
-   * Engine raises floors at finalize when count-up duration exceeds authored step timing.
-   */
-  readonly choreographyStepTiming?: DeepPartial<WinChoreographyConfig['stepTiming']>;
-  /**
-   * Count-up duration (0 → win amount). With `timingPrecedence: 'presenterOverridesTier'`,
-   * wins over catalog tier tweens (normal 450 … epic 1500).
-   */
-  readonly amountTweenDurationMs?: number;
   readonly textPosition?: DeepPartial<WinPresenterFullConfig['textPosition']>;
   readonly global?: DeepPartial<WinPresenterFullConfig['global']>;
 }
@@ -59,8 +52,7 @@ function hasAuthoredLineStyles(
 
 /**
  * Resolves template win presentation intent at the composition boundary into
- * engine `winPresenterConfigOverrides` (choreography, optional global win text,
- * Cleopatra layout patches, payline theme).
+ * engine `winPresenterConfigOverrides` (choreography, tier step timing, layout patches, payline theme).
  */
 export function composeWinPresenterConfigOverrides(
   input: TemplateWinPresentationComposeInput,
@@ -69,23 +61,20 @@ export function composeWinPresenterConfigOverrides(
 
   if (input.intent != null) {
     const profile: ResolvedPresentationProfile = createClassicLineWinPresentation(input.intent);
-    overrides.choreography = profile.choreography;
-    // Do not merge profile.text → global.winText here: catalog tier amount tweens apply unless
-    // winPresenterLayout.amountTweenDurationMs is set (presenterOverridesTier).
+    const { stepTiming: _profileStepTiming, ...choreographyShell } = profile.choreography;
+    overrides.choreography = {
+      ...choreographyShell,
+      stepTiming: { ...CATALOG_MANUAL_WIN_PRESENTER_MERGE_BASE.choreography.stepTiming },
+    };
+    if (input.intent.timing != null) {
+      overrides.tiers = applyWinPresentationTimingIntentToTiers({
+        timing: input.intent.timing,
+        intensity: input.intent.intensity,
+      });
+    }
   }
 
   const layout = input.presenterLayout;
-  const stepTimingPatch = layout?.choreographyStepTiming;
-  if (isNonArrayObject(stepTimingPatch) && Object.keys(stepTimingPatch).length > 0) {
-    overrides.choreography = {
-      ...overrides.choreography,
-      enabled: overrides.choreography?.enabled ?? true,
-      stepTiming: {
-        ...overrides.choreography?.stepTiming,
-        ...stepTimingPatch,
-      },
-    };
-  }
   if (layout?.timingPrecedence !== undefined) {
     overrides.timingPrecedence = layout.timingPrecedence;
   }
@@ -97,20 +86,6 @@ export function composeWinPresenterConfigOverrides(
   }
   if (isNonArrayObject(layout?.global) && Object.keys(layout.global).length > 0) {
     overrides.global = { ...overrides.global, ...layout.global };
-  }
-  if (layout?.amountTweenDurationMs !== undefined) {
-    overrides.global = {
-      ...overrides.global,
-      winText: {
-        ...(overrides.global?.winText ?? {}),
-        amountTween: {
-          enabled: true,
-          from: 'zero',
-          durationMs: layout.amountTweenDurationMs,
-          easing: 'quadOut',
-        },
-      },
-    };
   }
 
   if (hasAuthoredLineStyles(input.lineStyles)) {
@@ -128,6 +103,7 @@ export function isAuthoredWinPresenterOverrides(
 ): overrides is DeepPartial<WinPresenterFullConfig> {
   if (overrides == null) return false;
   if (overrides.choreography != null) return true;
+  if (overrides.tiers != null) return true;
   if (overrides.timingPrecedence !== undefined) return true;
   if (isNonArrayObject(overrides.timing) && Object.keys(overrides.timing).length > 0) return true;
   if (isNonArrayObject(overrides.textPosition) && Object.keys(overrides.textPosition).length > 0) return true;
