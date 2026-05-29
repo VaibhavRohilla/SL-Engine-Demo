@@ -1,11 +1,16 @@
 import {
   applyWinPresentationLayoutIntentToOverrides,
+  applyWinPresentationOverlayLayersToTiers,
   applyWinPresentationTimingIntentToTiers,
   createClassicLineWinPresentation,
+  profileUsesIntentOwnedOverlayLayer,
   type ClassicLineWinPresentationOptions,
 } from '@fnx/sl-engine';
-import type { DeepPartial, WinPresenterFullConfig } from '@view/win/WinPresenterConfig.ts';
-import { CATALOG_MANUAL_WIN_PRESENTER_MERGE_BASE } from '@view/win/WinPresenterConfig.ts';
+import {
+  CATALOG_MANUAL_WIN_PRESENTER_MERGE_BASE,
+  type DeepPartial,
+  type WinPresenterFullConfig,
+} from '@view/win/WinPresenterConfig.ts';
 import type { LineStyleRegistryConfig } from '@view/win/line-style/lineStyleTypes.ts';
 import type { WinTextPresentationConfig } from '@view/win/text/WinTextTypes.ts';
 
@@ -57,11 +62,20 @@ export function composeWinPresenterConfigOverrides(
       ...choreographyShell,
       stepTiming: { ...CATALOG_MANUAL_WIN_PRESENTER_MERGE_BASE.choreography.stepTiming },
     };
-    if (input.intent.timing != null) {
-      overrides.tiers = applyWinPresentationTimingIntentToTiers({
+    const overlayLayers = profile.overlay.layers ?? [];
+    const needsTierOverrides = input.intent.timing != null || profileUsesIntentOwnedOverlayLayer(overlayLayers);
+    if (needsTierOverrides) {
+      let tiers = applyWinPresentationTimingIntentToTiers({
         timing: input.intent.timing,
         intensity: input.intent.intensity,
       });
+      if (profileUsesIntentOwnedOverlayLayer(overlayLayers)) {
+        tiers = applyWinPresentationOverlayLayersToTiers({
+          tiers,
+          layers: overlayLayers,
+        });
+      }
+      overrides.tiers = tiers;
     }
 
     const layoutOverrides = applyWinPresentationLayoutIntentToOverrides(input.intent.layout);

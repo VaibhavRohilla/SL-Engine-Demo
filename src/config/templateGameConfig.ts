@@ -4,6 +4,7 @@ import type {
   SpinFeelPresetName,
 } from '@fnx/sl-engine';
 import type { LineStyleRegistryConfig } from '@view/win/line-style/lineStyleTypes.ts';
+import { cleopatraWinOverlayPresentation } from './cleopatraWinOverlayPresentation.ts';
 
 export const STARTER_SPIN_FEEL_PRESETS = ['classic', 'premium', 'snappy', 'heavy', 'arcade'] as const satisfies readonly SpinFeelPresetName[];
 export type StarterSpinFeelPresetName = (typeof STARTER_SPIN_FEEL_PRESETS)[number];
@@ -379,22 +380,34 @@ export const templateGameConfig: TemplateGameConfig = {
     intensity: 'balanced',
     symbolFeedback: 'clipWithOverlay',
     lineFeedback: 'payline',
-    amountText: 'countUp',
+    amountText: 'none',
+    winOverlay: cleopatraWinOverlayPresentation,
     timing: {
       defaultStepTiming: {
-        individualWinDurationMs: 1000,
-        allWinsDurationMs: 1400,
+        individualWinDurationMs: 5300,
+        allWinsDurationMs: 5500,
         betweenStepsDelayMs: 100,
       },
       tierStepTiming: {
+        // Must fit winOverlay entrance (220ms) + tier countTo duration in cleopatraWinOverlayPresentation.
+        good: {
+          individualWinDurationMs: 7500,
+          allWinsDurationMs: 7600,
+          betweenStepsDelayMs: 100,
+        },
+        big: {
+          individualWinDurationMs: 10300,
+          allWinsDurationMs: 10500,
+          betweenStepsDelayMs: 125,
+        },
         mega: {
-          individualWinDurationMs: 1500,
-          allWinsDurationMs: 2100,
+          individualWinDurationMs: 13700,
+          allWinsDurationMs: 14000,
           betweenStepsDelayMs: 160,
         },
         epic: {
-          individualWinDurationMs: 1800,
-          allWinsDurationMs: 2600,
+          individualWinDurationMs: 17000,
+          allWinsDurationMs: 17500,
           betweenStepsDelayMs: 200,
         },
       },
