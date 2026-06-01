@@ -212,16 +212,13 @@ function assertTierOverlayDurationsFitStepTiming(issues: PipelineIssue[]): void 
       );
     }
 
-    if (tierId === 'mega' || tierId === 'epic') {
-      const elementIds = Object.keys(rule.elements);
-      if (!elementIds.includes('title') || !elementIds.includes('amount')) {
-        addIssue(
-          issues,
-          `Tier "${tierId}" winOverlay must define title and amount elements.`,
-          `winOverlay.byTier.${tierId}.elements`,
-          'author parallel title + amount tracks for mega/epic celebrations.',
-        );
-      }
+    if (!Object.keys(rule.elements).includes('amount')) {
+      addIssue(
+        issues,
+        `Tier "${tierId}" winOverlay must define an amount element.`,
+        `winOverlay.byTier.${tierId}.elements`,
+        'author amount text + countTo timeline for each tier.',
+      );
     }
   }
 }

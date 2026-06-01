@@ -72,13 +72,14 @@ const CLEOPATRA_WIN_OVERLAY_PLACEMENT = {
 function amountRule(
   tier: keyof typeof TIER_TEXT,
   countMs: number = COUNT_MS[tier],
+  amountStyle: WinOverlayTextStyleIntent = TIER_TEXT[tier],
 ): WinOverlayCompositionRuleIntent {
   return {
     elements: {
       amount: {
         type: 'text',
         text: 'WIN ${amount}',
-        style: TIER_TEXT[tier],
+        style: amountStyle,
       },
     },
     animation: {
@@ -111,109 +112,15 @@ export const cleopatraWinOverlayPresentation: WinOverlayCompositionIntent = {
   byTier: {
     good: amountRule('good'),
     big: amountRule('big'),
-    mega: {
-      elements: {
-        title: {
-          type: 'text',
-          text: 'MEGA WIN',
-          style: TIER_TEXT.mega,
-        },
-        amount: {
-          type: 'text',
-          text: 'WIN ${amount}',
-          style: {
-            ...TIER_TEXT.mega,
-            fontSize: 86,
-            stroke: { color: 0x000000, width: 8 },
-          },
-        },
-      },
-      animation: {
-        type: 'timeline',
-        tracks: [
-          {
-            target: 'title',
-            sequence: [
-              { op: 'set', props: { alpha: 0, scale: 0.6 } },
-              { op: 'to', durationMs: 300, ease: 'backOut', props: { alpha: 1, scale: 1.25 } },
-              {
-                op: 'to',
-                durationMs: 250,
-                ease: 'quadOut',
-                props: { scale: 1 },
-                emit: 'megaTitleSettled',
-              },
-            ],
-          },
-          {
-            target: 'amount',
-            sequence: [
-              { op: 'wait', durationMs: 250 },
-              {
-                op: 'countTo',
-                durationMs: COUNT_MS.mega,
-                from: 0,
-                to: 'stepAmount',
-                ease: 'quadOut',
-                emit: 'megaAmountCountComplete',
-              },
-            ],
-          },
-        ],
-      },
-      placement: CLEOPATRA_WIN_OVERLAY_PLACEMENT,
-    },
-    epic: {
-      elements: {
-        title: {
-          type: 'text',
-          text: 'EPIC WIN',
-          style: TIER_TEXT.epic,
-        },
-        amount: {
-          type: 'text',
-          text: 'WIN ${amount}',
-          style: {
-            ...TIER_TEXT.epic,
-            fontSize: 92,
-            stroke: { color: 0x0066ff, width: 10 },
-          },
-        },
-      },
-      animation: {
-        type: 'timeline',
-        tracks: [
-          {
-            target: 'title',
-            sequence: [
-              { op: 'set', props: { alpha: 0, scale: 0.5 } },
-              { op: 'to', durationMs: 350, ease: 'backOut', props: { alpha: 1, scale: 1.3 } },
-              {
-                op: 'to',
-                durationMs: 300,
-                ease: 'quadOut',
-                props: { scale: 1 },
-                emit: 'epicTitleSettled',
-              },
-            ],
-          },
-          {
-            target: 'amount',
-            sequence: [
-              { op: 'wait', durationMs: 300 },
-              {
-                op: 'countTo',
-                durationMs: COUNT_MS.epic,
-                from: 0,
-                to: 'stepAmount',
-                ease: 'quadOut',
-                emit: 'epicAmountCountComplete',
-              },
-            ],
-          },
-        ],
-      },
-      placement: CLEOPATRA_WIN_OVERLAY_PLACEMENT,
-    },
+    mega: amountRule('mega', COUNT_MS.mega, {
+      ...TIER_TEXT.mega,
+      fontSize: 86,
+      stroke: { color: 0x000000, width: 8 },
+    }),
+    epic: amountRule('epic', COUNT_MS.epic, {
+      ...TIER_TEXT.epic,
+      fontSize: 92,
+      stroke: { color: 0x0066ff, width: 10 },
+    }),
   },
 };
