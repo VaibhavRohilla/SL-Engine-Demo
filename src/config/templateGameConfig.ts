@@ -413,7 +413,6 @@ export const templateGameConfig: TemplateGameConfig = {
       },
     },
     layout: {
-      textPosition: { yOffset: 250 },
       showPaylines: true,
     },
   },

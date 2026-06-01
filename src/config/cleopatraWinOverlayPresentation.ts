@@ -6,25 +6,68 @@ import type {
 
 const ENTRANCE_MS = 220;
 
-/** Stock tier colors with heavier stroke (thicker outline) than stock amountText. */
+/** Stock-catalog drop shadow — matches default tier “WIN $amount” presentation. */
+const STOCK_WIN_DROP_SHADOW = {
+  color: 0x000000,
+  blur: 4,
+  distance: 2,
+  angle: Math.PI / 4,
+} as const satisfies NonNullable<WinOverlayTextStyleIntent['dropShadow']>;
+
+/** Tier text styling aligned with stock win tiers + bold shadowed “WIN $amount” look. */
 const TIER_TEXT = {
-  normal: { fill: 0xffdd00, stroke: { color: 0x000000, width: 8 }, fontSize: 48 },
-  good: { fill: 0xffaa00, stroke: { color: 0x000000, width: 10 }, fontSize: 56 },
-  big: { fill: 0xff4444, stroke: { color: 0x000000, width: 12 }, fontSize: 64 },
-  mega: { fill: 0xff00ff, stroke: { color: 0x000000, width: 14 }, fontSize: 72 },
-  epic: { fill: 0x00ffff, stroke: { color: 0x0066ff, width: 16 }, fontSize: 80 },
+  normal: {
+    fontSize: 48,
+    fontWeight: 'bold',
+    fill: 0xffdd00,
+    stroke: { color: 0x000000, width: 4 },
+    dropShadow: STOCK_WIN_DROP_SHADOW,
+  },
+  good: {
+    fontSize: 56,
+    fontWeight: 'bold',
+    fill: 0xffaa00,
+    stroke: { color: 0x000000, width: 5 },
+    dropShadow: { color: 0x000000, blur: 6, distance: 3, angle: Math.PI / 4 },
+  },
+  big: {
+    fontSize: 64,
+    fontWeight: 'bold',
+    fill: 0xff4444,
+    stroke: { color: 0x000000, width: 6 },
+    dropShadow: { color: 0xff0000, blur: 10, distance: 0, angle: 0 },
+  },
+  mega: {
+    fontSize: 72,
+    fontWeight: 'bold',
+    fill: 0xff00ff,
+    stroke: { color: 0x000000, width: 8 },
+    dropShadow: { color: 0xff00ff, blur: 15, distance: 0, angle: 0 },
+  },
+  epic: {
+    fontSize: 80,
+    fontWeight: 'bold',
+    fill: 0x00ffff,
+    stroke: { color: 0x0066ff, width: 10 },
+    dropShadow: { color: 0x00ffff, blur: 20, distance: 0, angle: 0 },
+  },
 } as const satisfies Record<string, WinOverlayTextStyleIntent>;
 
 /**
  * Count-up durations — normal is the 5000ms baseline; higher tiers scale up from stock ratios.
  */
 const COUNT_MS = {
-  normal: 5000,
-  good: 7200,
-  big: 10000,
-  mega: 13400,
-  epic: 16700,
+  normal: 2000,
+  good: 4200,
+  big: 7000,
+  mega: 10400,
+  epic: 13700,
 } as const;
+
+const CLEOPATRA_WIN_OVERLAY_PLACEMENT = {
+  anchor: 'reelsCenter',
+  offset: { y: 250 },
+} as const satisfies WinOverlayCompositionRuleIntent['placement'];
 
 function amountRule(
   tier: keyof typeof TIER_TEXT,
@@ -34,7 +77,7 @@ function amountRule(
     elements: {
       amount: {
         type: 'text',
-        text: '{amount}',
+        text: 'WIN ${amount}',
         style: TIER_TEXT[tier],
       },
     },
@@ -58,10 +101,11 @@ function amountRule(
         },
       ],
     },
+    placement: CLEOPATRA_WIN_OVERLAY_PLACEMENT,
   };
 }
 
-/** Cleopatra dynamic win overlay — slower count-up, thicker strokes, tier-scaled pacing. */
+/** Cleopatra dynamic win overlay — stock-style WIN $amount text with stroke + drop shadow. */
 export const cleopatraWinOverlayPresentation: WinOverlayCompositionIntent = {
   default: amountRule('normal'),
   byTier: {
@@ -76,11 +120,11 @@ export const cleopatraWinOverlayPresentation: WinOverlayCompositionIntent = {
         },
         amount: {
           type: 'text',
-          text: '{amount}',
+          text: 'WIN ${amount}',
           style: {
             ...TIER_TEXT.mega,
             fontSize: 86,
-            stroke: { color: 0x000000, width: 16 },
+            stroke: { color: 0x000000, width: 8 },
           },
         },
       },
@@ -117,6 +161,7 @@ export const cleopatraWinOverlayPresentation: WinOverlayCompositionIntent = {
           },
         ],
       },
+      placement: CLEOPATRA_WIN_OVERLAY_PLACEMENT,
     },
     epic: {
       elements: {
@@ -127,11 +172,11 @@ export const cleopatraWinOverlayPresentation: WinOverlayCompositionIntent = {
         },
         amount: {
           type: 'text',
-          text: '{amount}',
+          text: 'WIN ${amount}',
           style: {
             ...TIER_TEXT.epic,
             fontSize: 92,
-            stroke: { color: 0x0066ff, width: 18 },
+            stroke: { color: 0x0066ff, width: 10 },
           },
         },
       },
@@ -168,6 +213,7 @@ export const cleopatraWinOverlayPresentation: WinOverlayCompositionIntent = {
           },
         ],
       },
+      placement: CLEOPATRA_WIN_OVERLAY_PLACEMENT,
     },
   },
 };

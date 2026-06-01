@@ -41,7 +41,6 @@ const CLEOPATRA_WIN_PRESENTATION_INTENT: WinPresentationIntent = {
     },
   },
   layout: {
-    textPosition: { yOffset: 250 },
     showPaylines: true,
   },
 };
